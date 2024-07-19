@@ -7,6 +7,7 @@ import StudentAccount from '././StudentSide/StudentAccount.jsx'
 import FacultyStaffSignup from '././FacultyStaffSide/FacultyStaffSignup.jsx'
 import FacultyStaffLogin from '././FacultyStaffSide/FacultyStaffLogin.jsx'
 import FacultyStaffDashboard from '././FacultyStaffSide/FacultyStaffDashboard.jsx'
+import FacultyStaffParkingSlot from '././FacultyStaffSide/FacultyStaffParkingSlot.jsx'
 import AdminLogin from '././AdminSide/AdminLogin.jsx'
 import './../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
@@ -28,6 +29,7 @@ export default function App(){
             <Route path="/facultystaffsignup" element={<FacultyStaffSignup />} />
             <Route path="/facultystafflogin" element={<FacultyStaffLogin />} />
             <Route path="/facultystaffdashboard" element={<FacultyStaffDashboard />} />
+            <Route path="/facultystaffparkingslot" element={<FacultyStaffParkingSlot />} />
             <Route path="/adminlogin" element={<AdminLogin />} />
         </Routes>
       </Router>
