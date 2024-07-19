@@ -5,40 +5,41 @@ import GSOlogo from '.././Pictures/gsoo.png';
 import '.././App.css'
 
 export default function FacultyStaffLogin() {
-  const [fullname, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [fullname, setFullname] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(fullname, email, password);
-    try{
-      const response = await fetch('http://localhost/website/my-project/Backend/facultystafflogin.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fullname,
-          email,
-          password,
-        }),
-      });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('http://localhost/website/my-project/Backend/facultystafflogin.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    fullname,
+                    email,
+                    password,
+                }),
+                credentials: 'include',
+            });
 
-      const data = await response.json();
+            const data = await response.json();
 
-      if (data.success) {
-        navigate('/facultystaffdashboard');
-      } else {
-        setError(data.message);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setError('An unexpected error occurred.')
-    }
-  };
+            if (data.success) {
+                // Store user data in session storage or state if needed
+                navigate('/facultystaffdashboard');
+            } else {
+                setError(data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setError('An unexpected error occurred.');
+        }
+    };
   
 
   return (
@@ -66,7 +67,7 @@ export default function FacultyStaffLogin() {
       </p>
       <p className="text-base text-gray-400 sm:text-sm">Login your Account.</p>
       <label className="relative">
-        <input name="fullname" value={fullname} onChange={(e) => setFullName(e.target.value)} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+        <input name="fullname" value={fullname} onChange={(e) => setFullname(e.target.value)} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
         <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Full Name</span>
       </label>
       <label className="relative">

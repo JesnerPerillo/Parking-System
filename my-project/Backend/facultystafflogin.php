@@ -1,9 +1,11 @@
 <?php 
-  require './connect.php';
+  require './database.php';
+  session_start();
 
-  header('Access-Control-Allow-Origin: *');
+  header('Access-Control-Allow-Origin: http://localhost:3000');
   header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE');
   header('Access-Control-Allow-Headers: Content-Type, Accept, Origin, X-Requested-With');
+  header('Access-Control-Allow-Credentials: true');
   header('Content-Type: application/json');
 
   $response = array();
@@ -36,8 +38,8 @@
             if (!isset($_SESSION)) session_start();
             $_SESSION["login"] = true;
             $_SESSION["fullname"] = $row["Name"];
+
             $response['success'] = true;
-            $response['message'] = 'Login successful.';
           } elseif ($email != $row["Email"]) {
             $response['success'] = false;
             $response['message'] = 'Email does not match our records.';
