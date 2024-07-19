@@ -66,7 +66,7 @@ export default function FacultyStaffDashboard() {
           <div className="bg-blue-900 w-3/4 h-24 text-white flex flex-col items-center justify-center mt-10 rounded-xl text-xl tracking-wider">
             <h1 className="text-bold text-white text-3xl tracking-widest">{userData.Name}</h1>
             {/* Replace 'Name' with the correct property name from your API response */}
-            <p className="text-xs">{userData.Name}</p>
+            <p className="text-xs">{userData.Position}</p>
             {/* Replace 'Student Number' with the correct property name from your API response */}
           </div>
           <ul className="flex flex-col justify-evenly p-5 w-full h-2/4 relative">

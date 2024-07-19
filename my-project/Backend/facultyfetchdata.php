@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-header('Access-Control-Allow-Origin: http://localhost:3000'); // Adjust according to your frontend origin
+header('Access-Control-Allow-Origin: http://localhost:3000');
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE');
 header('Access-Control-Allow-Headers: Content-Type, Accept, Origin, X-Requested-With');
 header('Access-Control-Allow-Credentials: true'); // Allow credentials
