@@ -1,9 +1,9 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-export default function FacultyStaffDashboard() {
+export default function FacultyStaffAccount() {
   const [userData, setUserData] = useState({});
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -11,23 +11,6 @@ export default function FacultyStaffDashboard() {
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
-  };
-
-  const handleLogout = async () => {
-    try {
-      const response = await axios.get('http://localhost/website/my-project/Backend/logout.php', {
-        withCredentials: true
-      });
-
-      if (response.data.success) {
-        navigate('/');
-      } else {
-        setError('Logout failed. Please try again.');
-      }
-    } catch (error) {
-      setError('Error logging out: ' + error.message);
-      console.error('Error logging out: ', error);
-    }
   };
 
   useEffect(() => {
@@ -38,20 +21,38 @@ export default function FacultyStaffDashboard() {
         });
 
         if (response.data.success) {
-          setUserData(response.data.data); // Assuming `data` contains the user information
+          setUserData(response.data.data);
         } else {
           setError(response.data.message || 'No data found for the logged-in user.');
         }
       } catch (error) {
         setError('Error fetching data: ' + error.message);
-        console.error('Error fetching data:', error);
+        console.error('Error fetching data: ', error);
       }
     };
 
     fetchData();
   }, []);
 
-  return (
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get('http://localhost/website/my-project/Backend/logout.php', {
+        withCredentials: true
+      });
+
+      if (response.data.success) {
+        navigate('/');
+      } else {
+        setError('log out failed. Please try again.');
+      }
+    } catch (error) {
+      setError('Error logging out: ', error.message);
+      console.error('Error logging out: ', error);
+    }
+  }
+
+
+  return(
     <>
       <div className="relative w-full h-screen bg-blue-900 flex">
         {/* Navigation button */}
@@ -69,8 +70,8 @@ export default function FacultyStaffDashboard() {
             <p className="text-xs">{userData.Position}</p>
           </div>
           <ul className="flex flex-col justify-evenly p-5 w-full h-2/4 relative">
-            <Link to="/facultystaffdashboard" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200 bg-blue-900" href="#">
-              <li className="group-hover:text-white text-2xl text-white tracking-widest">
+            <Link to="/facultystaffdashboard" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200" href="#">
+              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest">
                 <span>Dashboard</span>
               </li>
             </Link>
@@ -84,8 +85,8 @@ export default function FacultyStaffDashboard() {
                 Report
               </li>
             </Link>
-            <Link to="/facultystaffaccount" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200 " href="#">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest">
+            <Link to="/facultystaffaccount" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200 bg-blue-900" href="#">
+              <li className="group-hover:text-white text-2xl text-white tracking-widest">
                 Account
               </li>
             </Link>
@@ -97,10 +98,10 @@ export default function FacultyStaffDashboard() {
 
         <div className="w-full">
           <div className="w-full h-20 flex justify-end items-end border-b-2">
-            <p className={`text-white font-semibold text-2xl tracking-widest z-10 mr-5 ${isNavOpen ? 'hidden' : 'block'}`}>Dashboard</p>
+            <p className={`text-white font-semibold text-2xl tracking-widest z-10 mr-5 ${isNavOpen ? 'hidden' : 'block'}`}>Account</p>
           </div>
         </div>
       </div>
     </>
-  );
+  )
 }

@@ -202,22 +202,22 @@ export default function FacultyStaffParkingSlot() {
             <p className="text-xs">{userData.Position}</p>
           </div>
           <ul className="flex flex-col justify-evenly p-5 w-full h-2/4 relative">
-            <Link to="/studentdashboard" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200">
+            <Link to="/facultystaffdashboard" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200">
               <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest">
                 Dashboard
               </li>
             </Link>
-            <Link to="/studentparkingslots" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200 bg-blue-900">
+            <Link to="/facultystaffparkingslots" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200 bg-blue-900">
               <li className="group-hover:text-white text-2xl text-white tracking-widest">
                 Parking Slots
               </li>
             </Link>
-            <Link to="/studentreport" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200">
+            <Link to="/facultystaffreport" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200">
               <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest">
                 Report
               </li>
             </Link>
-            <Link to="/studentaccount" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200">
+            <Link to="/facultystaffaccount" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200">
               <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest">
                 Account
               </li>
