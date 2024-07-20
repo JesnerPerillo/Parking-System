@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -8,7 +9,7 @@ export default function FacultyStaffParkingSlot() {
   const navigate = useNavigate();
   const [isNavOpen, setIsNavOpen] = useState(false);
 
-  const [selectedVehicle, setSelectedVehicle] = useState('motorcycle');
+  const [selectedVehicle, setSelectedVehicle] = useState(null); // Initially null
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [occupiedSpots, setOccupiedSpots] = useState({
     motorcycle: [],
@@ -17,9 +18,9 @@ export default function FacultyStaffParkingSlot() {
   });
 
   const categories = {
-    motorcycle: {count: 300, color: 'bg-green-500 text-white'},
-    tricycle: {count: 15, color: 'bg-green-500 text-white'},
-    fourwheeler: {count: 10, color: 'bg-green-500 text-white'}
+    motorcycle: { count: 300, color: 'bg-green-500 text-white' },
+    tricycle: { count: 15, color: 'bg-green-500 text-white' },
+    fourwheeler: { count: 10, color: 'bg-green-500 text-white' }
   };
 
   const toggleNav = () => {
@@ -34,8 +35,15 @@ export default function FacultyStaffParkingSlot() {
         });
 
         if (response.data.success) {
-          setUserData(response.data.data);
-          console.log('User Data:', response.data.data);
+          const user = response.data.data;
+          setUserData(user);
+
+          // Normalize vehicle type to match keys in categories
+          const vehicleType = user.Vehicle.toLowerCase();
+          setSelectedVehicle(vehicleType);
+
+          console.log('User Data:', user);
+          console.log('Vehicle Type:', vehicleType);
         } else {
           setError(response.data.message || 'No data found for the logged-in user.');
         }
@@ -106,7 +114,7 @@ export default function FacultyStaffParkingSlot() {
         });
 
         if (response.data.status === 'success') {
-          alert('Parking slot selected successsfully.');
+          alert('Parking slot selected successfully.');
           setUserData(prevData => ({
             ...prevData,
             parkingSlot: { slotType: selectedVehicle, slotNumber: selectedSpot }
@@ -128,7 +136,7 @@ export default function FacultyStaffParkingSlot() {
         alert('Error selecting parking slot: ', error.message);
       }
     } else if (userData.parkingSlot) {
-      alert('You have already have a selected parking slot.');
+      alert('You already have a selected parking slot.');
     } else {
       alert('Please select a parking spot and ensure you are logged in.');
     }
@@ -164,19 +172,19 @@ export default function FacultyStaffParkingSlot() {
 
       return (
         <div key={index}
-        className={`rounded-xl h-20 flex items-center justify-center cursor-pointer ${color} ${spotColorClass}`}
-        style={{
-          borderColor: isSelected || isOccupied ? '#E53E3E' : 'transparent',
-          color: isSelected || isOccupied ? '#FFFFFF' : '#000000',
-          boxShadow: isSelected ? '0 0 0 2px rgba(66, 153, 225, 0.5)' : 'none'
-        }}
-        onClick={() => {
-          if (!isOccupied && !isCurrentUserSpot) {
-            handleSpotSelection(spotNumber);
-          } else if (isOccupied) {
-            alert('This parking spot is already occupied.');
-          }
-        }}
+          className={`rounded-xl h-20 flex items-center justify-center cursor-pointer ${color} ${spotColorClass}`}
+          style={{
+            borderColor: isSelected || isOccupied ? '#E53E3E' : 'transparent',
+            color: isSelected || isOccupied ? '#FFFFFF' : '#000000',
+            boxShadow: isSelected ? '0 0 0 2px rgba(66, 153, 225, 0.5)' : 'none'
+          }}
+          onClick={() => {
+            if (!isOccupied && !isCurrentUserSpot) {
+              handleSpotSelection(spotNumber);
+            } else if (isOccupied) {
+              alert('This parking spot is already occupied.');
+            }
+          }}
         >
           {spotNumber}
         </div>

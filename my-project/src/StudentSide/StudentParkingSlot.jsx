@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -8,7 +9,7 @@ export default function StudentParkingSlots() {
   const navigate = useNavigate();
   const [isNavOpen, setIsNavOpen] = useState(false);
 
-  const [selectedVehicle, setSelectedVehicle] = useState('motorcycle');
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [occupiedSpots, setOccupiedSpots] = useState({
     motorcycle: [],
@@ -34,8 +35,14 @@ export default function StudentParkingSlots() {
         });
 
         if (response.data.success) {
-          setUserData(response.data.data);
-          console.log('User Data:', response.data.data);
+          const user = response.data.data;
+          setUserData(user);
+
+          const vehicleType = user.Vehicle.toLowerCase();
+          setSelectedVehicle(vehicleType);
+
+          console.log('User Data:', user);
+          console.log('Vehicle Type:', vehicleType);
         } else {
           setError(response.data.message || 'No data found for the logged-in user.');
         }

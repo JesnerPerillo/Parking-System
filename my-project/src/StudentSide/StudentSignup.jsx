@@ -142,7 +142,7 @@ export default function StudentSignup() {
               <option value="" disabled selected hidden>Type of Vehicle</option>
                 <option>Motorcycle</option>
                 <option>Tricycle</option>
-                <option>FourWheels</option>
+                <option>Four-Wheeler</option>
               </select>
             </label>
             <label className="relative w-full">
