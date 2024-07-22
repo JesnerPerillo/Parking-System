@@ -21,7 +21,7 @@ include './database.php'; // Adjust path as necessary
 
 $studentNumber = $_SESSION["studentNumber"];
 
-$stmt = $conn->prepare("SELECT * FROM students WHERE `Student Number` = ?");
+$stmt = $conn->prepare("SELECT id, `Student Number`, Name, Email, `Year and Section`, Course, Vehicle, `Plate Number`, Password, License, ORCR FROM students WHERE `Student Number` = ?");
 if (!$stmt) {
     $response['success'] = false;
     $response['message'] = 'Database query preparation failed.';
@@ -35,6 +35,15 @@ $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
+
+    // Convert binary data to base64 for easy embedding in JSON
+    if ($row['License'] !== null) {
+        $row['License'] = base64_encode($row['License']);
+    }
+    if ($row['ORCR'] !== null) {
+        $row['ORCR'] = base64_encode($row['ORCR']);
+    }
+
     $response['success'] = true;
     $response['data'] = $row;
 } else {

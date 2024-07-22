@@ -43,26 +43,25 @@ export default function StudentSignup() {
       form.append(key, formData[key]);
     });
 
-
     try {
       const response = await axios.post('http://localhost/website/my-project/Backend/studentsignup.php', form, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
+
       alert(response.data.message);
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (response.data.status === 'success') {
         navigate('/studentlogin');
-    }
+      }
     } catch (error) {
       console.error(error);
       alert('An error occurred during registration.');
     }
   };
 
+  
   return (
     <div className="bg-gradient-to-r from-blue-700 w-full to-teal-700 min-h-screen flex flex-col items-center">
       <div className="form xl:w-2/3 mt-10 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-blue-900">
@@ -81,7 +80,7 @@ export default function StudentSignup() {
           <img src={URSlogo} alt="URS Logo" className="w-20 h-24 md:w-28 md:h-32" />
         </div>
       </div>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3 float:right h-auto max-w-lg p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 sm:max-w-full sm:p-5">
+        <form onSubmit={handleSubmit} encType="multipart/form-data" className="flex flex-col gap-3 float:right h-auto max-w-lg p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 sm:max-w-full sm:p-5">
             <p className="text-3xl font-semibold tracking-tight relative flex items-center pl-7 text-cyan-500 sm:text-2xl">
             Register (Students)
               <span className="absolute left-0 h-4 w-4 rounded-full bg-cyan-500 animate-pulse"></span>
@@ -142,7 +141,7 @@ export default function StudentSignup() {
               <option value="" disabled selected hidden>Type of Vehicle</option>
                 <option>Motorcycle</option>
                 <option>Tricycle</option>
-                <option>Four-Wheeler</option>
+                <option>Fourwheeler</option>
               </select>
             </label>
             <label className="relative w-full">

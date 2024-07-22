@@ -14,17 +14,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $course = $_POST["course"];
     $vehicleType = $_POST["vehicleType"];
     $plateNumber = $_POST["plateNumber"];
-    $password = $_POST["password"]; // Assuming you receive this from the form
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT); // Hash the password
+    $password = $_POST["password"];
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // File upload handling - Local Storage uploads
-    $licenseFilename = $_FILES['license']['name'];
-    $licenseTmpName = $_FILES['license']['tmp_name'];
-    $licenseDestination = 'uploads/' . $licenseFilename;
+    // File upload handling - Check if files are uploaded
+    if (isset($_FILES['license']['tmp_name']) && isset($_FILES['orcr']['tmp_name'])) {
+        $licenseFile = $_FILES['license']['tmp_name'];
+        $orcrFile = $_FILES['orcr']['tmp_name'];
 
-    $orcrFilename = $_FILES['orcr']['name'];
-    $orcrTmpName = $_FILES['orcr']['tmp_name'];
-    $orcrDestination = 'uploads/' . $orcrFilename;
+        // Read file contents for BLOB storage
+        $licenseContent = file_get_contents($licenseFile);
+        $orcrContent = file_get_contents($orcrFile);
+    } else {
+        echo json_encode(array('status' => 'error', 'message' => 'License and ORCR files are required.'));
+        exit;
+    }
 
     // Check for duplicate student number or email using prepared statements
     $stmt = mysqli_prepare($conn, "SELECT * FROM students WHERE `Student Number` = ? OR Email = ?");
@@ -37,26 +41,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Move uploaded files to desired location
-    if (move_uploaded_file($licenseTmpName, $licenseDestination) && move_uploaded_file($orcrTmpName, $orcrDestination)) {
-        // Prepare SQL statement to insert data into database using prepared statements
-        $query = "INSERT INTO students (`Student Number`, Name, Email, `Year and Section`, Course, Vehicle, `Plate Number`, Password, License, ORCR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, 'ssssssssss', $studentNumber, $fullname, $emailAddress, $yearsection, $course, $vehicleType, $plateNumber, $hashedPassword, $licenseDestination, $orcrDestination);
-
-        // Execute the statement
-        if (mysqli_stmt_execute($stmt)) {
-            echo json_encode(array('status' => 'success', 'message' => 'Registration Successful!', 'redirect' => 'StudentLogin.jsx'));
-        } else {
-            echo json_encode(array('status' => 'error', 'message' => 'Error in registration.'));
-        }
-
-        // Close statement
-        mysqli_stmt_close($stmt);
-    } else {
-        echo json_encode(array('status' => 'error', 'message' => 'Error in file upload.'));
+    // Prepare SQL statement to insert data into database using prepared statements
+    $query = "INSERT INTO students (`Student Number`, Name, Email, `Year and Section`, Course, Vehicle, `Plate Number`, Password, License, ORCR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($conn, $query);
+    if (!$stmt) {
+        echo json_encode(array('status' => 'error', 'message' => 'Prepared statement failed: ' . mysqli_error($conn)));
+        exit;
     }
 
+    mysqli_stmt_bind_param($stmt, 'ssssssssbb', $studentNumber, $fullname, $emailAddress, $yearsection, $course, $vehicleType, $plateNumber, $hashedPassword, $licenseContent, $orcrContent);
+
+    // Bind the BLOB parameters
+    mysqli_stmt_send_long_data($stmt, 8, $licenseContent);
+    mysqli_stmt_send_long_data($stmt, 9, $orcrContent);
+
+    // Execute the statement
+    if (mysqli_stmt_execute($stmt)) {
+        echo json_encode(array('status' => 'success', 'message' => 'Registration Successful!', 'redirect' => 'StudentLogin.jsx'));
+    } else {
+        echo json_encode(array('status' => 'error', 'message' => 'Error in registration.'));
+    }
+
+    // Close statement
+    mysqli_stmt_close($stmt);
     mysqli_close($conn);
 }
 ?>

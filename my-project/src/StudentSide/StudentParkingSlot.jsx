@@ -211,7 +211,7 @@ export default function StudentParkingSlots() {
         {/* Navigation menu */}
         <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center md:flex md:flex-col md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
           <div className="bg-blue-900 w-3/4 h-24 text-white flex flex-col items-center justify-center mt-10 rounded-xl text-xl tracking-wider">
-            <h1 className="text-bold text-white text-3xl tracking-widest">{userData.Name}</h1>
+            <h1 className="text-bold text-white text-xl tracking-widest">{userData.Name}</h1>
             <p className="text-xs">{userData['Student Number']}</p>
           </div>
           <ul className="flex flex-col justify-evenly p-5 w-full h-2/4 relative">
