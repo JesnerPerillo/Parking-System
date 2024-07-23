@@ -11,6 +11,18 @@ export default function StudentAccount() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [licenseSrc, setLicenseSrc] = useState('');
   const [orcrSrc, setOrcrSrc] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalImageSrc, setModalImageSrc] = useState('');
+
+  const handleOpenModal = (src) => {
+    setModalImageSrc(src);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal =() => {
+    setIsModalOpen(false);
+    setModalImageSrc('');
+  };
 
   useEffect(() => {
     axios.get('http://localhost/website/my-project/Backend/fetchdata.php', { withCredentials: true })
@@ -56,9 +68,12 @@ export default function StudentAccount() {
 
   const handleLogout = async () => {
     try {
+      console.log('Attempting to log out...');
       const response = await axios.get('http://localhost/website/my-project/Backend/logout.php', {
-        withCredentials: true
+        withCredentials: true,
       });
+
+      console.log('Logout response:', response.data);
 
       if (response.data.success) {
         navigate('/');
@@ -120,22 +135,60 @@ export default function StudentAccount() {
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Account</p>
           </div>
           <div className="w-11/12 h-auto p-10 bg-white mt-16 ml-16 rounded-xl">
-            <h1 className="ml-5 pt-5">
+            <h1 className="">
               You can edit your Account!
             </h1>
             <div className="h-full mt-14">
               <ul className="h-2/5 w-full flex flex-col justify-between">
-                <li>id: {userData.id}</li>
-                <li>Student Number: {userData['Student Number']}</li>
-                <li>Name: {userData.Name}</li>
-                <li>Email: {userData.Email}</li>
-                <li>Year and Section: {userData['Year and Section']}</li>
-                <li>Course: {userData.Course}</li>
-                <li>Password: {userData.Password}</li>
-                <li>Vehicle: {userData.Vehicle}</li>
-                <li>Plate Number: {userData['Plate Number']}</li>
-                <li>License: {licenseSrc ? <img src={licenseSrc} alt="License" className="w-32 h-auto" /> : 'No image available'}</li>
-                <li>ORCR: {orcrSrc ? <img src={orcrSrc} alt="ORCR" className="w-32 h-auto" /> : 'No image available'}</li>
+                <li className="mb-2"><b>Student Number:</b> {userData['Student Number']}</li>
+                <li className="mb-2"><b>Name:</b> {userData.Name}</li>
+                <li className="mb-2"><b>Email:</b> {userData.Email}</li>
+                <li className="mb-2"><b>Year and Section:</b> {userData['Year and Section']}</li>
+                <li className="mb-2"><b>Course:</b> {userData.Course}</li>
+                <li className="mb-2"><b>Password:</b> {userData.Password}</li>
+                <li className="mb-2"><b>Vehicle:</b> {userData.Vehicle}</li>
+                <li><b>Plate Number:</b> {userData['Plate Number']}</li>
+                <div className="mt-10">
+                  <li>
+                    <b>License:</b><br />
+                    {licenseSrc ? (
+                      <>
+                        <img src={licenseSrc} alt="License" className="w-32 h-auto inline-block" />
+                        <button onClick={() => handleOpenModal(licenseSrc)} className="ml-2 text-blue-500 hover:text-blue-700">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.94 4.94m0 0L15 20.87m4.94-5.94H3.75M9.75 10h3m-3 4h3" />
+                          </svg>
+                        </button>
+                      </>
+                    ) : 'No image available'}
+                  </li>
+                  <li className="mt-4">
+                    <b>ORCR:</b><br />
+                    {orcrSrc ? (
+                      <>
+                        <img src={orcrSrc} alt="ORCR" className="w-32 h-auto inline-block" />
+                        <button onClick={() => handleOpenModal(orcrSrc)} className="ml-2 text-blue-500 hover:text-blue-700">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.94 4.94m0 0L15 20.87m4.94-5.94H3.75M9.75 10h3m-3 4h3" />
+                          </svg>
+                        </button>
+                      </>
+                    ) : 'No image available'}
+                  </li>
+
+                  {isModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                      <div className="relative bg-white p-4 rounded-lg shadow-lg">
+                        <button onClick={handleCloseModal} className="absolute top-0 right-0 mt-2 mr-2 text-gray-500 hover:text-gray-700">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                        <img src={modalImageSrc} alt="Enlarged" className="max-w-full max-h-screen" />
+                      </div>
+                    </div>
+                  )}
+                </div>
               </ul>
             </div>
           </div>

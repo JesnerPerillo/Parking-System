@@ -15,9 +15,12 @@ export default function FacultyStaffDashboard() {
 
   const handleLogout = async () => {
     try {
+      console.log('Attempting to log out...');
       const response = await axios.get('http://localhost/website/my-project/Backend/logout.php', {
-        withCredentials: true
+        withCredentials: true,
       });
+
+      console.log('Logout response:', response.data);
 
       if (response.data.success) {
         navigate('/');

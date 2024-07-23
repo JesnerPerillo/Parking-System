@@ -15,20 +15,23 @@ export default function StudentDashboard() {
 
   const handleLogout = async () => {
     try {
+      console.log('Attempting to log out...');
       const response = await axios.get('http://localhost/website/my-project/Backend/logout.php', {
-        withCredentials: true
+        withCredentials: true,
       });
 
+      console.log('Logout response:', response.data);
+
       if (response.data.success) {
-        navigate('/studentlogin');
+        navigate('/');
       } else {
         setError('Logout failed. Please try again.');
       }
     } catch (error) {
-      setError('Error Logging out: ' + error.message);
+      setError('Error logging out: ' + error.message);
       console.error('Error logging out: ', error);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
