@@ -29,6 +29,7 @@ export default function FacultyStaffSignup(){
   };
 
   const handleFileChange = (e) => {
+    e.preventDefault();
       const { name, files } = e.target;
       setFormData((prevData) => ({
         ...prevData,
@@ -112,7 +113,7 @@ export default function FacultyStaffSignup(){
               <option value="" disabled  hidden>Type of Vehicle</option>
                 <option>Motorcycle</option>
                 <option>Tricycle</option>
-                <option>FourWheels</option>
+                <option>Fourwheeler</option>
               </select>
             </label>
             <label className="relative w-full">
@@ -132,7 +133,7 @@ export default function FacultyStaffSignup(){
             <label for="formFile1" class="form-label">ORCR</label>
             <input name="orcr" onChange={handleFileChange} class="form-control" type="file" id="formFile1" />
           </div>
-          <button className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5">
+          <button type="submit" className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5">
             Submit
           </button>
           <p className="text-center text-base text-gray-400 sm:text-sm">

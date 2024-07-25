@@ -18,6 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fullname = $data["fullname"];
         $password = $data["password"];
 
+        // Debugging: Log input values
+        error_log("Student Number: " . $studentNumber);
+        error_log("Full Name: " . $fullname);
+
         // Input validation
         if (!preg_match('/^[a-zA-Z0-9]+$/', $studentNumber) || !preg_match('/^[a-zA-Z ]+$/', $fullname)) {
             $response['success'] = false;

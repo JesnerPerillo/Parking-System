@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+
 export default function FacultyStaffAccount() {
   const [userData, setUserData] = useState({});
   const [error, setError] = useState('');
@@ -137,19 +138,19 @@ export default function FacultyStaffAccount() {
 
         <div className="w-full">
           <div className="w-full h-20 flex justify-end items-end border-b-2">
-            <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Account</p>
+            <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">{isNavOpen ? '' : 'Account'}</p>
           </div>
-          <div className="w-11/12 h-auto p-10 bg-white mt-16 ml-16 rounded-xl">
+          <div className="w-11/12 h-auto p-10 bg-white mt-16 lg:ml-16 rounded-xl max-sm:w-full">
             <h1 className="">
               You can edit your Account!
             </h1>
             <div className="h-full mt-14">
-              <ul className="h-2/5 w-full flex flex-col justify-between">
+              <ul className="h-auto w-full flex flex-col justify-between">
                 <li className="mb-2"><b>Name:</b> {userData.Name}</li>
                 <li className="mb-2"><b>Email:</b> {userData.Email}</li>
                 <li className="mb-2"><b>Position:</b> {userData.Position}</li>
                 <li className="mb-2"><b>Building:</b> {userData.Building}</li>
-                <li className="mb-2"><b>Password:</b> {userData.Password}</li>
+                <li className="mb-2 max-sm:overflow-scroll flex items-center"><b>Password: </b> {userData.Password}</li>
                 <li className="mb-2"><b>Vehicle:</b> {userData.Vehicle}</li>
                 <li><b>Plate Number:</b> {userData['Plate Number']}</li>
                 <div className="mt-10">
@@ -182,13 +183,13 @@ export default function FacultyStaffAccount() {
 
                   {isModalOpen && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                      <div className="relative bg-white p-4 rounded-lg shadow-lg">
+                      <div className="relative bg-white p-4 rounded-lg shadow-lg flex justify-center w-3/4 h-3/4 max-sm:h-1/3 max-sm:w-full">
                         <button onClick={handleCloseModal} className="absolute top-0 right-0 mt-2 mr-2 text-gray-500 hover:text-gray-700">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                           </svg>
                         </button>
-                        <img src={modalImageSrc} alt="Enlarged" className="max-w-full max-h-screen" />
+                        <img src={modalImageSrc} alt="Enlarged" className="max-w-full max-h-full max-sm:w-full" />
                       </div>
                     </div>
                   )}

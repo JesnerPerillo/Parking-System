@@ -2,6 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FcTemplate } from "react-icons/fc";
+import { FcAutomotive } from "react-icons/fc";
+import { FcCustomerSupport } from "react-icons/fc";
+import { FcServices } from "react-icons/fc";
+import { FiLogOut } from "react-icons/fi";
 
 export default function FacultyStaffDashboard() {
   const [userData, setUserData] = useState({});
@@ -73,28 +78,28 @@ export default function FacultyStaffDashboard() {
           </div>
           <ul className="flex flex-col justify-evenly p-5 w-full h-2/4 relative">
             <Link to="/facultystaffdashboard" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200 bg-blue-900" href="#">
-              <li className="group-hover:text-white text-2xl text-white tracking-widest">
-                <span>Dashboard</span>
+              <li className="group-hover:text-white text-2xl text-white tracking-widest flex items-center w-full">
+              <FcTemplate /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
             <Link to="/facultystaffparkingslot" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest">
-                Parking Slots
+              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full">
+              <FcAutomotive /> <span className="ml-5">Parking Slots</span> 
               </li>
             </Link>
             <Link to="/facultystaffreport" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200" href="#">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest">
-                Report
+              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full">
+              <FcCustomerSupport /> <span className="ml-5">Report</span> 
               </li>
             </Link>
             <Link to="/facultystaffaccount" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200 " href="#">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest">
-                Account
+              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full">
+              <FcServices /> <span className="ml-5">Account</span> 
               </li>
             </Link>
           </ul>
-          <button className="w-3/4 h-14 rounded-xl text-white font-semibold tracking-widest text-2xl bg-red-600" onClick={handleLogout}>
-            Logout
+          <button className="w-3/4 h-14 rounded-xl text-red-600 border border-red-500 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center hover:bg-red-600 " onClick={handleLogout}>
+            <span className="hover:text-white hover:bg-red-600 rounded-xl flex items-center justify-center w-full h-full"><FiLogOut />Logout</span>
           </button>
         </nav>
 

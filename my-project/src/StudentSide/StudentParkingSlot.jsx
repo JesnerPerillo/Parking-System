@@ -1,7 +1,13 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { BsCreditCard2Front } from "react-icons/bs";
+import { BsTaxiFront } from "react-icons/bs";
+import { BsExclamationDiamond } from "react-icons/bs";
+import { BsFillPersonVcardFill } from "react-icons/bs";
+import { FiLogOut } from "react-icons/fi";
 
 export default function StudentParkingSlots() {
   const [userData, setUserData] = useState({});
@@ -218,29 +224,29 @@ export default function StudentParkingSlots() {
             <p className="text-xs">{userData['Student Number']}</p>
           </div>
           <ul className="flex flex-col justify-evenly p-5 w-full h-2/4 relative">
-            <Link to="/studentdashboard" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest">
-                Dashboard
+          <Link to="/studentdashboard" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200">
+              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full">
+              <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/studentparkingslots" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200 bg-blue-900">
-              <li className="group-hover:text-white text-2xl text-white tracking-widest">
-                Parking Slots
+            <Link to="/studentparkingslot" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200  bg-blue-900">
+              <li className="group-hover:text-white text-2xl text-white tracking-widest flex items-center w-full">
+              <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <Link to="/studentreport" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest">
-                Report
+            <a className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200" href="#">
+              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full">
+              <BsExclamationDiamond /> <span className="ml-5">Report</span>
               </li>
-            </Link>
+            </a>
             <Link to="/studentaccount" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest">
-                Account
+              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full">
+              <BsFillPersonVcardFill /> <span className="ml-5">Account</span>
               </li>
             </Link>
           </ul>
-          <button className="w-3/4 h-14 rounded-xl text-white font-semibold tracking-widest text-2xl bg-red-600" onClick={handleLogout}>
-            Logout
+          <button className="w-3/4 h-14 rounded-xl text-red-600 border border-red-500 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center hover:bg-red-600" onClick={handleLogout}>
+            <span className="hover:text-white hover:bg-red-600 rounded-xl flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut />Logout</span>
           </button>
         </nav>
 
