@@ -346,7 +346,7 @@ const handleDownloadQRCode = () => {
                   Download QR Code
                 </button>
               </div>
-              <ul className="h-auto w-4/5 bg-red-500 flex flex-col justify-between max-sm:h-full">
+              <ul className="h-auto w-4/5 flex flex-col justify-between max-sm:h-full">
                 <li className="mb-4 mt-4 text-6xl max-sm:mt-0 mb-0 font-bold"> {userData.Name}</li>
                 <li className="max-sm:text-xs mb-2">Email: {userData.Email}</li>
                 <li className="max-sm:text-xs mb-2">Position: {userData.Position}</li>
@@ -426,20 +426,6 @@ const handleDownloadQRCode = () => {
                         <input name="building" value={formData.building} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
                         <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Building</span>
                       </label>
-                      <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
-                        <label className="relative w-full">
-                          <select name="vehicleType" value={formData.vehicleType} onChange={handleChange} className="placeholder:text-gray-400 w-full bg-gray-800 text-white py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" required>
-                          <option value="" disabled  hidden>Type of Vehicle</option>
-                            <option>Motorcycle</option>
-                            <option>Tricycle</option>
-                            <option>Fourwheeler</option>
-                          </select>
-                        </label>
-                        <label className="relative w-full">
-                          <input name="plateNumber" value={formData.plateNumber} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
-                          <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Plate Number</span>
-                        </label>
-                      </div>
                       <label className="relative">
                         <input name="password" value={formData.password} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="password" placeholder=" " required />
                         <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Password</span>
