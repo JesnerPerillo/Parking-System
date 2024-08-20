@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { BsExclamationTriangle } from "react-icons/bs";
@@ -13,6 +13,7 @@ import { BsEyeFill } from "react-icons/bs";
 import { BsPersonFillGear } from "react-icons/bs";
 import { BsQuestionSquare } from "react-icons/bs";
 import QRCode from "qrcode.react";
+import logo from '../Pictures/urs.png';
 
 export default function StudentAccount() {
   const [userData, setUserData] = useState({});
@@ -26,6 +27,7 @@ export default function StudentAccount() {
   const [modalImageSrc, setModalImageSrc] = useState('');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [slot, setSlot] = useState([]);
+  const canvasRef = useRef(null);
   const [formData, setFormData] = useState({
     studentNumber: '',
     fullname: '',
@@ -211,36 +213,65 @@ SLOT NUMBER:                 ${slot.map((s) => s.slot_number).join(', ')}
 
 
 
-  const handleSaveQRCode = async () => {
-    const canvas = document.querySelector("canvas");
-    const qrDataURL = canvas.toDataURL("image/png");
+  const handleDownloadQRCode = () => {
+    console.log('BUtton Clicked');
 
-    console.log('QR Code Data URL:', qrDataURL); 
-    console.log('User Data:', userData); 
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
 
-    if (!userData || !userData['slot_id']) {
-        alert('Error: slot_id is not available.');
-        return;
-    }
+    canvas.width = 400;
+    canvas.height = 400;
 
-    try {
-        const response = await axios.post("http://localhost/website/my-project/Backend/saveqrcode.php", 
-            new URLSearchParams({
-                qrCode: qrDataURL,
-                slot_id: userData['slot_id']
-            }),
-            {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            }
-        );
-        alert(response.data.message);
-    } catch (error) {
-        console.error("There was an error saving the QR code!", error);
-        alert('Error saving QR Code. Please try again.');
-    }
-};
+    context.fillStyle = 'white';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    const logoImg = new Image();
+    logoImg.src = logo;
+
+    logoImg.onload = () => {
+      console.log('Logo loaded successfully');
+
+      const logoWidth = 70;
+      const logoHeight = 75;
+      const logoX = 25;
+      const logoY = 25;
+      context.drawImage(logoImg, logoX, logoY, logoWidth, logoHeight);
+
+      const qrCanvas = canvasRef.current.querySelector('canvas');
+      if (qrCanvas) {
+        console.log('QR Canvas found');
+        const qrWidth = 200;
+        const qrHeight = 200;
+        const qrX = (canvas.width - qrWidth) / 2;
+        const qrY = logoY + logoHeight + 10;
+        context.drawImage(qrCanvas, qrX, qrY, qrWidth, qrHeight);
+      } else {
+        console.error('QR Canvas no found');
+      }
+
+      context.font = '20px Arial';
+      context.textAlign = 'left';
+      context.fillStyle = 'black';
+      const textX = logoX + logoWidth + 10;
+      const textY = logoY + (logoHeight / 2);
+      context.fillText('URS MORONG CAMPUS', textX, textY);
+
+      context.font = '16px Arial';
+      context.textAlign = 'center';
+      const userName = userData.Name || 'User';
+      context.fillText(userName, canvas.width / 2, canvas.height - 30);
+
+      const dataURL = canvas.toDataURL('img/png');
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'parking_qrcode.png';
+      link.click();
+    };
+
+    logoImg.onerror = () => {
+      console.error('Failed to load logo image');
+    };
+  };
   
 
   return (
@@ -301,7 +332,16 @@ SLOT NUMBER:                 ${slot.map((s) => s.slot_number).join(', ')}
               STUDENT ACCOUNT
             </h1>
             <div className="h-5/6 w-full absolute bottom-0 bg-white rounded-xl overflow-auto flex max-sm:flex-col justify-between max-sm:overflow-auto">
-              <ul className="h-2/5 w-2/3 flex flex-col justify-between max-sm:h-full">
+            <div ref={canvasRef} className="w-1/5 bg-gray-200 h-full xl:mt-0 max-sm:w-full mt-20 h-full flex flex-col justify-center items-center">
+                  <div className="mt-5 max-sm:mt-0">
+                  <QRCode value={qrValue} size={200} includeMargin={true}/>
+                  </div>
+
+                  <button onClick={handleDownloadQRCode} className="mt-5 bg-gray-500 text-white p-2 rounded ">
+                    Download QR Code
+                  </button>
+              </div>
+              <ul className="h-2/5 w-4/5 flex flex-col justify-between max-sm:h-full">
                 <li className="mb-2 mt-3 max-sm:mb-0 mt-0 text-sm">Student Number: {userData['Student Number']}</li>
                 <li className="mb-4 mt-4 text-5xl max-sm:mt-0 mb-0 text-xl font-bold"> {userData.Name}</li>
                 <li className="max-sm:text-xs mb-2">Email: {userData.Email}</li>
@@ -450,15 +490,6 @@ SLOT NUMBER:                 ${slot.map((s) => s.slot_number).join(', ')}
                   ) : ''}
                 </div>
               </ul>
-              <div className="w-1/2 h-full xl:mt-0 max-sm:w-full mt-20 h-full flex flex-col justify-center items-center">
-                  <div className="mt-5 max-sm:mt-0">
-                  <QRCode value={qrValue} size={200} />
-                  </div>
-
-                  <button onClick={handleSaveQRCode} className="mt-5 bg-gray-200 p-2 rounded ">
-                    Save QR Code
-                  </button>
-              </div>
             </div>
           </div>}
         </div>

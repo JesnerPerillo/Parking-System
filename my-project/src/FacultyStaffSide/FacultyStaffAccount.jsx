@@ -338,7 +338,7 @@ const handleDownloadQRCode = () => {
             <div className="h-5/6 w-full absolute bottom-0 bg-white rounded-xl overflow-auto flex max-sm:flex-col justify-between max-sm:overflow-auto">
               <div ref={canvasRef} className="w-1/5 bg-gray-200 h-full xl:mt-0 max-sm:w-full mt-20 h-full flex flex-col justify-center items-center">
                 <div className="mt-5 max-sm:mt-0">
-                <QRCode value={qrValue} size={200} includeMargine=
+                <QRCode value={qrValue} size={200} includeMargin=
                 {true}/>
                 </div>
 
