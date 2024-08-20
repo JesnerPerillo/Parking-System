@@ -6,7 +6,7 @@ import { BsFillPersonVcardFill } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { BsQuestionSquare } from "react-icons/bs";
 
-export default function AdminDashboard() {
+export default function AdminParkingSlot() {
   const [userData, setUserData] = useState({});
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -78,22 +78,22 @@ export default function AdminDashboard() {
               <h1 className="text-bold text-4xl tracking-widest">PARKING SYSTEM</h1>
             </div>
           <div className="flex w-full flex-col justify-evenly h-2/4 relative">
-          <Link to="/studentdashboard" className="group no-underline h-16 flex items-center pl-8 bg-blue-900 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+          <Link to="/admindashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/adminparkingslot" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
+            <Link to="/adminparkingslot" className="group no-underline h-16 flex items-center pl-8 bg-blue-900 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
               <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <Link to="/adminreport" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+            <Link to="/adminaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Report</span>
               </li>
             </Link>
-            <Link to="/adminaccount" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+            <Link to="/adminabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsQuestionSquare /> <span className="ml-5">Account</span>
               </li>

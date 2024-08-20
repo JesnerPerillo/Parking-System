@@ -13,6 +13,7 @@ import FacultyStaffAccount from '././FacultyStaffSide/FacultyStaffAccount.jsx'
 import AdminLogin from '././AdminSide/AdminLogin.jsx'
 import AdminDashboard from '././AdminSide/AdminDashboard.jsx'
 import AdminReport from '././AdminSide/AdminReport.jsx'
+import AdminParkingSlot from '././AdminSide/AdminParkingSlot.jsx';
 import './../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
@@ -38,6 +39,7 @@ export default function App(){
             <Route path="/facultystaffaccount" element={<FacultyStaffAccount />} />
             <Route path="/adminlogin" element={<AdminLogin />} />
             <Route path="/admindashboard" element={<AdminDashboard />} />
+            <Route path="/adminparkingslot" element={<AdminParkingSlot />} />
             <Route path="/adminreport" element={<AdminReport />} />
         </Routes>
       </Router>
