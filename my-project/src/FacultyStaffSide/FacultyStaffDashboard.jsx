@@ -182,7 +182,7 @@ export default function FacultyStaffDashboard() {
                 </div>
                 <div className="w-full flex justify-center">
                   <Link
-                    to="/studentparkingslot"
+                    to="/facultystaffparkingslot"
                     className="flex items-center text-xl justify-around w-2/4 h-14 p-2 rounded bg-gray-900 text-white no-underline"
                   >
                     <button className="flex items-center text-xl justify-center w-full h-14 p-2 rounded bg-gray-900 text-white">

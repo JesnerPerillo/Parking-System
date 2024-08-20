@@ -356,7 +356,7 @@ const handleDownloadQRCode = () => {
                 {slot.map((s) => (
                   <li key={s.slot_id} className="max-sm:text-xs">Parking Slot: {s.slot_number}</li>
                 ))}
-                <div className="mt-10 flex flex-col">
+                <div className="mt-10 flex flex-col w-1/2 ">
                 <div>
                     <b>License:</b><br />
                     {licenseSrc ? (
