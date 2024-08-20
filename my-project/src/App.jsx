@@ -3,7 +3,7 @@ import StudentSignup from '././StudentSide/StudentSignup.jsx'
 import StudentLogin from '././StudentSide/StudentLogin.jsx'
 import StudentDashboard from '././StudentSide/StudentDashboard.jsx'
 import StudentParkingSlot from '././StudentSide/StudentParkingSlot.jsx'
-import StudentReport from '././StudentSide/StudentReport.jsx'
+import StudentAbout from '././StudentSide/StudentAbout.jsx'
 import StudentAccount from '././StudentSide/StudentAccount.jsx'
 import FacultyStaffSignup from '././FacultyStaffSide/FacultyStaffSignup.jsx'
 import FacultyStaffLogin from '././FacultyStaffSide/FacultyStaffLogin.jsx'
@@ -28,7 +28,7 @@ export default function App(){
             <Route path="/studentsignup" element={<StudentSignup />} />
             <Route path="/studentdashboard" element={<StudentDashboard />} />
             <Route path="/studentparkingslot" element={<StudentParkingSlot />} />
-            <Route path="/studentreport" element={<StudentReport />} />
+            <Route path="/studentabout" element={<StudentAbout />} />
             <Route path="/studentaccount" element={<StudentAccount />} />
             <Route path="/studentlogin" element={<StudentLogin />} />
             <Route path="/facultystaffsignup" element={<FacultyStaffSignup />} />

@@ -13,7 +13,8 @@ import { BsEyeFill } from "react-icons/bs";
 import { BsPersonFillGear } from "react-icons/bs";
 import { BsQuestionSquare } from "react-icons/bs";
 import QRCode from "qrcode.react";
-import logo from '../Pictures/urs.png';
+import Logo from '../Pictures/urs.png';
+import GSO from '../Pictures/gsoo.png'
 
 export default function StudentAccount() {
   const [userData, setUserData] = useState({});
@@ -226,7 +227,7 @@ SLOT NUMBER:                 ${slot.map((s) => s.slot_number).join(', ')}
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     const logoImg = new Image();
-    logoImg.src = logo;
+    logoImg.src = Logo;
 
     logoImg.onload = () => {
       console.log('Logo loaded successfully');
@@ -301,24 +302,19 @@ SLOT NUMBER:                 ${slot.map((s) => s.slot_number).join(', ')}
               <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <Link to="/studentreport" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3" href="">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
-              <BsExclamationDiamond /> <span className="ml-5">Report</span>
-              </li>
-            </Link>
             <Link to="/studentaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 bg-blue-900 lg:pl-3">
               <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Account</span>
               </li>
             </Link>
-            <Link to="/gsoabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+            <Link to="/studentabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsQuestionSquare /> <span className="ml-5">About</span>
               </li>
             </Link>
           </div>
-          <button className="w-3/4 h-14 rounded-xl text-red-600 border border-red-500 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center hover:bg-red-600" onClick={handleLogout}>
-            <span className="hover:text-white hover:bg-red-600 rounded-xl flex items-center justify-center w-full h-full transition ease-linear duration-200 lg:text-xl"><FiLogOut className="rotate-180"/>Logout</span>
+          <button className="w-full h-14 rounded-xl text-red-600 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center" onClick={handleLogout}>
+            <span className=" rounded-xl flex items-center justify-center w-full h-full transition ease-linear duration-200 lg:text-xl"><FiLogOut className="rotate-180 mr-3"/>Logout</span>
           </button>
         </nav>
 
@@ -328,9 +324,12 @@ SLOT NUMBER:                 ${slot.map((s) => s.slot_number).join(', ')}
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">{isNavOpen ? '' : 'Account'}</p>
           </div>
           {isNavOpen ? '' : <div className="lg:w-11/12 bg-blue-900 flex items-start mt-10 justify-center lg:h-3/4 relative lg:ml-16 rounded-xl max-sm:w-full border max-sm:h-9/10 max-md:h-3/5 w-full">
-            <h1 className="text-white mt-10 max-sm:mt-5">
-              STUDENT ACCOUNT
-            </h1>
+            <div className="h-32 w-full flex justify-around items-center">
+              <img src={Logo} alt="URS Logo" className="h-28"/>
+              <h1 className="text-white ">
+                STUDENT ACCOUNT
+              </h1>
+              <img src={GSO} alt="GSO Logo" className="h-28 w-28"/>
             <div className="h-5/6 w-full absolute bottom-0 bg-white rounded-xl overflow-auto flex max-sm:flex-col justify-between max-sm:overflow-auto">
             <div ref={canvasRef} className="w-1/5 bg-gray-200 h-full xl:mt-0 max-sm:w-full mt-20 h-full flex flex-col justify-center items-center">
                   <div className="mt-5 max-sm:mt-0">
@@ -341,9 +340,9 @@ SLOT NUMBER:                 ${slot.map((s) => s.slot_number).join(', ')}
                     Download QR Code
                   </button>
               </div>
-              <ul className="h-2/5 w-4/5 flex flex-col justify-between max-sm:h-full">
+              <ul className="h-auto w-4/5 overflow-auto flex flex-col justify-between max-sm:h-full">
                 <li className="mb-2 mt-3 max-sm:mb-0 mt-0 text-sm">Student Number: {userData['Student Number']}</li>
-                <li className="mb-4 mt-4 text-5xl max-sm:mt-0 mb-0 text-xl font-bold"> {userData.Name}</li>
+                <li className="mb-4 mt-4 text-6xl max-sm:mt-0 mb-0 font-bold"> {userData.Name}</li>
                 <li className="max-sm:text-xs mb-2">Email: {userData.Email}</li>
                 <li className="max-sm:text-xs mb-2">Year & Section: {userData['Year and Section']}</li>
                 <li className="max-sm:text-xs mb-2">Course: {userData.Course}</li>
@@ -351,9 +350,6 @@ SLOT NUMBER:                 ${slot.map((s) => s.slot_number).join(', ')}
                 <li className="max-sm:text-xs">Plate Number: {userData['Plate Number']}</li>
                 {slot.map((s) => (
                   <li key={s.slot_id} className="max-sm:text-xs">Parking Slot: {s.slot_number}</li>
-                ))}
-                {slot.map((s) => (
-                  <li key={s.slot_id}>{s.slot_id}</li>
                 ))}
                 <div className="mt-10 flex flex-col">
                 <div>
@@ -491,6 +487,7 @@ SLOT NUMBER:                 ${slot.map((s) => s.slot_number).join(', ')}
                 </div>
               </ul>
             </div>
+          </div>
           </div>}
         </div>
       </div>
