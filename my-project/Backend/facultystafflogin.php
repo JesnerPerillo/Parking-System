@@ -18,7 +18,8 @@
       $email = $data["email"];
       $password = $data["password"];
 
-      if (!preg_match('/^[a-zA-Z ]+$/', $fullname) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      // Updated regex to allow letters, hyphens, periods, and spaces
+      if (!preg_match('/^[a-zA-Z\s\-.]+$/', $fullname) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $response['success'] = false;
         $response['message'] = 'Invalid input data';
         echo json_encode($response);
@@ -54,7 +55,7 @@
       } catch (Exception $e) {
         error_log("Error: " . $e->getMessage());
         $response['success'] = false;
-        $response['message'] = 'An expected error occurred.';
+        $response['message'] = 'An unexpected error occurred.';
       }
     } else {
       $response['success'] = false;

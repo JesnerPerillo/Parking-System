@@ -8,7 +8,7 @@ header("Access-Control-Allow-Credentials: true");
 header('Content-Type: application/json');
 
 // Query to fetch all occupied parking slots
-$sql = "SELECT slot_type, slot_number FROM StudentParkingSlots";
+$sql = "SELECT slot_id, slot_type, slot_number FROM StudentParkingSlots";
 $result = $conn->query($sql);
 
 $occupiedSlots = array();
@@ -17,6 +17,7 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $slotType = $row['slot_type'];
         $slotNumber = $row['slot_number'];
+        $slot_id = $row['slot_id'];
 
         if (!isset($occupiedSlots[$slotType])) {
             $occupiedSlots[$slotType] = array();

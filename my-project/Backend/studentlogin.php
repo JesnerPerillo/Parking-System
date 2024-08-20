@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         error_log("Full Name: " . $fullname);
 
         // Input validation
-        if (!preg_match('/^[a-zA-Z0-9]+$/', $studentNumber) || !preg_match('/^[a-zA-Z ]+$/', $fullname)) {
+        if (!preg_match('/^[a-zA-Z0-9\-.]+$/', $studentNumber) || !preg_match('/^[a-zA-Z\-.]+$/', $fullname)) {
             $response['success'] = false;
             $response['message'] = 'Invalid input data';
             echo json_encode($response);

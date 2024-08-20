@@ -1,0 +1,8 @@
+{
+    "require": {
+        "cboden/ratchet": "^0.4.4",
+        "phpmailer/phpmailer": "^6.9",
+        "endroid/qr-code": "^5.0",
+        "chillerlan/php-qrcode": "^5.0"
+    }
+}

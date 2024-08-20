@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { BsCreditCard2Front } from "react-icons/bs";
+import { BsCreditCard2Front, BsQuestionSquare } from "react-icons/bs";
 import { BsTaxiFront } from "react-icons/bs";
 import { BsExclamationDiamond } from "react-icons/bs";
 import { BsFillPersonVcardFill } from "react-icons/bs";
@@ -14,6 +14,7 @@ export default function StudentParkingSlots() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [qrCode, setQrCode] = useState(null);
 
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectedSpot, setSelectedSpot] = useState(null);
@@ -203,8 +204,6 @@ export default function StudentParkingSlots() {
     });
   };
   
-  
-  
 
   return (
     <>
@@ -219,34 +218,38 @@ export default function StudentParkingSlots() {
 
         {/* Navigation menu */}
         <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center md:flex md:flex-col md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
-          <div className="bg-blue-900 w-3/4 h-24 text-white flex flex-col items-center justify-center mt-10 rounded-xl text-xl tracking-wider">
-            <h1 className="text-bold text-white text-xl tracking-widest">{userData.Name}</h1>
-            <p className="text-xs">{userData['Student Number']}</p>
+        <div className="border-b-2 border-blue-900 w-full h-24 text-blue-900 flex flex-col items-center justify-center mt-10 text-xl tracking-wider">
+            <h1 className="text-bold text-4xl tracking-widest">PARKING SYSTEM</h1>
           </div>
-          <ul className="flex flex-col justify-evenly p-5 w-full h-2/4 relative">
-          <Link to="/studentdashboard" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full">
+          <div className="flex flex-col justify-evenly w-full h-2/4 relative">
+          <Link to="/studentdashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/studentparkingslot" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200  bg-blue-900">
-              <li className="group-hover:text-white text-2xl text-white tracking-widest flex items-center w-full">
+            <Link to="/studentparkingslot" className="group no-underline h-16 flex items-center pl-8 bg-blue-900 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
               <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <a className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200" href="#">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full">
+            <Link to="/studentreport" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3" href="">
+              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsExclamationDiamond /> <span className="ml-5">Report</span>
               </li>
-            </a>
-            <Link to="/studentaccount" className="group no-underline h-14 flex items-center rounded-xl pl-3 hover:bg-blue-900 mb-2 duration-200">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full">
+            </Link>
+            <Link to="/studentaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Account</span>
               </li>
             </Link>
-          </ul>
+            <Link to="/gsoabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+              <BsQuestionSquare /> <span className="ml-5">About</span>
+              </li>
+            </Link>
+          </div>
           <button className="w-3/4 h-14 rounded-xl text-red-600 border border-red-500 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center hover:bg-red-600" onClick={handleLogout}>
-            <span className="hover:text-white hover:bg-red-600 rounded-xl flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut />Logout</span>
+            <span className="hover:text-white hover:bg-red-600 rounded-xl flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut className="rotate-180"/>Logout</span>
           </button>
         </nav>
 
@@ -255,7 +258,7 @@ export default function StudentParkingSlots() {
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
           </div>
-          <div className="container mx-auto p-4 h-4/5 overflow-scroll mt-20 border-2">
+          <div className="container bg-blue-900 mx-auto p-4 h-4/5 overflow-auto mt-20 border-2 rounded max-sm:w-9/10">
             <div className="mb-4">
               <label className="mr-4 text-white">Select Vehicle Type:</label>
               <select
