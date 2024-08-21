@@ -144,7 +144,7 @@ export default function StudentDashboard() {
                     </span>
                   </h1>
                 </div>
-                <div className="flex justify-between lg:justify-around sm:justify-around mt-8 sm: sm:w-full sm:w-9/10 mt-12 mb-12 md:w-full md:ml-2 md:justify-between">
+                <div className="flex justify-between lg:justify-around sm:flex justify-around mt-8 sm: sm:w-full sm:w-9/10 mt-12 mb-12 md:w-full md:ml-2 md:justify-around">
                   <div
                     onClick={() => handleVehicleClick("Motorcycle")}
                     className={`flex flex-col items-center justify-center w-24 sm:w-32 h-24 sm:h-32 rounded-xl md:w-28 ${
@@ -176,7 +176,7 @@ export default function StudentDashboard() {
                   <div className="w-full sm:w-2/4 flex justify-center mt-8 md:w-full">
                     <Link
                       to="/studentparkingslot"
-                      className="flex items-center no-underline text-base lg:w-3/4 sm:text-xl justify-center w-full h-12 sm:h-14 p-2 rounded bg-gray-900 text-white"
+                      className="flex items-center no-underline text-base lg:w-3/4 sm:text-xl justify-center w-9/10 h-12 sm:h-14 p-2 rounded bg-gray-900 text-white"
                     >
                       Check Availability <BsArrowRight className="scale-125 sm:scale-150 ml-3" />
                     </Link>
