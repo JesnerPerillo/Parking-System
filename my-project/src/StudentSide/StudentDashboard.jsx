@@ -99,7 +99,7 @@ export default function StudentDashboard() {
           {/* Navigation menu */}
           <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-md:flex max-md:flex-col max-md:items-center md:flex md:flex-col md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
             <div className="border-b-2 border-blue-900 w-full h-24 text-blue-900 flex flex-col items-center justify-center mt-10 text-xl tracking-wider">
-              <h1 className="text-bold text-4xl tracking-widest">PARKING SYSTEM</h1>
+              <h1 className="text-bold text-4xl tracking-widest lg:text-2xl max-[1024px]:text-lg min-[769px]:text-xl">PARKING SYSTEM</h1>
             </div>
             <div className="flex w-full flex-col justify-evenly h-2/4 relative">
             <Link to="/studentdashboard" className="group no-underline h-16 flex items-center pl-8 bg-blue-900 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
@@ -134,59 +134,56 @@ export default function StudentDashboard() {
             </div>
 
             {/*Container for Motorcycle,Tricycle, Four Wheeler*/}
-            <div className="w-full h-9/10 mt-3 flex">
-              <div className="w-1/2 h-4/5 mt-16 flex flex-col justify-around items-center z-20">
-                <div>
-                  <h1 className="text-white text-6xl">
-                    Find Your{" "}
-                    <span className="font-black text-7xl text-yellow-400">
-                      <br />
+            <div className="w-full h-screen bg-blue-900 lg:h-5/6 sm:h-screen mt-20 flex flex-col sm:flex-row md:h-3/4">
+              <div className="lg:w-1/2 mt-0 ml-5 h-full mt-8 sm:mt-16 ml-0 sm:flex flex-col justify-around items-center">
+                <div className="text-left">
+                  <h1 className="text-white text-4xl sm:text-5xl md:text-4xl">
+                    Find Your
+                    <span className="block font-black lg:text-7xl sm:text-4xl md:text-5xl text-yellow-400">
                       PARKING SPOT
                     </span>
                   </h1>
                 </div>
-                <div className="flex justify-around ml-16 w-9/10">
+                <div className="flex justify-between lg:justify-around sm:justify-around mt-8 sm: sm:w-full sm:w-9/10 mt-12 mb-12 md:w-full md:ml-2 md:justify-between">
                   <div
                     onClick={() => handleVehicleClick("Motorcycle")}
-                    className={`flex flex-col items-center justify-center w-32 h-32 rounded-xl ${
+                    className={`flex flex-col items-center justify-center w-24 sm:w-32 h-24 sm:h-32 rounded-xl md:w-28 ${
                       selectedVehicle === "Motorcycle" ? "bg-yellow-400" : "bg-white"
                     } cursor-pointer`}
                   >
-                    <FaMotorcycle className="scale-300 mb-2" />
-                    <p>Motorcycle</p>
+                    <FaMotorcycle className="scale-150 sm:scale-300 mb-2" />
+                    <p className="text-sm sm:text-base">Motorcycle</p>
                   </div>
                   <div
                     onClick={() => handleVehicleClick("Tricycle")}
-                    className={`flex flex-col items-center justify-center w-32 h-32 rounded-xl ${
+                    className={`flex flex-col items-center justify-center w-24 sm:w-32 h-24 sm:h-32 rounded-xl md:w-32 ${
                       selectedVehicle === "Tricycle" ? "bg-yellow-400" : "bg-white"
                     } cursor-pointer`}
                   >
-                    <img src={TricycleImage} alt="Tricycle" className="w-12 h-12" />
-                    <p>Tricycle</p>
+                    <img src={TricycleImage} alt="Tricycle" className="w-8 sm:w-12 h-8 sm:h-12" />
+                    <p className="text-sm sm:text-base">Tricycle</p>
                   </div>
                   <div
                     onClick={() => handleVehicleClick("FourWheeler")}
-                    className={`flex flex-col items-center justify-center w-32 h-32 rounded-xl ${
+                    className={`flex flex-col items-center justify-center w-24 sm:w-32 h-24 sm:h-32 rounded-xl md:w-32 ${
                       selectedVehicle === "FourWheeler" ? "bg-yellow-400" : "bg-white"
                     } cursor-pointer`}
                   >
-                    <FaCarRear className="scale-300 mb-2" />
-                    <p>Four Wheeler</p>
+                    <FaCarRear className="scale-150 sm:scale-300 mb-2" />
+                    <p className="text-xs sm:text-base">Four Wheeler</p>
+                  </div>
+                  </div>
+                  <div className="w-full sm:w-2/4 flex justify-center mt-8 md:w-full">
+                    <Link
+                      to="/studentparkingslot"
+                      className="flex items-center no-underline text-base lg:w-3/4 sm:text-xl justify-center w-full h-12 sm:h-14 p-2 rounded bg-gray-900 text-white"
+                    >
+                      Check Availability <BsArrowRight className="scale-125 sm:scale-150 ml-3 sm:ml-5" />
+                    </Link>
                   </div>
                 </div>
-                <div className="w-full flex justify-center">
-                  <Link
-                    to="/studentparkingslot"
-                    className="flex items-center text-xl justify-around w-2/4 h-14 p-2 rounded bg-gray-900 text-white no-underline"
-                  >
-                    <button className="flex items-center text-xl justify-center w-full h-14 p-2 rounded bg-gray-900 text-white">
-                      Check Availability <BsArrowRight className="scale-150 ml-5" />
-                    </button>
-                  </Link>
-                </div>
-              </div>
-              <div className="w-1/2 flex items-center justify-center">
-                <img src={getVehicleImage()} alt={`${selectedVehicle} Image`} />
+              <div className="w-full h-screen lg:w-1/2 sm:w-1/2 h-64 sm:h-full flex items-center justify-center">
+                <img src={getVehicleImage()} alt={`${selectedVehicle} Image`} className="max-w-full h-auto sm:h-3/4" />
               </div>
             </div>
           </div>}

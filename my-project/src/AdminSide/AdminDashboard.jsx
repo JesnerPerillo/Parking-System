@@ -59,27 +59,6 @@ export default function AdminDashboard() {
     fetchData();
   }, []);
 
-  const handleScan = async (data) => {
-    if (data) {
-      setScanResult(data);
-      
-      try {
-        const response = await axios.post('http://localhost/website/my-project/Backend/handleTime.php', { qrData: data });
-        if (response.data.success) {
-          alert('Time In/Out recorded successfully.');
-        } else {
-          alert('Failed to record Time In/Out.');
-        }
-      } catch (error) {
-        console.error('Error recording time:', error);
-        alert('An error occurred while recording time.');
-      }
-    }
-  };
-
-  const handleError = (err) => {
-    console.error(err);
-  };
 
   return (
     <>
@@ -131,14 +110,10 @@ export default function AdminDashboard() {
         </nav>
 
 
-        <div className="w-full h-screen flex flex-col">
+        <div className="w-full h-screen">
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
           </div>
-          <div className="qr-code-scanner">
-          
-          <p>Scanned QR Code: {scanResult}</p>
-        </div>
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
       </div>
