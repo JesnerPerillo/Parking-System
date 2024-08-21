@@ -187,7 +187,7 @@ export default function StudentDashboard() {
               </div>
             </div>
           </div>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p className="absolute" style={{ color: 'red'}}>{error}</p>}
         
       </div>
     </>
