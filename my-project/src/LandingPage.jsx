@@ -20,7 +20,7 @@ function LandingPage() {
         <p className="text-white text-4xl sm:text-5xl md:text-6xl">UNIVERSITY OF RIZAL SYSTEM</p>
         <span className="text-white text-2xl sm:text-3xl md:text-4xl">MORONG CAMPUS</span>
       </header>
-      <h1 className="bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-blue-400 text-center text-6xl max-sm:text-3xl md:text-7xl tracking-widest"><ColoredLine color="white" />
+      <h1 className="bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-blue-400 text-center text-6xl md:text-7xl tracking-widest"><ColoredLine color="white" />
       PARKING SYSTEM
       <ColoredLine color="white" />
       </h1>

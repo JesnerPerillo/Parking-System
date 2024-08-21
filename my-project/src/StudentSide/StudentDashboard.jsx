@@ -98,8 +98,8 @@ export default function StudentDashboard() {
 
           {/* Navigation menu */}
           <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-md:flex max-md:flex-col max-md:items-center md:flex md:flex-col md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
-            <div className="border-b-2 border-blue-900 w-full h-24 text-blue-900 flex flex-col items-center justify-center mt-10 text-xl tracking-wider">
-              <h1 className="text-bold text-4xl tracking-widest lg:text-2xl max-[1024px]:text-lg min-[769px]:text-xl">PARKING SYSTEM</h1>
+            <div className="border-b-2 border-blue-900 w-full h-24 text-blue-900 flex flex-col items-center justify-center mt-10 tracking-wider">
+              <h1 className="text-bold text-4xl tracking-widest">PARKING SYSTEM</h1>
             </div>
             <div className="flex w-full flex-col justify-evenly h-2/4 relative">
             <Link to="/studentdashboard" className="group no-underline h-16 flex items-center pl-8 bg-blue-900 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
@@ -178,7 +178,7 @@ export default function StudentDashboard() {
                       to="/studentparkingslot"
                       className="flex items-center no-underline text-base lg:w-3/4 sm:text-xl justify-center w-full h-12 sm:h-14 p-2 rounded bg-gray-900 text-white"
                     >
-                      Check Availability <BsArrowRight className="scale-125 sm:scale-150 ml-3 sm:ml-5" />
+                      Check Availability <BsArrowRight className="scale-125 sm:scale-150 ml-3" />
                     </Link>
                   </div>
                 </div>
