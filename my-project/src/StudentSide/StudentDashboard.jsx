@@ -135,7 +135,7 @@ export default function StudentDashboard() {
 
             {/*Container for Motorcycle,Tricycle, Four Wheeler*/}
             <div className="w-full h-screen bg-blue-900 lg:h-5/6 sm:h-screen mt-20 flex flex-col sm:flex-row md:h-3/4">
-              <div className="lg:w-1/2 mt-0 ml-5 h-full mt-8 sm:mt-16 ml-0 sm:flex flex-col justify-around items-center">
+              <div className="lg:w-1/2 mt-0 h-full mt-8 sm:mt-16 ml-0 sm:flex flex-col justify-around items-center">
                 <div className="text-left">
                   <h1 className="text-white text-4xl sm:text-5xl md:text-4xl">
                     Find Your
