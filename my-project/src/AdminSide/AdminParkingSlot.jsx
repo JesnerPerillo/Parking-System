@@ -88,7 +88,7 @@ export default function AdminParkingSlot() {
               <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <Link to="/adminaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+            <Link to="/adminreport" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Report</span>
               </li>
