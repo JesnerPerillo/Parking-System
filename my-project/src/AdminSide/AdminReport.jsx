@@ -12,11 +12,11 @@ export default function AdminReport() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [vehicleCounts, setVehicleCounts] = useState({});
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
   };
-
 
   const handleLogout = async () => {
     try {
@@ -39,24 +39,60 @@ export default function AdminReport() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchStudentData = async () => {
+      try {
+        const response = await axios.get('http://localhost/website/my-project/Backend/fetchstudentsdata.php', {
+          withCredentials: true,
+        });
+
+        console.log('Student data response:', response.data); // Log the response data
+
+        if (response.data.success) {
+          setUserData(response.data.students);
+
+          // Process vehicle counts
+          if (response.data.vehicleCounts) {
+            const vehicleCounts = {};
+            for (const [vehicle, count] of Object.entries(response.data.vehicleCounts)) {
+              vehicleCounts[vehicle] = Number(count);
+            }
+            setVehicleCounts(vehicleCounts);
+          } else {
+            setVehicleCounts({}); // Default to an empty object if vehicleCounts is missing
+          }
+        } else {
+          setError(response.data.message || 'No data found for the logged-in user.');
+        }
+      } catch (error) {
+        setError('Error fetching student data: ' + error.message);
+        console.error('Error fetching student data: ', error);
+      }
+    };
+
+    fetchStudentData();
+  }, []);
+
+  useEffect(() => {
+    const fetchAdminData = async () => {
       try {
         const response = await axios.get('http://localhost/website/my-project/Backend/adminfetchdata.php', {
           withCredentials: true,
         });
 
+        console.log('Admin data response:', response.data); // Log the response data
+
         if (response.data.success) {
-          setUserData(response.data.data);
+          // Handle admin data if needed
         } else {
-          setError(response.data.message || 'No data found for the logged-in user.');
+          setError(response.data.message || 'No data found for the admin.');
         }
       } catch (error) {
-        setError('Error fetching data: ' + error.message);
-        console.error('Error fetching data: ', error);
+        setError('Error fetching admin data: ' + error.message);
+        console.error('Error fetching admin data: ', error);
       }
     };
 
-    fetchData();
+    fetchAdminData();
   }, []);
 
   return (
@@ -113,8 +149,10 @@ export default function AdminReport() {
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Report</p>
           </div>
-          <div>
-            <StudentMotorcyclePDF />
+          <div className="w-full h-9/10 p-5">
+            <div className="w-40 h-40 bg-white rounded flex flex-col justify-between border">
+              <StudentMotorcyclePDF />
+            </div>
           </div>
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}

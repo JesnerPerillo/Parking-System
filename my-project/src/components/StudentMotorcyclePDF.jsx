@@ -6,19 +6,41 @@ import URS from '../Pictures/urs.png';
 
 export default function StudentMotorcyclePDF() {
   const [students, setStudents] = useState([]);
+  const [error, setError] = useState('');
+  const [vehicleCounts, setVehicleCounts] = useState({});
 
   useEffect(() => {
-    axios.get('http://localhost/website/my-project/Backend/fetchstudentsdata.php', { withCredentials: true })
-      .then(response => {
+    const fetchStudentData = async () => {
+      try {
+        const response = await axios.get('http://localhost/website/my-project/Backend/fetchstudentsdata.php', {
+          withCredentials: true,
+        });
+
+        console.log('Student data response:', response.data); // Log the response data
+
         if (response.data.success) {
-          setStudents(response.data.data);
+          setStudents(response.data.students);
+
+          // Process vehicle counts
+          if (response.data.vehicleCounts) {
+            const vehicleCounts = {};
+            for (const [vehicle, count] of Object.entries(response.data.vehicleCounts)) {
+              vehicleCounts[vehicle] = Number(count);
+            }
+            setVehicleCounts(vehicleCounts);
+          } else {
+            setVehicleCounts({}); // Default to an empty object if vehicleCounts is missing
+          }
         } else {
-          console.log(response.data.message);
+          setError(response.data.message || 'No data found for the logged-in user.');
         }
-      })
-      .catch(error => {
-        console.log('Error fetching student data:', error);
-      });
+      } catch (error) {
+        setError('Error fetching student data: ' + error.message);
+        console.error('Error fetching student data: ', error);
+      }
+    };
+
+    fetchStudentData();
   }, []);
 
   const generatePDF = () => {
@@ -51,7 +73,7 @@ export default function StudentMotorcyclePDF() {
       body: tableRows,
       startY: 20, // Starting position of the table
       theme: 'grid', // Optional: Use 'grid' for grid lines or 'striped' for alternating row colors
-      headStyles: { fillColor: [0, 0, 102] }, // Optional: Customize header style
+      headStyles: { fillColor: [0, 0, 102] }, // Header style
       styles: { fontSize: 10 }, // Optional: Adjust font size
     });
 
@@ -61,7 +83,10 @@ export default function StudentMotorcyclePDF() {
 
   return (
     <>
-      <button className="w-full h-40 bg-red-600 rounded text-white" onClick={generatePDF}>Generate PDF</button>
+    <div className="relative w-full h-full flex flex-col items-center">
+        <span className="text-4xl mt-10">{vehicleCounts['Motorcycle'] || 0}/300</span>
+        <button className="w-full h-1/4 bg-red-600 rounded text-white absolute bottom-0" onClick={generatePDF}>Generate PDF </button>
+    </div>
     </>
   );
 }
