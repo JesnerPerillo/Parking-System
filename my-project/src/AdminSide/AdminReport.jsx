@@ -6,7 +6,7 @@ import { BsFillPersonVcardFill } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { BsQuestionSquare } from "react-icons/bs";
 import StudentMotorcyclePDF from '../components/StudentMotorcyclePDF.jsx';
-
+import StudentTricyclePDF from '../components/StudentTricyclePDF.jsx';
 export default function AdminReport() {
   const [userData, setUserData] = useState({});
   const [error, setError] = useState('');
@@ -153,6 +153,10 @@ export default function AdminReport() {
             <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border">
               <StudentMotorcyclePDF />
               <p className="text-lg font-bold">Students Motorcycle</p>
+            </div>
+            <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border">
+              <StudentTricyclePDF />
+              <p className="text-lg font-bold">Students Tricycle</p>
             </div>
           </div>
         </div>
