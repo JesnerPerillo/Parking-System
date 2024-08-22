@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($fullname == $row["Name"] && password_verify($password, $row["Password"])) {
                     $_SESSION['login'] = true;
                     $_SESSION["fullname"] = $row["Name"];
+                    $_SESSION["isAdmin"] = true;
                     $response['success'] = true;
                 } else {
                     $response['success'] = false;

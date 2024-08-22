@@ -5,6 +5,7 @@ import { BsTaxiFront, BsCreditCard2Front } from "react-icons/bs";
 import { BsFillPersonVcardFill } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { BsQuestionSquare } from "react-icons/bs";
+import StudentMotorcyclePDF from '../components/StudentMotorcyclePDF.jsx';
 
 export default function AdminReport() {
   const [userData, setUserData] = useState({});
@@ -108,9 +109,12 @@ export default function AdminReport() {
         </nav>
 
         {/*Main Content */}
-        <div className="w-full h-screen">
+        <div className="w-full h-screen flex flex-col">
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Report</p>
+          </div>
+          <div>
+            <StudentMotorcyclePDF />
           </div>
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
