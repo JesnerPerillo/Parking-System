@@ -150,8 +150,9 @@ export default function AdminReport() {
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Report</p>
           </div>
           <div className="w-full h-9/10 p-5">
-            <div className="w-40 h-40 bg-white rounded flex flex-col justify-between border">
+            <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border">
               <StudentMotorcyclePDF />
+              <p className="text-lg font-bold">Students Motorcycle</p>
             </div>
           </div>
         </div>

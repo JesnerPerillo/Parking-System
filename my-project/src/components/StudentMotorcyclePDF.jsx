@@ -1,8 +1,7 @@
-import { React, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable'; // Import the autoTable plugin
-import URS from '../Pictures/urs.png';
 
 export default function StudentMotorcyclePDF() {
   const [students, setStudents] = useState([]);
@@ -19,7 +18,9 @@ export default function StudentMotorcyclePDF() {
         console.log('Student data response:', response.data); // Log the response data
 
         if (response.data.success) {
-          setStudents(response.data.students);
+          // Filter students to include only motorcycles
+          const motorcycleStudents = response.data.students.filter(student => student.Vehicle === 'Motorcycle');
+          setStudents(motorcycleStudents);
 
           // Process vehicle counts
           if (response.data.vehicleCounts) {
@@ -46,10 +47,10 @@ export default function StudentMotorcyclePDF() {
   const generatePDF = () => {
     const doc = new jsPDF();
 
-    doc.text('Students Data', 10, 10);
+    doc.text('Motorcycle Students Data', 10, 10);
 
     // Define the columns and rows for the table
-    const tableColumn = ["#", "Student Number", "Name", "Email", "Vehicle,", "Plate Number", "Parking Slot",];
+    const tableColumn = ["#", "Student Number", "Name", "Email", "Vehicle", "Plate Number", "Parking Slot"];
     const tableRows = [];
 
     // Loop through students and push the data into rows
@@ -62,7 +63,6 @@ export default function StudentMotorcyclePDF() {
         student.Vehicle,
         student['Plate Number'],
         student.slot_number,
- // Adjust the property names according to your data structure
       ];
       tableRows.push(studentData);
     });
@@ -82,11 +82,9 @@ export default function StudentMotorcyclePDF() {
   };
 
   return (
-    <>
     <div className="relative w-full h-full flex flex-col items-center">
-        <span className="text-4xl mt-10">{vehicleCounts['Motorcycle'] || 0}/300</span>
-        <button className="w-full h-1/4 bg-red-600 rounded text-white absolute bottom-0" onClick={generatePDF}>Generate PDF </button>
+      <span className="text-4xl mt-10">{vehicleCounts['Motorcycle'] || 0}/300</span>
+      <button className="w-full h-1/4 bg-red-600 rounded text-white absolute bottom-0 mb-1" onClick={generatePDF}>Generate PDF</button>
     </div>
-    </>
   );
 }
