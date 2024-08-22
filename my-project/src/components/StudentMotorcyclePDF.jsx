@@ -27,17 +27,19 @@ export default function StudentMotorcyclePDF() {
     doc.text('Students Data', 10, 10);
 
     // Define the columns and rows for the table
-    const tableColumn = ["#", "Name", "Email", "Vehicle,", "Plate Number",];
+    const tableColumn = ["#", "Student Number", "Name", "Email", "Vehicle,", "Plate Number", "Parking Slot",];
     const tableRows = [];
 
     // Loop through students and push the data into rows
     students.forEach((student, index) => {
       const studentData = [
         index + 1,
+        student['Student Number'],
         student.Name,
         student.Email,
         student.Vehicle,
         student['Plate Number'],
+        student.slot_number,
  // Adjust the property names according to your data structure
       ];
       tableRows.push(studentData);
@@ -59,9 +61,7 @@ export default function StudentMotorcyclePDF() {
 
   return (
     <>
-      <div className="w-40 h-40 bg-white">
-        <button onClick={generatePDF}>Generate PDF</button>
-      </div>
+      <button className="w-full h-40 bg-red-600 rounded text-white" onClick={generatePDF}>Generate PDF</button>
     </>
   );
 }

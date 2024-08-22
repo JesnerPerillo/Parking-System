@@ -16,7 +16,13 @@ if (!isset($_SESSION['isAdmin']) || $_SESSION['isAdmin'] !== true) {
 // Assuming you have already established a database connection
 include './database.php'; // This file contains your database connection code
 
-$query = "SELECT Name, Email, Vehicle, `Plate Number` FROM students"; // Adjust the query based on your database structure
+// Query to fetch student data along with their slot number
+$query = "
+    SELECT s.`Student Number`, s.Name, s.Email, s.Vehicle, s.`Plate Number`, sp.slot_number
+    FROM students s
+    LEFT JOIN studentparkingslots sp ON s.id = sp.student_id
+"; // Adjust the query based on your database structure
+
 $result = mysqli_query($conn, $query);
 
 if (!$result) {
