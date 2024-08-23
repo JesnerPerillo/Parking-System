@@ -5,6 +5,7 @@ import { BsTaxiFront, BsCreditCard2Front } from "react-icons/bs";
 import { BsFillPersonVcardFill } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { BsQuestionSquare } from "react-icons/bs";
+import StudentParkingDataGraph from '../components/StudentParkingDataGraph.jsx';
 
 export default function AdminDashboard() {
   const [userData, setUserData] = useState({});
@@ -110,9 +111,12 @@ export default function AdminDashboard() {
         </nav>
 
 
-        <div className="w-full h-screen">
+        <div className="w-full h-screen flex flex-col">
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
+          </div>
+          <div className="mt-10 ml-10 w-2/4 h-2/4">
+            <StudentParkingDataGraph />
           </div>
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}
