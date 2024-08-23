@@ -153,23 +153,28 @@ export default function AdminReport() {
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Report</p>
           </div>
-          <div className="w-full h-screen p-5 bg-white">
-            <div className="W-4/5 h-1/3 flex justify-around">
-              <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl">
-                <StudentMotorcyclePDF />
-                <p className="text-lg font-bold">Students Motorcycle</p>
-              </div>
-              <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl">
-                <StudentTricyclePDF />
-                <p className="text-lg font-bold">Students Tricycle</p>
-              </div>
-              <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl">
-                <StudentFourwheelsPDF />
-                <p className="text-lg font-bold">Students FourWheeler</p>
-              </div>
-              <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl">
-                <StudentParkingDataPDF />
-                <p className="text-lg font-bold">Students FourWheeler</p>
+          <div className="w-full h-screen p-5 bg-white overflow-auto">
+            <div className="text-center mb-2 border-b-2 border-black">
+              <h1>Students</h1>
+            </div>
+            <div>
+              <div className="W-4/5 h-1/3 flex justify-around border-b-2 border-black">
+                <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl mb-2">
+                  <StudentMotorcyclePDF />
+                  <p className="text-lg font-bold"> Motorcycle</p>
+                </div>
+                <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl">
+                  <StudentTricyclePDF />
+                  <p className="text-lg font-bold"> Tricycle</p>
+                </div>
+                <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl">
+                  <StudentFourwheelsPDF />
+                  <p className="text-lg font-bold"> FourWheeler</p>
+                </div>
+                <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl">
+                  <StudentParkingDataPDF />
+                  <p className="text-lg font-bold"> Total User</p>
+                </div>
               </div>
             </div>
           </div>
