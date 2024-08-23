@@ -7,6 +7,10 @@ import { FiLogOut } from "react-icons/fi";
 import { BsQuestionSquare } from "react-icons/bs";
 import StudentMotorcyclePDF from '../components/StudentMotorcyclePDF.jsx';
 import StudentTricyclePDF from '../components/StudentTricyclePDF.jsx';
+import StudentFourwheelsPDF from '../components/StudentFourwheelsPDF.jsx';
+import StudentParkingDataPDF from '../components/StudentParkingDataPDF.jsx';
+
+
 export default function AdminReport() {
   const [userData, setUserData] = useState({});
   const [error, setError] = useState('');
@@ -106,7 +110,7 @@ export default function AdminReport() {
         </button>
 
         <nav
-          className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-md:flex max-md:flex-col max-md:items-center md:flex md:flex-col md:items-center ${
+          className={`bg-white drop-shadow-2xl absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-md:flex max-md:flex-col max-md:items-center md:flex md:flex-col md:items-center ${
             isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'
           }`}
         >
@@ -149,14 +153,24 @@ export default function AdminReport() {
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Report</p>
           </div>
-          <div className="w-full h-9/10 p-5">
-            <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border">
-              <StudentMotorcyclePDF />
-              <p className="text-lg font-bold">Students Motorcycle</p>
-            </div>
-            <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border">
-              <StudentTricyclePDF />
-              <p className="text-lg font-bold">Students Tricycle</p>
+          <div className="w-full h-screen p-5 bg-white">
+            <div className="W-4/5 h-1/3 flex justify-around">
+              <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl">
+                <StudentMotorcyclePDF />
+                <p className="text-lg font-bold">Students Motorcycle</p>
+              </div>
+              <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl">
+                <StudentTricyclePDF />
+                <p className="text-lg font-bold">Students Tricycle</p>
+              </div>
+              <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl">
+                <StudentFourwheelsPDF />
+                <p className="text-lg font-bold">Students FourWheeler</p>
+              </div>
+              <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl">
+                <StudentParkingDataPDF />
+                <p className="text-lg font-bold">Students FourWheeler</p>
+              </div>
             </div>
           </div>
         </div>
