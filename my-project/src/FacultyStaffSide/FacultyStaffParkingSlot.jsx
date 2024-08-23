@@ -24,7 +24,7 @@ export default function FacultyStaffParkingSlot() {
   });
 
   const categories = {
-    motorcycle: { count: 300, color: 'bg-green-500 text-white' },
+    motorcycle: { count: 110, color: 'bg-green-500 text-white' },
     tricycle: { count: 15, color: 'bg-green-500 text-white' },
     fourwheeler: { count: 10, color: 'bg-green-500 text-white' }
   };
@@ -115,6 +115,12 @@ export default function FacultyStaffParkingSlot() {
 
   const handleSubmit = async () => {
     if (selectedSpot !== null && userData && userData.id && !userData.parkingSlot) {
+
+      const confirmed = window.confirm(`Are your sure you want to select Parking Spot No.${selectedSpot}?`);
+      if (!confirmed) {
+        return;
+      }
+
       try {
         const response = await axios.post('http://localhost/website/my-project/Backend/facultyselectparkingslot.php', {
           slotType: selectedVehicle,
@@ -254,7 +260,7 @@ export default function FacultyStaffParkingSlot() {
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
           </div>
-          <div className="container mx-auto p-4 h-4/5 rounded overflow-auto mt-20 border-2">
+          <div className="container mx-auto p-4 h-4/5 rounded mt-20 border-2 overflow-auto">
             <div className="mb-4">
               <label className="mr-4 text-white">Select Vehicle Type:</label>
               <select
@@ -269,6 +275,20 @@ export default function FacultyStaffParkingSlot() {
                 <option value="tricycle">Tricycle</option>
                 <option value="fourwheeler">Four Wheeler</option>
               </select>
+              {selectedVehicle === 'motorcycle' && (
+                <div className="font-semibold text-sm mt-2 flex items-center text-gray-400">
+                  <BsExclamationDiamond className="mr-2 text-red-500" />
+                  <span className="text-red-500">Notice: &nbsp;</span>
+                  <span>The Parking Slots of 1-100 is located at the EARTS/CIT. And the Parking Slots for 101-110 is located at the Guard House.</span>
+                </div>
+              )}
+              {selectedVehicle === 'fourwheeler' && (
+                <div className="font-semibold text-sm mt-2 flex items-center text-gray-400">
+                  <BsExclamationDiamond className="mr-2 text-red-500" />
+                  <span className="text-red-500">Notice: &nbsp;</span>
+                  <span>The Parking Slots of Four Wheeler is located at the front of the Engineering Building.</span>
+                </div>
+              )}
             </div>
 
             {Object.entries(categories).map(([category, { count, color }]) =>

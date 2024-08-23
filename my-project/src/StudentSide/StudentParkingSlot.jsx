@@ -26,8 +26,8 @@ export default function StudentParkingSlots() {
 
   const categories = {
     motorcycle: { count: 300, color: 'bg-green-500 text-white' },
-    tricycle: { count: 15, color: 'bg-green-500 text-white' },
-    fourwheeler: { count: 10, color: 'bg-green-500 text-white' }
+    tricycle: { count: 20, color: 'bg-green-500 text-white' },
+    fourwheeler: { count: 20, color: 'bg-green-500 text-white' }
   };
 
   const toggleNav = () => {
@@ -110,48 +110,67 @@ export default function StudentParkingSlots() {
   };
 
   const handleSpotSelection = (spotNumber) => {
+    if (selectedVehicle !== userData.Vehicle.toLowerCase()) {
+      alert(`Warning: Your registered vehicle type is ${userData.Vehicle}. Please select a parking slot matching your vehicle type.`);
+      return; // Prevent selecting the spot if vehicle type doesn't match
+    }
     setSelectedSpot(spotNumber);
   };
-
+  
   const handleSubmit = async () => {
-    if (selectedSpot !== null && userData && userData.id && !userData.parkingSlot) {
-      try {
-        const response = await axios.post('http://localhost/website/my-project/Backend/selectparkingslot.php', {
-          slotType: selectedVehicle,
-          slotNumber: selectedSpot,
-          id: userData.id
-        });
-
-        if (response.data.status === 'success') {
-          alert('Parking slot selected successfully');
-          // Update local state
-          setUserData(prevData => ({
-            ...prevData,
-            parkingSlot: { slotType: selectedVehicle, slotNumber: selectedSpot }
-          }));
-          setOccupiedSpots(prevOccupied => ({
-            ...prevOccupied,
-            [selectedVehicle]: [...(prevOccupied[selectedVehicle] || []), selectedSpot]
-          }));
-
-          // Store in localStorage
-          localStorage.setItem('selectedParkingSlot', JSON.stringify({
-            slotType: selectedVehicle,
-            slotNumber: selectedSpot
-          }));
-        } else {
-          alert('Error selecting parking slot: ' + response.data.message);
-        }
-      } catch (error) {
-        console.error('Error selecting parking slot:', error);
-        alert('Error selecting parking slot: ' + error.message);
-      }
-    } else if (userData.parkingSlot) {
-      alert('You already have a selected parking slot.');
-    } else {
+    if (selectedSpot === null || !userData || !userData.id) {
       alert('Please select a parking spot and ensure you are logged in');
+      return;
+    }
+  
+    if (userData.parkingSlot) {
+      alert('You already have a selected parking slot.');
+      return;
+    }
+  
+    if (selectedVehicle !== userData.Vehicle.toLowerCase()) {
+      alert(`Error: Your vehicle type is ${userData.Vehicle}. You cannot select a parking slot for a different vehicle type.`);
+      return; // Prevent submission if vehicle type doesn't match
+    }
+  
+    const confirmed = window.confirm(`Are you sure you want to select Parking Spot No.${selectedSpot}?`);
+    if (!confirmed) {
+      return;
+    }
+  
+    try {
+      const response = await axios.post('http://localhost/website/my-project/Backend/selectparkingslot.php', {
+        slotType: selectedVehicle,
+        slotNumber: selectedSpot,
+        id: userData.id
+      });
+  
+      if (response.data.status === 'success') {
+        alert('Parking slot selected successfully');
+        // Update local state
+        setUserData(prevData => ({
+          ...prevData,
+          parkingSlot: { slotType: selectedVehicle, slotNumber: selectedSpot }
+        }));
+        setOccupiedSpots(prevOccupied => ({
+          ...prevOccupied,
+          [selectedVehicle]: [...(prevOccupied[selectedVehicle] || []), selectedSpot]
+        }));
+  
+        // Store in localStorage
+        localStorage.setItem('selectedParkingSlot', JSON.stringify({
+          slotType: selectedVehicle,
+          slotNumber: selectedSpot
+        }));
+      } else {
+        alert('Error selecting parking slot: ' + response.data.message);
+      }
+    } catch (error) {
+      console.error('Error selecting parking slot:', error);
+      alert('Error selecting parking slot: ' + error.message);
     }
   };
+  
 
   const renderSpots = (count, color, vehicleType) => {
     const occupied = occupiedSpots[vehicleType] || [];

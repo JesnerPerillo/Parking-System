@@ -48,7 +48,7 @@ export default function StudentMotorcyclePDF() {
   const generatePDF = () => {
     const doc = new jsPDF();
 
-    doc.text('Motorcycle Students Data', 10, 10);
+    doc.text('Total Students Data', 10, 10);
 
     // Define the columns and rows for the table
     const tableColumn = ["#", "Student Number", "Name", "Email", "Vehicle", "Plate Number", "Parking Slot"];
@@ -63,7 +63,7 @@ export default function StudentMotorcyclePDF() {
         student.Email,
         student.Vehicle,
         student['Plate Number'],
-        student.slot_number,
+        student.slot_number || null,
       ];
       tableRows.push(studentData);
     });
