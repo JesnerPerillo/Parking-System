@@ -6,6 +6,7 @@ import { BsFillPersonVcardFill } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { BsQuestionSquare } from "react-icons/bs";
 import StudentParkingDataGraph from '../components/StudentParkingDataGraph.jsx';
+import FacultyParkingDataGraph from '../components/FacultyParkingDataGraph.jsx';
 
 export default function AdminDashboard() {
   const [userData, setUserData] = useState({});
@@ -72,7 +73,7 @@ export default function AdminDashboard() {
         </button>
 
         <nav
-          className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-md:flex max-md:flex-col max-md:items-center md:flex md:flex-col md:items-center ${
+          className={`bg-white drop-shadow-2xl absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-md:flex max-md:flex-col max-md:items-center md:flex md:flex-col md:items-center ${
             isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'
           }`}
         >
@@ -115,8 +116,13 @@ export default function AdminDashboard() {
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
           </div>
-          <div className="mt-10 ml-10 w-2/4 h-2/4">
-            <StudentParkingDataGraph />
+          <div className="w-full h-4/5 flex items-end">
+            <div className="w-1/2 h-full">
+              <StudentParkingDataGraph />
+            </div>
+            <div className="w-1/2 h-full">
+              <FacultyParkingDataGraph />
+            </div>
           </div>
         </div>
         {error && <p style={{ color: 'red' }}>{error}</p>}

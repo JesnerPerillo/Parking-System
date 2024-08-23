@@ -5,21 +5,19 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function StudentMotorcyclePDF() {
-  const [students, setStudents] = useState([]);
+export default function FacultyParkingDataGraph() {
   const [vehicleCounts, setVehicleCounts] = useState({});
-  const [totalStudents, setTotalStudents] = useState(0);
+  const [totalFaculty, setTotalFaculty] = useState(0);
 
   useEffect(() => {
-    const fetchStudentData = async () => {
+    const fetchFacultyData = async () => {
       try {
-        const response = await axios.get('http://localhost/website/my-project/Backend/fetchstudentsdata.php', {
+        const response = await axios.get('http://localhost/website/my-project/Backend/fetchfacultydata.php', {
           withCredentials: true,
         });
 
         if (response.data.success) {
-          setStudents(response.data.students);
-          setTotalStudents(response.data.students.length);
+          setTotalFaculty(response.data.faculty.length);
 
           if (response.data.vehicleCounts) {
             const vehicleCounts = {};
@@ -32,11 +30,11 @@ export default function StudentMotorcyclePDF() {
           }
         }
       } catch (error) {
-        console.error('Error fetching student data:', error);
+        console.error('Error fetching faculty data:', error);
       }
     };
 
-    fetchStudentData();
+    fetchFacultyData();
   }, []);
 
   // Prepare the data for the pie chart
@@ -44,17 +42,25 @@ export default function StudentMotorcyclePDF() {
     labels: Object.keys(vehicleCounts), // Vehicle types
     datasets: [
       {
-        label: 'Number of Students',
+        label: 'Number of Faculty/Staff',
         data: Object.values(vehicleCounts), // Corresponding counts
         backgroundColor: [
-          'rgba(222, 210, 0, 0.8)',  // Yellow
-          'rgba(54, 162, 235, 0.8)',  // Blue
-          'rgba(255, 99, 132, 0.8)',  // Red
-          'rgba(255, 206, 86, 0.8)',  // Yellow
-          'rgba(75, 192, 192, 0.8)',  // Teal
-        ], // Colors for each slice
-        borderColor: 'rgba(255, 255, 255, 0.8)', // White border color between slices
-        borderWidth: 2,
+          'rgba(255, 99, 132, 0.6)',
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(255, 206, 86, 0.6)',
+          'rgba(75, 192, 192, 0.6)',
+          'rgba(153, 102, 255, 0.6)',
+          'rgba(255, 159, 64, 0.6)',
+        ], // Bar colors
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+        ], // Border colors
+        borderWidth: 1,
       },
     ],
   };
@@ -67,16 +73,15 @@ export default function StudentMotorcyclePDF() {
         labels: {
           color: 'white', // Set legend text color to white
           font: {
-            size: 14, // Adjust font size of legend
+            size: 12, // Adjust legend font size
           },
         },
       },
       tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.7)', // Tooltip background color
-        titleColor: 'white', // Tooltip title color
-        bodyColor: 'white', // Tooltip body color
         callbacks: {
-          label: (tooltipItem) => `${tooltipItem.label}: ${tooltipItem.raw}`, // Custom tooltip format
+          label: (tooltipItem) => {
+            return `${tooltipItem.label}: ${tooltipItem.raw}`; // Custom tooltip format
+          },
         },
       },
     },
@@ -85,19 +90,14 @@ export default function StudentMotorcyclePDF() {
         top: 20, // Adjust padding to fit text
       },
     },
-    elements: {
-      arc: {
-        borderWidth: 2, // Border width of pie slices
-      },
-    },
   };
 
   return (
     <>
       <div className="w-full h-full flex flex-col items-center">
-        <span className="text-4xl text-white mb-4">{totalStudents}/335</span>
-        <div style={{ width: '70%', height: '70%' }}>
-          <Pie data={chartData} options={chartOptions} />
+        <span className="text-4xl text-white">{totalFaculty}</span>
+        <div style={{ width: '60%', height: '60%' }}>
+          <Pie data={chartData} options={chartOptions} /> {/* Render the pie chart */}
         </div>
       </div>
     </>
