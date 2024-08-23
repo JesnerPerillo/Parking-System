@@ -9,6 +9,7 @@ import StudentMotorcyclePDF from '../components/StudentMotorcyclePDF.jsx';
 import StudentTricyclePDF from '../components/StudentTricyclePDF.jsx';
 import StudentFourwheelsPDF from '../components/StudentFourwheelsPDF.jsx';
 import StudentParkingDataPDF from '../components/StudentParkingDataPDF.jsx';
+import FacultyFourwheelsPDF from '../components/FacultyFourwheelsPDF.jsx';
 
 
 export default function AdminReport() {
@@ -174,6 +175,19 @@ export default function AdminReport() {
                 <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl">
                   <StudentParkingDataPDF />
                   <p className="text-lg font-bold"> Total User</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="w-full h-screen p-5 bg-white overflow-auto">
+            <div className="text-center mb-2 border-b-2 border-black">
+              <h1>Faculty</h1>
+            </div>
+            <div>
+              <div className="W-4/5 h-1/3 flex justify-around border-b-2 border-black">
+                <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl mb-2">
+                  <FacultyFourwheelsPDF />
+                  <p className="text-lg font-bold">FourWheeler</p>
                 </div>
               </div>
             </div>

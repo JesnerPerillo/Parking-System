@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -26,7 +27,7 @@ export default function FacultyStaffParkingSlot() {
   const categories = {
     motorcycle: { count: 110, color: 'bg-green-500 text-white' },
     tricycle: { count: 15, color: 'bg-green-500 text-white' },
-    fourwheeler: { count: 10, color: 'bg-green-500 text-white' }
+    fourwheeler: { count: 25, color: 'bg-green-500 text-white' }
   };
 
   const toggleNav = () => {
@@ -110,16 +111,33 @@ export default function FacultyStaffParkingSlot() {
   };
 
   const handleSpotSelection = (spotNumber) => {
+    if (selectedVehicle !== userData.Vehicle.toLowerCase()) {
+      alert(`Warning: Your Registered vehicle type is ${userData.Vehicle}. Please select a parking slot matching your vehicle type.`);
+      return;
+    }
     setSelectedSpot(spotNumber);
   };
 
   const handleSubmit = async () => {
-    if (selectedSpot !== null && userData && userData.id && !userData.parkingSlot) {
+    if (selectedSpot === null || !userData || !userData.id) {
+      alert('Please select a parking slot and ensure you are logged in.');
+      return
+    }
 
-      const confirmed = window.confirm(`Are your sure you want to select Parking Spot No.${selectedSpot}?`);
-      if (!confirmed) {
-        return;
-      }
+    if (userData.parkingSlot) {
+      alert('You already have a selected parking slot.');
+      return;
+    }
+
+    if (selectedVehicle !== userData.Vehicle.toLowerCase()) {
+      alert(`Error: Your vehicle type is ${userData.Vehicle}. You cannot select a parking slot for a different vehicle type.`);
+      return;
+    }
+
+    const confirmed = window.confirm(`Are you sure you want to select Parking Spot No.${selectedSpot}?`);
+    if (!confirmed) {
+      return;
+    }
 
       try {
         const response = await axios.post('http://localhost/website/my-project/Backend/facultyselectparkingslot.php', {
@@ -150,12 +168,7 @@ export default function FacultyStaffParkingSlot() {
         console.error('Error selecting parking slot: ', error);
         alert('Error selecting parking slot: ', error.message);
       }
-    } else if (userData.parkingSlot) {
-      alert('You already have a selected parking slot.');
-    } else {
-      alert('Please select a parking spot and ensure you are logged in.');
-    }
-  };
+    };
 
   const renderSpots = (count, color, vehicleType) => {
     const occupied = occupiedSpots[vehicleType] || [];
