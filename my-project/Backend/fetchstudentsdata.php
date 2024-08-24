@@ -55,6 +55,7 @@ if (mysqli_num_rows($result_students) > 0) {
 
 // Fetch vehicle type frequencies
 $vehicle_counts = [];
+$total_student_users = mysqli_num_rows($result_students); // Total number of student users
 if (mysqli_num_rows($result_vehicle_counts) > 0) {
     while ($row = mysqli_fetch_assoc($result_vehicle_counts)) {
         $vehicle_counts[$row['Vehicle']] = $row['count'];
@@ -65,7 +66,8 @@ if (mysqli_num_rows($result_vehicle_counts) > 0) {
 echo json_encode([
     'success' => true,
     'students' => $students,
-    'vehicleCounts' => $vehicle_counts
+    'vehicleCounts' => $vehicle_counts,
+    'totalUsers' => $total_student_users // Include total number of student users
 ]);
 
 mysqli_close($conn);

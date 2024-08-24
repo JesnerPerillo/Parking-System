@@ -16,7 +16,7 @@ if (!isset($_SESSION['isAdmin']) || $_SESSION['isAdmin'] !== true) {
 // Assuming you have already established a database connection
 include './database.php'; // This file contains your database connection code
 
-// Query to fetch student data along with their slot number
+// Query to fetch faculty data along with their slot number
 $query_faculty = "
     SELECT s.Name, s.Email, s.Position, s.Building, s.Vehicle, s.`Plate Number`, sp.slot_number
     FROM facultystaff s
@@ -31,10 +31,10 @@ $query_vehicle_counts = "
     ORDER BY count DESC
 "; // Adjust the query based on your database structure
 
-// Execute the student data query
+// Execute the faculty data query
 $result_faculty = mysqli_query($conn, $query_faculty);
 if (!$result_faculty) {
-    echo json_encode(['success' => false, 'message' => 'Student query failed: ' . mysqli_error($conn)]);
+    echo json_encode(['success' => false, 'message' => 'Faculty query failed: ' . mysqli_error($conn)]);
     exit();
 }
 
@@ -45,7 +45,7 @@ if (!$result_vehicle_counts) {
     exit();
 }
 
-// Fetch student data
+// Fetch faculty data
 $faculty = [];
 if (mysqli_num_rows($result_faculty) > 0) {
     while ($row = mysqli_fetch_assoc($result_faculty)) {
@@ -55,17 +55,19 @@ if (mysqli_num_rows($result_faculty) > 0) {
 
 // Fetch vehicle type frequencies
 $vehicle_counts = [];
+$total_faculty_users = mysqli_num_rows($result_faculty); // Total number of faculty users
 if (mysqli_num_rows($result_vehicle_counts) > 0) {
     while ($row = mysqli_fetch_assoc($result_vehicle_counts)) {
         $vehicle_counts[$row['Vehicle']] = $row['count'];
     }
 }
 
-// Return both student data and vehicle type frequencies
+// Return both faculty data and vehicle type frequencies
 echo json_encode([
     'success' => true,
     'faculty' => $faculty,
-    'vehicleCounts' => $vehicle_counts
+    'vehicleCounts' => $vehicle_counts,
+    'totalUsers' => $total_faculty_users // Include total number of faculty users
 ]);
 
 mysqli_close($conn);

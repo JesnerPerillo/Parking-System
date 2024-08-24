@@ -5,37 +5,53 @@ import { Chart as ChartJS, BarElement, Tooltip, Legend, CategoryScale, LinearSca
 
 ChartJS.register(BarElement, Tooltip, Legend, CategoryScale, LinearScale);
 
-export default function FacultyParkingDataGraph() {
+export default function TotalUserData() {
   const [vehicleCounts, setVehicleCounts] = useState({});
-  const [totalFaculty, setTotalFaculty] = useState(0);
+  const [totalUsers, setTotalUsers] = useState(0);
 
   useEffect(() => {
-    const fetchFacultyData = async () => {
+    const fetchParkingData = async () => {
       try {
-        const response = await axios.get('http://localhost/website/my-project/Backend/fetchfacultydata.php', {
-          withCredentials: true,
-        });
-
-        if (response.data.success) {
-          setTotalFaculty(response.data.faculty.length);
-
-          if (response.data.vehicleCounts) {
-            const vehicleCounts = {};
-            for (const [vehicle, count] of Object.entries(response.data.vehicleCounts)) {
-              vehicleCounts[vehicle] = Number(count);
+        const [facultyResponse, studentResponse] = await Promise.all([
+          axios.get('http://localhost/website/my-project/Backend/fetchfacultydata.php', { withCredentials: true }),
+          axios.get('http://localhost/website/my-project/Backend/fetchstudentsdata.php', { withCredentials: true }),
+        ]);
+  
+        console.log('Faculty Response:', facultyResponse.data);
+        console.log('Student Response:', studentResponse.data);
+  
+        if (facultyResponse.data.success && studentResponse.data.success) {
+          const combinedVehicleCounts = {};
+  
+          const processData = (data) => {
+            for (const [vehicle, count] of Object.entries(data)) {
+              if (!combinedVehicleCounts[vehicle]) {
+                combinedVehicleCounts[vehicle] = 0;
+              }
+              combinedVehicleCounts[vehicle] += Number(count);
             }
-            setVehicleCounts(vehicleCounts);
-          } else {
-            setVehicleCounts({});
-          }
+          };
+  
+          processData(facultyResponse.data.vehicleCounts);
+          processData(studentResponse.data.vehicleCounts);
+  
+          console.log('Vehicle Counts:', combinedVehicleCounts);
+  
+          // Ensure the values are numbers before addition
+          const totalFacultyUsers = Number(facultyResponse.data.totalUsers) || 0;
+          const totalStudentUsers = Number(studentResponse.data.totalUsers) || 0;
+  
+          setTotalUsers(totalFacultyUsers + totalStudentUsers);
+          setVehicleCounts(combinedVehicleCounts);
         }
       } catch (error) {
-        console.error('Error fetching faculty data:', error);
+        console.error('Error fetching parking data:', error);
       }
     };
-
-    fetchFacultyData();
+  
+    fetchParkingData();
   }, []);
+  
 
   // Prepare the data for the bar chart
   const chartData = {
@@ -106,7 +122,7 @@ export default function FacultyParkingDataGraph() {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-r from-gray-800 to-gray-900 p-6 rounded-lg shadow-2xl">
-      <h1 className="text-white text-xl tracking-widest">Faculty|Staff Parking Data</h1>
+      <h1 className="text-white text-xl tracking-widest">Total Parking Data</h1>
       <div className="flex justify-center space-x-6 mb-6">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-4 bg-yellow-400 rounded"></div>
@@ -124,6 +140,7 @@ export default function FacultyParkingDataGraph() {
       <div className="flex flex-col items-center justify-center" style={{ width: '80%', height: '80%' }}>
         <Bar data={chartData} options={chartOptions} />
       </div>
+      <p className="text-white mt-2">Total Users: {totalUsers}</p>
     </div>
   );
 }
