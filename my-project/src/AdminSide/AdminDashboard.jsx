@@ -83,7 +83,7 @@ export default function AdminDashboard() {
               <h1 className="text-bold text-4xl tracking-widest">PARKING SYSTEM</h1>
             </div>
           <div className="flex w-full flex-col justify-evenly h-2/4 relative">
-          <Link to="/studentdashboard" className="group no-underline h-16 flex items-center pl-8 bg-blue-900 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+          <Link to="/admindashboard" className="group no-underline h-16 flex items-center pl-8 bg-blue-900 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>

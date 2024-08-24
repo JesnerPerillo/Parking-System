@@ -7,21 +7,30 @@ header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Accept, Origin, X-Requested-With');
 header('Access-Control-Allow-Credentials: true');
 
+// Log session details for debugging
+error_log('Session Details: ' . print_r($_SESSION, true));
+
 // Check if the user is an admin
 if (!isset($_SESSION['isAdmin']) || $_SESSION['isAdmin'] !== true) {
     echo json_encode(['success' => false, 'message' => 'Unauthorized access']);
     exit();
 }
 
-// Assuming you have already established a database connection
-include './database.php'; // This file contains your database connection code
+// Include database connection
+include './database.php'; // Ensure this file sets up the $conn variable correctly
+
+// Check database connection
+if (!$conn) {
+    echo json_encode(['success' => false, 'message' => 'Database connection failed: ' . mysqli_connect_error()]);
+    exit();
+}
 
 // Query to fetch faculty data along with their slot number
 $query_faculty = "
     SELECT s.Name, s.Email, s.Position, s.Building, s.Vehicle, s.`Plate Number`, sp.slot_number
     FROM facultystaff s
     LEFT JOIN facultyparkingslots sp ON s.id = sp.faculty_id
-"; // Adjust the query based on your database structure
+";
 
 // Query to count vehicle type frequencies
 $query_vehicle_counts = "
@@ -29,7 +38,7 @@ $query_vehicle_counts = "
     FROM facultystaff
     GROUP BY Vehicle
     ORDER BY count DESC
-"; // Adjust the query based on your database structure
+";
 
 // Execute the faculty data query
 $result_faculty = mysqli_query($conn, $query_faculty);
@@ -67,7 +76,7 @@ echo json_encode([
     'success' => true,
     'faculty' => $faculty,
     'vehicleCounts' => $vehicle_counts,
-    'totalUsers' => $total_faculty_users // Include total number of faculty users
+    'totalUsers' => $total_faculty_users
 ]);
 
 mysqli_close($conn);
