@@ -27,7 +27,7 @@ if (!$conn) {
 
 // Query to fetch faculty data along with their slot number
 $query_faculty = "
-    SELECT s.Name, s.Email, s.Position, s.Building, s.Vehicle, s.`Plate Number`, sp.slot_number
+    SELECT s.Name, s.Email, s.Position, s.Building, s.Vehicle, s.`Plate Number`, s.`License`, s.`ORCR`, sp.slot_number
     FROM facultystaff s
     LEFT JOIN facultyparkingslots sp ON s.id = sp.faculty_id
 ";
@@ -58,6 +58,9 @@ if (!$result_vehicle_counts) {
 $faculty = [];
 if (mysqli_num_rows($result_faculty) > 0) {
     while ($row = mysqli_fetch_assoc($result_faculty)) {
+        // Convert binary data to base64 for easy handling in JSON
+        $row['License'] = base64_encode($row['License']);
+        $row['ORCR'] = base64_encode($row['ORCR']);
         $faculty[] = $row;
     }
 }

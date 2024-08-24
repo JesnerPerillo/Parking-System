@@ -27,7 +27,7 @@ if (!$conn) {
 
 // Queries
 $query_students = "
-    SELECT s.`Student Number`, s.Name, s.Email, s.Vehicle, s.`Plate Number`, sp.slot_number
+    SELECT s.`Student Number`, s.Name, s.Email, s.Vehicle, s.`Plate Number`, s.`License`, s.`ORCR`, sp.slot_number
     FROM students s
     LEFT JOIN studentparkingslots sp ON s.id = sp.student_id
 ";
@@ -57,6 +57,9 @@ if (!$result_vehicle_counts) {
 $students = [];
 if (mysqli_num_rows($result_students) > 0) {
     while ($row = mysqli_fetch_assoc($result_students)) {
+        // Convert binary data to base64 for easy handling in JSON
+        $row['License'] = base64_encode($row['License']);
+        $row['ORCR'] = base64_encode($row['ORCR']);
         $students[] = $row;
     }
 }

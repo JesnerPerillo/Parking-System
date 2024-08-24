@@ -128,7 +128,7 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="w-full h-2/4 mt-10 flex justify-around">
-              <div className="w-2/5 h-full ml-10">
+              <div className="w-4/5 h-full ml-10">
                 <TotalUsersData />
               </div>
             </div>
