@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Pie } from 'react-chartjs-2'; 
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Bar } from 'react-chartjs-2'; 
+import { Chart as ChartJS, BarElement, Tooltip, Legend, CategoryScale, LinearScale } from 'chart.js';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(BarElement, Tooltip, Legend, CategoryScale, LinearScale);
 
 export default function StudentMotorcyclePDF() {
   const [students, setStudents] = useState([]);
   const [vehicleCounts, setVehicleCounts] = useState({});
-  const [totalStudents, setTotalStudents] = useState(0);
 
   useEffect(() => {
     const fetchStudentData = async () => {
@@ -19,7 +18,6 @@ export default function StudentMotorcyclePDF() {
 
         if (response.data.success) {
           setStudents(response.data.students);
-          setTotalStudents(response.data.students.length);
 
           if (response.data.vehicleCounts) {
             const vehicleCounts = {};
@@ -39,7 +37,7 @@ export default function StudentMotorcyclePDF() {
     fetchStudentData();
   }, []);
 
-  // Prepare the data for the pie chart
+  // Prepare the data for the bar chart
   const chartData = {
     labels: Object.keys(vehicleCounts), // Vehicle types
     datasets: [
@@ -47,13 +45,11 @@ export default function StudentMotorcyclePDF() {
         label: 'Number of Students',
         data: Object.values(vehicleCounts), // Corresponding counts
         backgroundColor: [
-          'rgba(222, 210, 0, 0.8)',  // Yellow
-          'rgba(54, 162, 235, 0.8)',  // Blue
-          'rgba(255, 99, 132, 0.8)',  // Red
-          'rgba(255, 206, 86, 0.8)',  // Yellow
-          'rgba(75, 192, 192, 0.8)',  // Teal
-        ], // Colors for each slice
-        borderColor: 'rgba(255, 255, 255, 0.8)', // White border color between slices
+          'rgba(222, 210, 0, 0.8)',  // Yellow for Motorcycle
+          'rgba(54, 162, 235, 0.8)',  // Blue for Tricycle
+          'rgba(255, 99, 132, 0.8)',  // Red for Fourwheeler
+        ],
+        borderColor: 'rgba(255, 255, 255, 0.8)', // White border color
         borderWidth: 2,
       },
     ],
@@ -63,13 +59,7 @@ export default function StudentMotorcyclePDF() {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top',
-        labels: {
-          color: 'white', // Set legend text color to white
-          font: {
-            size: 14, // Adjust font size of legend
-          },
-        },
+        display: false, // Hide the legend
       },
       tooltip: {
         backgroundColor: 'rgba(0, 0, 0, 0.7)', // Tooltip background color
@@ -85,21 +75,51 @@ export default function StudentMotorcyclePDF() {
         top: 20, // Adjust padding to fit text
       },
     },
-    elements: {
-      arc: {
-        borderWidth: 2, // Border width of pie slices
+    scales: {
+      x: {
+        grid: {
+          display: false, // Hide grid lines on X-axis for cleaner look
+        },
+        ticks: {
+          color: 'white', // Set X-axis labels color to white
+        },
+      },
+      y: {
+        grid: {
+          color: 'rgba(255, 255, 255, 0.2)', // Light grid lines on Y-axis
+        },
+        ticks: {
+          color: 'white', // Set Y-axis labels color to white
+          beginAtZero: true, // Start the Y-axis at zero
+          stepSize: 1, // Ensure only whole numbers are used
+          callback: function(value) { 
+            return Number.isInteger(value) ? value : null;
+          },
+        },
       },
     },
   };
 
   return (
-    <>
-      <div className="w-full h-full flex flex-col items-center">
-        <span className="text-4xl text-white mb-4">{totalStudents}/335</span>
-        <div style={{ width: '70%', height: '70%' }}>
-          <Pie data={chartData} options={chartOptions} />
+    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-r from-gray-800 to-gray-900 p-6 rounded-lg shadow-2xl">
+      <h1 className="text-white text-xl tracking-widest">Students Data</h1>
+      <div className="flex justify-center space-x-6 mb-6">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-4 bg-yellow-400 rounded"></div>
+          <span className="text-white text-sm">Motorcycle</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-4 bg-blue-400 rounded"></div>
+          <span className="text-white text-sm">Tricycle</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-4 bg-red-400 rounded"></div>
+          <span className="text-white text-sm">Fourwheeler</span>
         </div>
       </div>
-    </>
+      <div className="flex flex-col items-center justify-center" style={{ width: '80%', height: '80%' }}>
+        <Bar data={chartData} options={chartOptions} />
+      </div>
+    </div>
   );
 }

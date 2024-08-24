@@ -80,7 +80,7 @@ export default function StudentMotorcyclePDF() {
     });
 
     // Save the PDF
-    doc.save('Student-Parking-Data.pdf');
+    doc.save('Total-Student-Parking-Data.pdf');
   };
 
   return (

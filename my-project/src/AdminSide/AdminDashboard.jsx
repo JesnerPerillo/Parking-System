@@ -116,12 +116,15 @@ export default function AdminDashboard() {
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
           </div>
-          <div className="w-full h-4/5 flex items-end">
-            <div className="w-1/2 h-full">
-              <StudentParkingDataGraph />
-            </div>
-            <div className="w-1/2 h-full">
-              <FacultyParkingDataGraph />
+          <div className="w-full h-4/5 flex flex-col">
+            <h1 className="text-white p-5">Welcome To Your Dashboard</h1>
+            <div className="w-full h-full flex">
+              <div className="w-2/3 h-2/3 ml-10">
+                <StudentParkingDataGraph />
+              </div>
+              <div className="w-1/2 h-full">
+                <FacultyParkingDataGraph />
+              </div>
             </div>
           </div>
         </div>
