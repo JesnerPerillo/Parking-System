@@ -116,6 +116,21 @@ export default function StudentAccount() {
   
 
   useEffect(() => {
+    axios.get('http://localhost/website/my-project/Backend/fetchdata.php', { withCredentials: true })
+      .then(response => {
+        console.log('Fetched user data:', response.data); // Log the response
+        if (response.data.success) {
+          setUserData(response.data.data);
+        } else {
+          console.log(response.data.message);
+        }
+      })
+      .catch(error => {
+        console.log('Error fetching user data:', error);
+      });
+  }, []);
+  
+  useEffect(() => {
     const fetchImage = async (type) => {
       try {
         const response = await axios.get(`http://localhost/website/my-project/Backend/fetchimage.php?type=${type}`, {
@@ -132,10 +147,11 @@ export default function StudentAccount() {
         console.error(`Error fetching ${type} image:`, error);
       }
     };
-
+  
     fetchImage('License');
     fetchImage('ORCR');
   }, []);
+  
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);

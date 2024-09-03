@@ -9,12 +9,6 @@ header('Access-Control-Allow-Credentials: true');
 
 error_log('Session Details: ' . print_r($_SESSION, true));
 
-// Check if the user is an admin
-if (!isset($_SESSION['isAdmin']) || $_SESSION['isAdmin'] !== true) {
-    echo json_encode(['success' => false, 'message' => 'Unauthorized access']);
-    exit();
-}
-
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 

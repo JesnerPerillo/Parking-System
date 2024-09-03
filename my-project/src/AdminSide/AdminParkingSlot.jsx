@@ -6,6 +6,7 @@ import axios from 'axios';
 import { BsTaxiFront, BsCreditCard2Front, BsFillPersonVcardFill, BsQuestionSquare } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { BsEyeFill } from "react-icons/bs";
+import QRScanner from '../components/QRScanner.jsx';
 
 export default function AdminParkingSlot() {
   const [error, setError] = useState('');
@@ -109,7 +110,6 @@ export default function AdminParkingSlot() {
     
           if (userData) {
             setPopupData(userData);
-            // Set the License and ORCR image sources
             setLicenseSrc(userData.License ? `data:image/jpeg;base64,${userData.License}` : null);
             setOrcrSrc(userData.ORCR ? `data:image/jpeg;base64,${userData.ORCR}` : null);
           } else {
@@ -124,15 +124,14 @@ export default function AdminParkingSlot() {
     }
   };
   
-
   const renderSpots = (count, color, vehicleType) => {
     const occupied = occupiedSpots[vehicleType] || [];
-
+  
     return Array.from({ length: count }, (_, index) => {
       const spotNumber = index + 1;
       const isOccupied = occupied.map(Number).includes(spotNumber);
       const isSelected = selectedSpot === spotNumber && selectedVehicle === vehicleType;
-
+  
       let spotColorClass = '';
       if (isSelected) {
         spotColorClass = 'bg-red-400';
@@ -141,10 +140,11 @@ export default function AdminParkingSlot() {
       } else {
         spotColorClass = color;
       }
-
+  
       return (
         <div
           key={index}
+          id={`slot-${spotNumber}`}
           className={`rounded-xl h-20 flex items-center justify-center cursor-pointer ${spotColorClass}`}
           onClick={() => handleSpotSelection(spotNumber)}
         >
@@ -153,6 +153,7 @@ export default function AdminParkingSlot() {
       );
     });
   };
+  
 
   const handleEdit = () => {
     alert('Edit functionality not implemented yet.');
@@ -173,6 +174,87 @@ export default function AdminParkingSlot() {
       alert('Error deleting user: ' + error.message);
     }
   };
+
+  const updateTime = async (userType, id, timeIn, timeOut) => {
+    try {
+        const response = await fetch('http://localhost/website/my-project/Backend/settime.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            credentials: 'include',
+            body: new URLSearchParams({
+                user_type: userType,
+                id: id,
+                time_in: timeIn || '',
+                time_out: timeOut || ''
+            }),
+        });
+
+        const result = await response.json();
+        if (result.status === 'success') {
+            console.log(result.message);
+        } else {
+            console.error(result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+const formatAMPM = (timeStr) => {
+  const [hours, minutes] = timeStr.split(':').map(num => parseInt(num, 10));
+  const ampm = hours >= 12 ? 'AM' : 'PM';
+  const hours12 = hours % 12 || 12;
+  const minutesFormatted = minutes < 10 ? '0' + minutes : minutes;
+  return `${hours12}:${minutesFormatted} ${ampm}`;
+};
+
+// Function to handle Time In for both students and faculty
+const handleTimeIn = async () => {
+  const userId = popupData.id;
+  const userType = selectedUserType;
+  if (!userId) {
+      console.error('User ID is missing');
+      return;
+  }
+  const timeIn = formatAMPM(new Date().toTimeString().substring(0, 5)); // Get current time in "HH:mm" format
+  await updateTime(userType, userId, timeIn, ''); // Pass the formatted time
+  alert('Time In recorded successfully!');
+};
+
+// Function to handle Time Out for both students and faculty
+const handleTimeOut = async () => {
+  const userId = popupData.id;
+  const userType = selectedUserType;
+  if (!userId) {
+      console.error('User ID is missing');
+      return;
+  }
+  const timeOut = formatAMPM(new Date().toTimeString().substring(0, 5)); // Get current time in "HH:mm" format
+  await updateTime(userType, userId, '', timeOut); // Pass the formatted time
+  alert('Time Out recorded successfully!');
+};
+
+const handleScanSuccess = async (scannedData) => {
+  try {
+    const response = await axios.post('http://localhost/website/my-project/Backend/verifyqr.php', {
+      qr_data: scannedData
+    }, { withCredentials: true });
+
+    if (response.data.success) {
+      // Process scanned data here
+      const { spotNumber, userType } = response.data.data;
+      setSelectedUserType(userType);
+      handleSpotSelection(spotNumber);
+    } else {
+      alert('Failed to verify QR code.');
+    }
+  } catch (error) {
+    alert('Error verifying QR code: ' + error.message);
+  }
+};
+  
 
   return (
     <div className="relative w-full h-screen bg-blue-900 flex">
@@ -249,95 +331,118 @@ export default function AdminParkingSlot() {
             {renderSpots(categories[selectedVehicle].count, categories[selectedVehicle].color, selectedVehicle)}
           </div>
         </div>
+        <div>
+          <QRScanner onScanSuccess={handleScanSuccess} />
+        </div>
       </div>
 
       {/* Pop-up for showing user data */}
       {popupData && (
-          <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-2/5">
-              <h2 className="text-2xl font-semibold mb-4">Slot User Information</h2>
-              <div>
-                {selectedUserType === 'student' ? (
-                  <div>
-                    <p><strong>Student Number:</strong> {popupData['Student Number']}</p>
-                    <p><strong>Name:</strong> {popupData.Name}</p>
-                    <p><strong>Email:</strong> {popupData.Email}</p>
-                    <p><strong>Vehicle:</strong> {popupData.Vehicle}</p>
-                    <p><strong>Plate Number:</strong> {popupData['Plate Number']}</p>
-                    <p><strong>Slot Number:</strong> {popupData.slot_number}</p>
-                  </div>
-                ) : (
-                  <div>
-                    <p><strong>Name:</strong> {popupData.Name}</p>
-                    <p><strong>Email:</strong> {popupData.Email}</p>
-                    <p><strong>Position:</strong> {popupData.Position}</p>
-                    <p><strong>Building:</strong> {popupData.Building}</p>
-                    <p><strong>Vehicle:</strong> {popupData.Vehicle}</p>
-                    <p><strong>Plate Number:</strong> {popupData['Plate Number']}</p>
-                    <p><strong>Slot Number:</strong> {popupData.slot_number}</p>
-                  </div>
-                )}
-                <div className="w-full flex justify-around">
-                  {licenseSrc ? (
-                    <div className="flex flex-col">
-                      <p>License</p>
-                      <div className="flex">
-                        <img src={licenseSrc} alt="License" className="w-40 h-32 inline-block max-sm:w-24" />
-                        <button onClick={() => handleOpenModal(licenseSrc)} className="ml-2 text-blue-500 hover:text-blue-700">
-                          <BsEyeFill className="w-10 h-7"/>
-                        </button>
-                      </div>
-                    </div>
-                  ) : 'No License image available'}
-                  {orcrSrc ? (
-                    <div className="flex flex-col">
-                      <p>ORCR</p>
-                      <div className="flex">
-                        <img src={orcrSrc} alt="ORCR" className="w-40 h-32 inline-block max-sm:w-24" />
-                        <button onClick={() => handleOpenModal(orcrSrc)} className="ml-2 text-blue-500 hover:text-blue-700">
-                          <BsEyeFill className="w-10 h-7"/>
-                        </button>
-                      </div>
-                    </div>
-                  ) : 'No image available'}
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-2/5">
+            <h2 className="text-2xl font-semibold mb-4">Slot User Information</h2>
+            <div>
+              {selectedUserType === 'student' ? (
+                <div>
+                  <p><strong>Student id:</strong> {popupData.id}</p>
+                  <p><strong>Student Number:</strong> {popupData['Student Number']}</p>
+                  <p><strong>Name:</strong> {popupData.Name}</p>
+                  <p><strong>Email:</strong> {popupData.Email}</p>
+                  <p><strong>Vehicle:</strong> {popupData.Vehicle}</p>
+                  <p><strong>Plate Number:</strong> {popupData['Plate Number']}</p>
+                  <p><strong>Slot Number:</strong> {popupData.slot_number}</p>
+                  <p><strong>Time In:</strong> {popupData[`Time In`] ? formatAMPM(popupData[`Time In`]) : 'N/A'}</p>
+                  <p><strong>Time Out:</strong> {popupData[`Time Out`] ? formatAMPM(popupData[`Time Out`]) : 'N/A'}</p>
                 </div>
-
-                {isModalOpen && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="relative bg-white p-4 rounded-lg shadow-lg flex justify-center w-3/4 h-3/4 max-sm:h-1/3 max-sm:w-full">
-                      <button onClick={handleCloseModal} className="absolute top-0 right-0 mt-2 mr-2 text-gray-500 hover:text-gray-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+              ) : (
+                <div>
+                  <p><strong>Name:</strong> {popupData.Name}</p>
+                  <p><strong>Email:</strong> {popupData.Email}</p>
+                  <p><strong>Position:</strong> {popupData.Position}</p>
+                  <p><strong>Building:</strong> {popupData.Building}</p>
+                  <p><strong>Vehicle:</strong> {popupData.Vehicle}</p>
+                  <p><strong>Plate Number:</strong> {popupData['Plate Number']}</p>
+                  <p><strong>Slot Number:</strong> {popupData.slot_number}</p>
+                  <p><strong>Time In:</strong> {popupData[`Time In`] ? formatAMPM(popupData[`Time In`]) : 'N/A'}</p>
+                  <p><strong>Time Out:</strong> {popupData[`Time Out`] ? formatAMPM(popupData[`Time Out`]) : 'N/A'}</p>
+                </div>
+              )}
+              <div className="w-full flex justify-around mt-4">
+                {licenseSrc ? (
+                  <div className="flex flex-col">
+                    <p>License</p>
+                    <div className="flex">
+                      <img src={licenseSrc} alt="License" className="w-40 h-32 inline-block max-sm:w-24" />
+                      <button onClick={() => handleOpenModal(licenseSrc)} className="ml-2 text-blue-500 hover:text-blue-700">
+                        <BsEyeFill className="w-10 h-7"/>
                       </button>
-                      <img src={modalImageSrc} alt="Enlarged" className="max-w-full max-h-full max-sm:w-full" />
                     </div>
                   </div>
-                )}
+                ) : 'No License image available'}
+                {orcrSrc ? (
+                  <div className="flex flex-col">
+                    <p>ORCR</p>
+                    <div className="flex">
+                      <img src={orcrSrc} alt="ORCR" className="w-40 h-32 inline-block max-sm:w-24" />
+                      <button onClick={() => handleOpenModal(orcrSrc)} className="ml-2 text-blue-500 hover:text-blue-700">
+                        <BsEyeFill className="w-10 h-7"/>
+                      </button>
+                    </div>
+                  </div>
+                ) : 'No image available'}
               </div>
-              <div className="w-full flex justify-between">
+
+              {/*Buttons for Time in and Time out */}
+              <div className="w-full flex justify-around mt-4">
                 <button
-                  className="mt-4 w-1/4 p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                  onClick={handleEdit}
+                    className="p-2 w-24 bg-green-500 text-white rounded hover:bg-green-700"
+                    onClick={handleTimeIn}
                 >
-                  Edit
+                    Time In
                 </button>
                 <button
-                  className="mt-4 w-1/4 p-2 bg-red-500 text-white rounded hover:bg-red-700"
-                  onClick={handleDelete}
+                    className="p-2 bg-red-500 text-white rounded hover:bg-red-700"
+                    onClick={handleTimeOut}
                 >
-                  Delete
-                </button>
-                <button
-                  className="mt-4 w-1/4 p-2 bg-gray-500 text-white rounded hover:bg-gray-700"
-                  onClick={() => setPopupData(null)}
-                >
-                  Close
+                    Time Out
                 </button>
               </div>
+              {isModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                  <div className="relative bg-white p-4 rounded-lg shadow-lg flex justify-center w-3/4 h-3/4 max-sm:h-1/3 max-sm:w-full">
+                  <button onClick={handleCloseModal} className="absolute top-0 right-0 mt-2 mr-2 text-gray-500 hover:text-gray-700">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                    <img src={modalImageSrc} alt="Enlarged" className="max-w-full max-h-full max-sm:w-full" />
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="w-full flex justify-between mt-4">
+              <button
+                className="mt-4 w-1/4 p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                onClick={handleEdit}
+              >
+                Edit
+              </button>
+              <button
+                className="mt-4 w-1/4 p-2 bg-red-500 text-white rounded hover:bg-red-700"
+                onClick={handleDelete}
+              >
+                Delete
+              </button>
+              <button
+                className="mt-4 w-1/4 p-2 bg-gray-500 text-white rounded hover:bg-gray-700"
+                onClick={() => setPopupData(null)}
+              >
+                Close
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }

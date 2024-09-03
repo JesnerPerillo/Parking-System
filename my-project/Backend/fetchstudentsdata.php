@@ -27,7 +27,7 @@ if (!$conn) {
 
 // Queries
 $query_students = "
-    SELECT s.`Student Number`, s.Name, s.Email, s.Vehicle, s.`Plate Number`, s.`License`, s.`ORCR`, sp.slot_number
+    SELECT s.id, s.`Student Number`, s.Name, s.Email, s.Vehicle, s.`Plate Number`, s.`License`, s.`ORCR`, s.`Time In`, s.`Time Out`, sp.slot_number
     FROM students s
     LEFT JOIN studentparkingslots sp ON s.id = sp.student_id
 ";

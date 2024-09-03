@@ -10,17 +10,20 @@ header('Access-Control-Allow-Credentials: true');
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get the user type and ID from the POST request
+    // Debugging: Log received data and parameters
+    error_log('Received POST request');
     $data = json_decode(file_get_contents('php://input'), true);
-    $userType = $_GET['userType']; // Expect userType to be passed as a query parameter
+    $userType = isset($_GET['userType']) ? $_GET['userType'] : '';
     $id = isset($data['id']) ? $data['id'] : '';
+
+    error_log('User Type: ' . $userType);
+    error_log('ID: ' . $id);
 
     if (empty($userType) || empty($id)) {
         echo json_encode(['success' => false, 'message' => 'User type or ID missing']);
         exit();
     }
 
-    // Determine the table to use based on the user type
     $table = '';
     if ($userType === 'student') {
         $table = 'students';
@@ -31,14 +34,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    // Prepare SQL statement to delete the record
+    // Prepare SQL statement
     $stmt = $conn->prepare("DELETE FROM $table WHERE id = ?");
+    if (!$stmt) {
+        echo json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]);
+        exit();
+    }
+
     $stmt->bind_param('i', $id);
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'User deleted successfully.']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Failed to delete user.']);
+        echo json_encode(['success' => false, 'message' => 'Execute failed: ' . $stmt->error]);
     }
 
     $stmt->close();

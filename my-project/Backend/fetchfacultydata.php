@@ -27,7 +27,7 @@ if (!$conn) {
 
 // Query to fetch faculty data along with their slot number
 $query_faculty = "
-    SELECT s.Name, s.Email, s.Position, s.Building, s.Vehicle, s.`Plate Number`, s.`License`, s.`ORCR`, sp.slot_number
+    SELECT s.id, s.Name, s.Email, s.Position, s.Building, s.Vehicle, s.`Plate Number`, s.`License`, s.`ORCR`, s.`Time In`, s.`Time Out`, sp.slot_number
     FROM facultystaff s
     LEFT JOIN facultyparkingslots sp ON s.id = sp.faculty_id
 ";
