@@ -15,20 +15,22 @@ error_reporting(E_ALL);
 $response = array();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!isset($_SESSION['studentNumber'])) {
-        echo json_encode(['success' => false, 'message' => 'User not logged in.']);
+    // Retrieve student ID from POST request
+    $studentId = $_POST['id'] ?? '';
+
+    if (empty($studentId)) {
+        echo json_encode(['success' => false, 'message' => 'Student ID is required.']);
         exit();
     }
 
-    $studentNumber = $_SESSION['studentNumber'];
-
+    // Retrieve other fields
     $studentNumber = $_POST['studentNumber'] ?? '';
     $name = $_POST['fullname'] ?? '';
     $email = $_POST['email'] ?? '';
     $yearAndSection = $_POST['yearsection'] ?? '';
     $course = $_POST['course'] ?? '';
     $password = $_POST['password'] ?? '';
-    
+
     $license = $_FILES['license'] ?? null;
     $orcr = $_FILES['orcr'] ?? null;
 
@@ -37,10 +39,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $types = '';
 
     if (!empty($studentNumber)) {
-        $updateFields[] = '`Student Number` = ?';
-        $params[] = $studentNumber;
-        $types .= 's';
-    }
+      $updateFields[] = '`Student Number` = ?';
+      $params[] = $studentNumber;
+      $types .= 's';
+  }
     if (!empty($name)) {
         $updateFields[] = 'Name = ?';
         $params[] = $name;
@@ -92,24 +94,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $types .= 'b';
     }
 
-    $params[] = $studentNumber;
+    // Add student ID for the WHERE clause
+    $params[] = $studentId;
     $types .= 's';
 
-    $sql = "UPDATE students SET " . implode(', ', $updateFields) . " WHERE `Student Number` = ?";
+    // Prepare SQL query
+    $sql = "UPDATE students SET " . implode(', ', $updateFields) . " WHERE id = ?";
     $stmt = $conn->prepare($sql);
 
     if ($stmt === false) {
+        error_log('Error preparing statement: ' . $conn->error);
         $response['success'] = false;
-        $response['message'] = 'Error preparing statement: ' . $conn->error;
+        $response['message'] = 'Error preparing statement.';
         echo json_encode($response);
         exit();
     }
 
-    // Bind the parameters
+    // Binding parameters
     $bindResult = $stmt->bind_param($types, ...$params);
     if ($bindResult === false) {
+        error_log('Error binding parameters: ' . $stmt->error);
         $response['success'] = false;
-        $response['message'] = 'Error binding parameters: ' . $stmt->error;
+        $response['message'] = 'Error binding parameters.';
         echo json_encode($response);
         exit();
     }
@@ -122,14 +128,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->send_long_data(array_search($orcrContent, $params), $orcrContent);
     }
 
-    if ($stmt->execute()) {
-        $response['success'] = true;
-        $response['message'] = 'User updated successfully.';
-    } else {
+    // Execute statement
+    if (!$stmt->execute()) {
+        error_log('Error executing statement: ' . $stmt->error);
         $response['success'] = false;
-        $response['message'] = 'Error updating user: ' . $stmt->error;
+        $response['message'] = 'Error executing statement.';
+        echo json_encode($response);
+        exit();
     }
 
+    $response['success'] = true;
+    $response['message'] = 'User updated successfully.';
+
+    // Close connections
     $stmt->close();
     $conn->close();
 } else {

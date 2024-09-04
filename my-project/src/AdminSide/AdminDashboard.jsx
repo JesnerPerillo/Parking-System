@@ -104,11 +104,8 @@ export default function AdminDashboard() {
               </li>
             </Link>
           </div>
-          <button
-            className="w-3/4 h-14 rounded-xl text-white font-semibold tracking-widest text-2xl bg-red-600"
-            onClick={handleLogout}
-          >
-            Logout
+          <button className="w-3/4 h-14 rounded-xl text-red-600 border border-red-500 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center hover:bg-red-600" onClick={handleLogout}>
+            <span className="hover:text-white hover:bg-red-600 rounded-xl flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut className="rotate-180"/>Logout</span>
           </button>
         </nav>
 
@@ -117,9 +114,9 @@ export default function AdminDashboard() {
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
           </div>
-          <div className="w-full h-full flex flex-col">
+          <div className="w-full h-full overflow-auto flex flex-col">
             <h1 className="text-white p-3">Welcome To Your Dashboard</h1>
-            <div className="w-full h-1/3 flex justify-around">
+            <div className="w-full h-1/2 flex justify-around">
               <div className="w-2/5 h-full ml-10">
                 <StudentParkingDataGraph />
               </div>

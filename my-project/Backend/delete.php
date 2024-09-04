@@ -1,58 +1,97 @@
 <?php
-// Include database connection file
-include './connect.php';
-
-header('Access-Control-Allow-Origin: http://localhost:3000');
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Accept, Origin, X-Requested-With');
+include './database.php';
+session_start();
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: http://localhost:3000'); // Adjust according to your frontend origin
+header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Headers: Content-Type, Accept, Origin, X-Requested-With');
 header('Access-Control-Allow-Credentials: true');
 
+// Enable detailed error reporting for troubleshooting
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+error_log('Session Details: ' . print_r($_SESSION, true));
+
+// Check if the user is an admin
+if (!isset($_SESSION['isAdmin']) || $_SESSION['isAdmin'] !== true) {
+    echo json_encode(['success' => false, 'message' => 'Unauthorized access']);
+    exit();
+}
+
+$response = array();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Debugging: Log received data and parameters
-    error_log('Received POST request');
-    $data = json_decode(file_get_contents('php://input'), true);
-    $userType = isset($_GET['userType']) ? $_GET['userType'] : '';
-    $id = isset($data['id']) ? $data['id'] : '';
+    // Retrieve user ID and type from POST request
+    $input = json_decode(file_get_contents('php://input'), true); // Use json_decode for raw input
+    $id = $input['id'] ?? '';
+    $userType = $input['userType'] ?? ''; // Expecting 'student' or 'faculty'
 
-    error_log('User Type: ' . $userType);
-    error_log('ID: ' . $id);
-
-    if (empty($userType) || empty($id)) {
-        echo json_encode(['success' => false, 'message' => 'User type or ID missing']);
+    if (empty($id) || empty($userType)) {
+        echo json_encode(['success' => false, 'message' => 'User ID and type are required.']);
         exit();
     }
 
-    $table = '';
-    if ($userType === 'student') {
-        $table = 'students';
-    } elseif ($userType === 'faculty') {
-        $table = 'facultystaff';
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Invalid user type']);
+    if ($userType !== 'student' && $userType !== 'faculty') {
+        echo json_encode(['success' => false, 'message' => 'Invalid user type.']);
         exit();
     }
 
-    // Prepare SQL statement
-    $stmt = $conn->prepare("DELETE FROM $table WHERE id = ?");
-    if (!$stmt) {
-        echo json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]);
+    $table = $userType === 'student' ? 'students' : 'facultystaff';
+    $dependentTable = $userType === 'student' ? 'studentparkingslots' : 'facultyparkingslots';
+
+    // First delete from dependent table if applicable
+    if ($dependentTable) {
+        $sql = "DELETE FROM $dependentTable WHERE `{$userType}_id` = ?";
+        $stmt = $conn->prepare($sql);
+        if ($stmt === false) {
+            error_log('Error preparing statement for dependent table: ' . $conn->error);
+            $response['success'] = false;
+            $response['message'] = 'Error preparing statement for dependent table.';
+            echo json_encode($response);
+            exit();
+        }
+
+        $stmt->bind_param('i', $id);
+        if (!$stmt->execute()) {
+            error_log('Error executing statement for dependent table: ' . $stmt->error);
+            $response['success'] = false;
+            $response['message'] = 'Error executing statement for dependent table.';
+            echo json_encode($response);
+            exit();
+        }
+        $stmt->close();
+    }
+
+    // Now delete from the main table
+    $sql = "DELETE FROM $table WHERE `id` = ?";
+    $stmt = $conn->prepare($sql);
+    if ($stmt === false) {
+        error_log('Error preparing statement for main table: ' . $conn->error);
+        $response['success'] = false;
+        $response['message'] = 'Error preparing statement for main table.';
+        echo json_encode($response);
         exit();
     }
 
     $stmt->bind_param('i', $id);
-
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'User deleted successfully.']);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Execute failed: ' . $stmt->error]);
+    if (!$stmt->execute()) {
+        error_log('Error executing statement for main table: ' . $stmt->error);
+        $response['success'] = false;
+        $response['message'] = 'Error executing statement for main table.';
+        echo json_encode($response);
+        exit();
     }
 
+    $response['success'] = true;
+    $response['message'] = 'User deleted successfully.';
     $stmt->close();
+    $conn->close();
 } else {
-    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+    $response['success'] = false;
+    $response['message'] = 'Invalid request method.';
 }
 
-$conn->close();
+echo json_encode($response);
 ?>

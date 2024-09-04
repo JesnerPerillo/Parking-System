@@ -100,8 +100,11 @@ export default function StudentMotorcyclePDF() {
     },
   };
 
+  // Calculate total users
+  const totalUsers = Object.values(vehicleCounts).reduce((total, count) => total + count, 0);
+
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-r from-gray-800 to-gray-900 p-6 rounded-lg shadow-2xl">
+    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg shadow-2xl">
       <h1 className="text-white text-xl tracking-widest">Students Data</h1>
       <div className="flex justify-center space-x-6 mb-6">
         <div className="flex items-center space-x-2">
@@ -119,6 +122,10 @@ export default function StudentMotorcyclePDF() {
       </div>
       <div className="flex flex-col items-center justify-center" style={{ width: '80%', height: '80%' }}>
         <Bar data={chartData} options={chartOptions} />
+      </div>
+      {/* Total Users Display */}
+      <div className="mt-4">
+        <h2 className="text-white text-lg">Total Users: {totalUsers}</h2>
       </div>
     </div>
   );

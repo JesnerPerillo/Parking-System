@@ -6,6 +6,7 @@ import axios from 'axios';
 import { BsTaxiFront, BsCreditCard2Front, BsFillPersonVcardFill, BsQuestionSquare } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { BsEyeFill } from "react-icons/bs";
+import { BsExclamationTriangle, BsPersonFillGear } from "react-icons/bs";
 import QRScanner from '../components/QRScanner.jsx';
 import { BrowserMultiFormatReader } from '@zxing/library';
 
@@ -43,6 +44,73 @@ export default function AdminParkingSlot() {
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
   };
+
+  const [formData, setFormData] = useState({
+    studentNumber: '',
+    fullname: '',
+    email: '',
+    yearsection: '',
+    course: '',
+    password: '',
+    license: null,
+    orcr: null
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    setFormData({
+      ...formData,
+      [name]: files[0],
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const form = new FormData();
+    for (const key in formData) {
+      form.append(key, formData[key]);
+    }
+  
+    // Add studentNumber to the form data
+    form.append('id', popupData.id);
+    console.log('Form data being sent:', form);
+  
+    try {
+      const response = await axios.post('http://localhost/website/my-project/Backend/admineditstudent.php', form, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      console.log('Response data:', response.data);
+  
+      if (response.data.success) {
+        setPopupData((prev) => ({
+          ...prev,
+          ...formData,
+          password: '', // Don't show the password in user data
+        }));
+        alert('Account updated successfully');
+      } else {
+        alert('Error updating account: ' + response.data.message);
+      }
+    } catch (error) {
+      console.error('Error updating account:', error);
+      alert('Error updating account. Please try again.');
+    }
+  };
+  
+
 
   const handleOpenModal = (src) => {
     setModalImageSrc(src);
@@ -161,27 +229,39 @@ export default function AdminParkingSlot() {
       );
     });
   };
-  
 
-  const handleEdit = () => {
-    alert('Edit functionality not implemented yet.');
-  };
-
-  const handleDelete = async () => {
+  const handleDelete = async (userType) => {
     try {
-      const response = await axios.post(`http://localhost/website/my-project/Backend/delete.php`, { id: popupData.id }, {
-        withCredentials: true
-      });
+      // Log the data being sent
+      console.log('Sending request with:', { id: popupData.id });
+      
+      // Send POST request
+      const response = await axios.post('http://localhost/website/my-project/Backend/delete.php', 
+        { 
+          id: popupData.id,
+          userType: userType // Include userType to help PHP determine which table to use
+        }, 
+        { 
+          withCredentials: true,
+          headers: { 'Content-Type': 'application/json' } // Ensure the content type is correct
+        }
+      );
+  
+      // Handle the response
+      console.log('Response data:', response.data);
       if (response.data.success) {
         alert('User deleted successfully.');
         setPopupData(null);
       } else {
-        alert('Failed to delete user.');
+        alert('Failed to delete user: ' + response.data.message);
       }
     } catch (error) {
       alert('Error deleting user: ' + error.message);
     }
   };
+  
+  
+  
 
   const updateTime = async (userType, id, timeIn, timeOut) => {
     try {
@@ -291,7 +371,6 @@ const handleQRCodeScan = (qrCodeData) => {
   }
 };
 
-// Handle internal QR code scan result
 // Handle internal QR code scan result
 const handleScanSuccessInternal = (result) => {
   if (result && result.text) {
@@ -458,7 +537,7 @@ useEffect(() => {
         <div className="w-full h-20 flex justify-end items-end border-b-2">
           <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
         </div>
-        <div  className="w-full h-full flex flex-col">
+        <div className="w-full h-full flex flex-col overflow-auto">
           <div onScanSuccess={handleQRCodeScan} className="mt-10 flex flex-col items-center justify-center">
               <div className="bg-gray-700 text-white p-8 rounded-lg shadow-md w-full max-w-md">
                 <h1 className="text-3xl font-bold mb-6 text-center">QR Code Scanner</h1>
@@ -528,7 +607,7 @@ useEffect(() => {
 
       {/* Pop-up for showing user data */}
       {popupData && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-20">
           <div className="bg-white p-8 rounded-lg shadow-lg w-2/4">
             <h2 className="text-2xl font-semibold mb-4">Slot User Information</h2>
             <div>
@@ -626,16 +705,13 @@ useEffect(() => {
             <div className="w-full flex justify-between mt-4">
               <button
                 className="mt-4 w-1/4 p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                onClick={handleEdit}
+                onClick={() => setIsEditModalOpen(true)}
               >
                 Edit
               </button>
-              <button
-                className="mt-4 w-1/4 p-2 bg-red-500 text-white rounded hover:bg-red-700"
-                onClick={handleDelete}
-              >
-                Delete
-              </button>
+              <button onClick={() => handleDelete('student')}>Delete Student</button>
+<button onClick={() => handleDelete('faculty')}>Delete Faculty</button>
+
               <button
                 className="mt-4 w-1/4 p-2 bg-gray-500 text-white rounded hover:bg-gray-700"
                 onClick={() => setPopupData(false)}
@@ -645,6 +721,95 @@ useEffect(() => {
             </div>
           </div>
         </div>
+      )}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30 max-sm:w-full">
+        <div className="bg-opacity-50 p-2 rounded-lg max-sm:h-full max-sm:w-full overflow-auto">
+          <form onSubmit={handleSubmit} encType="multipart/form-data" className="flex flex-col w-full gap-3 float:right h-auto max-w-3xl p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 max-sm:w-full sm:p-5">
+              <p className="text-3xl font-semibold tracking-tight relative flex items-center justify-center text-cyan-500 sm:text-2xl max-sm:text-base">
+              <BsPersonFillGear className="mr-5 w-10"/> Edit Account
+              </p>
+            <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
+              <label className="relative w-full">
+                <input name="studentNumber" value={formData.studentNumber} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" "required/>
+                <span className="text-gray-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Student Number</span>
+              </label>
+              <label className="relative w-full">
+                <input name="fullname" value={formData.fullname} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                <span className="text-gray-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">FullName</span>
+              </label>
+            </div>
+            <label className="relative">
+              <input name="email" value={formData.email} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="email" placeholder=" " required />
+              <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Email</span>
+            </label>
+            <label className="relative">
+              <input name="yearsection" value={formData.yearsection} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+              <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Year & Section</span>
+            </label>
+            <label className="relative">
+              <select name="course" value={formData.course} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5 sm:overflow-auto" type="text" placeholder=" " required >
+              <option value="" disabled selected hidden>Course</option>
+              <option>BS Civil Engineering</option>
+              <option>BS Computer Engineering</option>
+              <option>BS Electrical Engineering</option>
+              <option>BS Electronics Engineering</option>
+              <option>BS Mechanical Engineering</option>
+              <option>BS Hospitality Management</option>
+              <option>BS Biology - Microbiology</option>
+              <option>BS Mathematics</option>
+              <option>BS Psychology</option>
+              <option>BS Computer Science</option>
+              <option>Bachelor in Human Services</option>
+              <option>Bachelor of Elementary Education</option>
+              <option>Bachelor of Secondary Education - Science</option>
+              <option>Bachelor of Secondary Education - English</option>
+              <option>Bachelor of Secondary Education - Mathematics</option>
+              <option>Bachelor of Livelihood Education - Home Economics</option>
+              <option>Bachelor of Livelihood Education - Industrial Arts</option>
+              <option>Bachelor of Livelihood Education - Information and Communication Technology</option>
+              <option>Bachelor of Technical Vocational Teacher Education - Drafting Technology</option>
+              <option>Bachelor of Industrial Technology - Automotive Technology</option>
+              <option>Bachelor of Industrial Technology - Architectural Drafting Technology</option>
+              <option>Bachelor of Industrial Technology - Construction Technology</option>
+              <option>Bachelor of Industrial Technology - Electrical Technology</option>
+              <option>Bachelor of Industrial Technology - Electronics Technology</option>
+              <option>Bachelor of Industrial Technology - Heating, Ventilating and Air-conditioning</option>
+            <option>Bachelor of Industrial Technology - Mechanical Technology</option>
+              </select>
+            </label>
+            <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
+            </div>
+            <label className="relative">
+              <input name="password" value={formData.password} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="password" placeholder=" " required />
+              <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Password</span>
+            </label>
+            <div>
+              <label for="formFile" class="form-label">License</label>
+              <input name="license" class="form-control" type="file" id="formFile" onChange={handleFileChange}/>
+            </div>
+            <div>
+              <label for="formFile" class="form-label">ORCR</label>
+              <input name="orcr" class="form-control" type="file" id="formFile" onChange={handleFileChange}/>
+            </div>
+            <div className="flex justify-end justify-between">
+              <button
+                type="button"
+                onClick={() => setIsEditModalOpen(false)}
+                className="mr-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded w-1/2"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded w-1/2"
+              >
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
       )}
     </div>
   );
