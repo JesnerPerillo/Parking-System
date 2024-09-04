@@ -314,177 +314,222 @@ export default function StudentAccount() {
         </nav>
 
         {/*Main Content*/}
-        <div className="w-full h-screen">
-          <div className="w-full h-20 flex justify-end items-end border-b-2">
-            <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">{isNavOpen ? '' : 'Account'}</p>
+        <div className="w-full min-h-screen">
+      <div className="w-full h-20 flex justify-end items-end border-b-2">
+        <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">
+          {isNavOpen ? '' : 'Account'}
+        </p>
+      </div>
+
+      {!isNavOpen && (
+        <div className="w-full lg:w-11/12 bg-blue-900 flex flex-col items-center mt-10 justify-center h-full lg:h-3/4 relative rounded-xl mx-auto border">
+          <div className="h-32 w-full flex sm:flex-row justify-around items-center text-center">
+            <img src={Logo} alt="URS Logo" className="h-20 sm:h-28" />
+            <h1 className="text-white text-lg sm:text-xl lg:text-2xl">
+              STUDENT ACCOUNT
+            </h1>
+            <img src={GSO} alt="GSO Logo" className="h-20 sm:h-28 w-20 sm:w-28" />
           </div>
-          {isNavOpen ? '' : <div className="lg:w-11/12 bg-blue-900 flex items-start mt-10 justify-center lg:h-3/4 relative lg:ml-16 rounded-xl max-sm:w-full border max-sm:h-9/10 max-md:h-3/5 w-full">
-            <div className="h-32 w-full flex justify-around items-center">
-              <img src={Logo} alt="URS Logo" className="h-28"/>
-              <h1 className="text-white ">
-                STUDENT ACCOUNT
-              </h1>
-              <img src={GSO} alt="GSO Logo" className="h-28 w-28"/>
-            <div className="h-5/6 w-full absolute bottom-0 bg-white rounded-xl overflow-auto flex max-sm:flex-col justify-between max-sm:overflow-auto">
-            <div ref={canvasRef} className="w-1/5 bg-gray-200 h-full xl:mt-0 max-sm:w-full mt-20 h-full flex flex-col justify-center items-center">
-                  <div className="mt-5 max-sm:mt-0">
-                  <QRCode value={qrValue} size={200} includeMargin={true}/>
-                  </div>
-
-                  <button onClick={handleDownloadQRCode} className="mt-5 bg-gray-500 text-white p-2 rounded ">
-                    Download QR Code
-                  </button>
+          <div className="w-full h-5/6 max-h-full bg-white rounded-xl overflow-auto flex flex-col sm:flex-row justify-between items-center p-4">
+            <div
+              ref={canvasRef}
+              className="w-full sm:w-1/5 bg-gray-200 h-full flex flex-col justify-center items-center mb-4 sm:mb-0"
+            >
+              <div className="mt-5">
+                <QRCode value={qrValue} size={150} includeMargin={true} />
               </div>
-              <ul className="h-auto w-4/5 overflow-auto flex flex-col justify-between max-sm:h-full">
-                <li className="mb-2 mt-3 max-sm:mb-0 mt-0 text-sm">Student Number: {userData['Student Number']}</li>
-                <li className="mb-4 mt-4 text-6xl max-sm:mt-0 mb-0 font-bold"> {userData.Name}</li>
-                <li className="max-sm:text-xs mb-2">Email: {userData.Email}</li>
-                <li className="max-sm:text-xs mb-2">Year & Section: {userData['Year and Section']}</li>
-                <li className="max-sm:text-xs mb-2">Course: {userData.Course}</li>
-                <li className="max-sm:text-xs mb-2">Vehicle: {userData.Vehicle}</li>
-                <li className="max-sm:text-xs">Plate Number: {userData['Plate Number']}</li>
-                {slot.map((s) => (
-                  <li key={s.slot_id} className="max-sm:text-xs">Parking Slot: {s.slot_number}</li>
-                ))}
-                <div className="mt-10 flex flex-col">
-                <div>
-                    <b>License:</b><br />
-                    {licenseSrc ? (
-                      <div className=" flex">
-                        <img src={licenseSrc} alt="License" className="w-32 h-auto inline-block max-sm:w-24" />
-                        <button onClick={() => handleOpenModal(licenseSrc)} className="ml-2 text-blue-500 hover:text-blue-700">
-                          <BsEyeFill className="w-10 h-7"/>
-                        </button>
-                      </div>
-                    ) : 'No image available'}
-                  </div>
-                  <li className="">
-                    <b>ORCR:</b><br />
-                    {orcrSrc ? (
-                      <div className="flex">
-                        <img src={orcrSrc} alt="ORCR" className="w-32 h-auto inline-block max-sm:w-24" />
-                        <button onClick={() => handleOpenModal(orcrSrc)} className="ml-2 text-blue-500 hover:text-blue-700 ">
-                          <BsEyeFill className="w-10 h-7"/>
-                        </button>
-                      </div>
-                    ) : 'No image available'}
-                  </li>
-
-                  {//This is to Enlarge the image.
-                  }
-                  {isModalOpen && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                      <div className="relative bg-white p-4 rounded-lg shadow-lg flex justify-center w-3/4 h-3/4 max-sm:h-1/3 max-sm:w-full">
-                        <button onClick={handleCloseModal} className="absolute top-0 right-0 mt-2 mr-2 text-gray-500 hover:text-gray-700">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                        <img src={modalImageSrc} alt="Enlarged" className="max-w-full max-h-full max-sm:w-full" />
-                      </div>
+              <button
+                onClick={handleDownloadQRCode}
+                className="mt-5 bg-gray-500 text-white p-2 rounded"
+              >
+                Download QR Code
+              </button>
+            </div>
+            <ul className="w-full sm:w-4/5 flex flex-col justify-between text-sm">
+              <li className="mb-2">Student Number: {userData['Student Number']}</li>
+              <li className="mb-4 text-2xl sm:text-3xl font-bold">
+                {userData.Name}
+              </li>
+              <li className="mb-2">Email: {userData.Email}</li>
+              <li className="mb-2">Year & Section: {userData['Year and Section']}</li>
+              <li className="mb-2">Course: {userData.Course}</li>
+              <li className="mb-2">Vehicle: {userData.Vehicle}</li>
+              <li>Plate Number: {userData['Plate Number']}</li>
+              {slot.map((s) => (
+                <li key={s.slot_id}>Parking Slot: {s.slot_number}</li>
+              ))}
+              <div className="mt-5 flex flex-col">
+                <div className="mb-4">
+                  <b>License:</b>
+                  <br />
+                  {licenseSrc ? (
+                    <div className="flex items-center">
+                      <img
+                        src={licenseSrc}
+                        alt="License"
+                        className="w-24 h-auto"
+                      />
+                      <button
+                        onClick={() => handleOpenModal(licenseSrc)}
+                        className="ml-2 text-blue-500 hover:text-blue-700"
+                      >
+                        <BsEyeFill className="w-6 h-6" />
+                      </button>
                     </div>
+                  ) : (
+                    'No image available'
                   )}
+                </div>
+                <div className="mb-4">
+                  <b>ORCR:</b>
+                  <br />
+                  {orcrSrc ? (
+                    <div className="flex items-center">
+                      <img src={orcrSrc} alt="ORCR" className="w-24 h-auto" />
+                      <button
+                        onClick={() => handleOpenModal(orcrSrc)}
+                        className="ml-2 text-blue-500 hover:text-blue-700"
+                      >
+                        <BsEyeFill className="w-6 h-6" />
+                      </button>
+                    </div>
+                  ) : (
+                    'No image available'
+                  )}
+                </div>
+
+                {isModalOpen && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="relative bg-white p-4 rounded-lg shadow-lg flex justify-center w-3/4 max-w-md h-3/4 max-h-screen">
+                      <button
+                        onClick={handleCloseModal}
+                        className="absolute top-0 right-0 mt-2 mr-2 text-gray-500 hover:text-gray-700"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                      <img
+                        src={modalImageSrc}
+                        alt="Enlarged"
+                        className="max-w-full max-h-full"
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <button
                   onClick={() => setIsEditModalOpen(true)}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 mb-3 w-44 max-sm:ml-7">
+                  className="bg-blue-500 w-60 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 mb-3"
+                >
                   Edit Account
                 </button>
 
-                  {isEditModalOpen ? (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-20 sm:">
-                      <div className="bg-opacity-50 p-8 rounded-lg max-sm:h-full overflow-auto">
-                        <form onSubmit={handleSubmit} encType="multipart/form-data" className="flex flex-col w-full gap-3 float:right h-auto max-w-3xl p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 max-sm:w-full sm:p-5">
-                            <p className="text-3xl font-semibold tracking-tight relative flex items-center justify-center text-cyan-500 sm:text-2xl max-sm:text-base">
-                            <BsPersonFillGear className="mr-5 w-10"/> Edit Account
-                            </p>
-                          <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
-                            <label className="relative w-full">
-                              <input name="studentNumber" value={formData.studentNumber} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5 cursor-no-drop" type="text" placeholder={userData[`Student Number`]} required disabled/> <BsExclamationTriangle className="absolute left-16 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                            </label>
-                            <label className="relative w-full">
-                              <input name="fullname" value={formData.fullname} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
-                              <span className="text-gray-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">FullName</span>
-                            </label>
-                          </div>
-                          <label className="relative">
-                            <input name="email" value={formData.email} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="email" placeholder=" " required />
-                            <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Email</span>
-                          </label>
-                          <label className="relative">
-                            <input name="yearsection" value={formData.yearsection} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
-                            <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Year & Section</span>
-                          </label>
-                          <label className="relative">
-                            <select name="course" value={formData.course} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5 sm:overflow-auto" type="text" placeholder=" " required >
-                            <option value="" disabled selected hidden>Course</option>
-                            <option>BS Civil Engineering</option>
-                            <option>BS Computer Engineering</option>
-                            <option>BS Electrical Engineering</option>
-                            <option>BS Electronics Engineering</option>
-                            <option>BS Mechanical Engineering</option>
-                            <option>BS Hospitality Management</option>
-                            <option>BS Biology - Microbiology</option>
-                            <option>BS Mathematics</option>
-                            <option>BS Psychology</option>
-                            <option>BS Computer Science</option>
-                            <option>Bachelor in Human Services</option>
-                            <option>Bachelor of Elementary Education</option>
-                            <option>Bachelor of Secondary Education - Science</option>
-                            <option>Bachelor of Secondary Education - English</option>
-                            <option>Bachelor of Secondary Education - Mathematics</option>
-                            <option>Bachelor of Livelihood Education - Home Economics</option>
-                            <option>Bachelor of Livelihood Education - Industrial Arts</option>
-                            <option>Bachelor of Livelihood Education - Information and Communication Technology</option>
-                            <option>Bachelor of Technical Vocational Teacher Education - Drafting Technology</option>
-                            <option>Bachelor of Industrial Technology - Automotive Technology</option>
-                            <option>Bachelor of Industrial Technology - Architectural Drafting Technology</option>
-                            <option>Bachelor of Industrial Technology - Construction Technology</option>
-                            <option>Bachelor of Industrial Technology - Electrical Technology</option>
-                            <option>Bachelor of Industrial Technology - Electronics Technology</option>
-                            <option>Bachelor of Industrial Technology - Heating, Ventilating and Air-conditioning</option>
-                          <option>Bachelor of Industrial Technology - Mechanical Technology</option>
-                            </select>
-                          </label>
-                          <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
-                          </div>
-                          <label className="relative">
-                            <input name="password" value={formData.password} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="password" placeholder=" " required />
-                            <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Password</span>
-                          </label>
-                          <div>
-                            <label for="formFile" class="form-label">License</label>
-                            <input name="license" class="form-control" type="file" id="formFile" onChange={handleFileChange}/>
-                          </div>
-                          <div>
-                            <label for="formFile" class="form-label">ORCR</label>
-                            <input name="orcr" class="form-control" type="file" id="formFile" onChange={handleFileChange}/>
-                          </div>
-                          <div className="flex justify-end justify-between">
-                            <button
-                              type="button"
-                              onClick={() => setIsEditModalOpen(false)}
-                              className="mr-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded w-1/2"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              type="submit"
-                              className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded w-1/2"
-                            >
-                              Save Changes
-                            </button>
-                          </div>
-                        </form>
+                {isEditModalOpen && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-20 max-sm:w-full">
+                  <div className="bg-opacity-50 p-2 rounded-lg max-sm:h-full max-sm:w-full overflow-auto">
+                    <form onSubmit={handleSubmit} encType="multipart/form-data" className="flex flex-col w-full gap-3 float:right h-auto max-w-3xl p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 max-sm:w-full sm:p-5">
+                        <p className="text-3xl font-semibold tracking-tight relative flex items-center justify-center text-cyan-500 sm:text-2xl max-sm:text-base">
+                        <BsPersonFillGear className="mr-5 w-10"/> Edit Account
+                        </p>
+                      <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
+                        <label className="relative w-full">
+                          <input name="studentNumber" value={formData.studentNumber} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5 cursor-no-drop" type="text" placeholder={userData[`Student Number`]} required disabled/> <BsExclamationTriangle className="absolute left-16 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                        </label>
+                        <label className="relative w-full">
+                          <input name="fullname" value={formData.fullname} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                          <span className="text-gray-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">FullName</span>
+                        </label>
                       </div>
-                    </div>
-                  ) : ''}
+                      <label className="relative">
+                        <input name="email" value={formData.email} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="email" placeholder=" " required />
+                        <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Email</span>
+                      </label>
+                      <label className="relative">
+                        <input name="yearsection" value={formData.yearsection} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                        <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Year & Section</span>
+                      </label>
+                      <label className="relative">
+                        <select name="course" value={formData.course} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5 sm:overflow-auto" type="text" placeholder=" " required >
+                        <option value="" disabled selected hidden>Course</option>
+                        <option>BS Civil Engineering</option>
+                        <option>BS Computer Engineering</option>
+                        <option>BS Electrical Engineering</option>
+                        <option>BS Electronics Engineering</option>
+                        <option>BS Mechanical Engineering</option>
+                        <option>BS Hospitality Management</option>
+                        <option>BS Biology - Microbiology</option>
+                        <option>BS Mathematics</option>
+                        <option>BS Psychology</option>
+                        <option>BS Computer Science</option>
+                        <option>Bachelor in Human Services</option>
+                        <option>Bachelor of Elementary Education</option>
+                        <option>Bachelor of Secondary Education - Science</option>
+                        <option>Bachelor of Secondary Education - English</option>
+                        <option>Bachelor of Secondary Education - Mathematics</option>
+                        <option>Bachelor of Livelihood Education - Home Economics</option>
+                        <option>Bachelor of Livelihood Education - Industrial Arts</option>
+                        <option>Bachelor of Livelihood Education - Information and Communication Technology</option>
+                        <option>Bachelor of Technical Vocational Teacher Education - Drafting Technology</option>
+                        <option>Bachelor of Industrial Technology - Automotive Technology</option>
+                        <option>Bachelor of Industrial Technology - Architectural Drafting Technology</option>
+                        <option>Bachelor of Industrial Technology - Construction Technology</option>
+                        <option>Bachelor of Industrial Technology - Electrical Technology</option>
+                        <option>Bachelor of Industrial Technology - Electronics Technology</option>
+                        <option>Bachelor of Industrial Technology - Heating, Ventilating and Air-conditioning</option>
+                      <option>Bachelor of Industrial Technology - Mechanical Technology</option>
+                        </select>
+                      </label>
+                      <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
+                      </div>
+                      <label className="relative">
+                        <input name="password" value={formData.password} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="password" placeholder=" " required />
+                        <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Password</span>
+                      </label>
+                      <div>
+                        <label for="formFile" class="form-label">License</label>
+                        <input name="license" class="form-control" type="file" id="formFile" onChange={handleFileChange}/>
+                      </div>
+                      <div>
+                        <label for="formFile" class="form-label">ORCR</label>
+                        <input name="orcr" class="form-control" type="file" id="formFile" onChange={handleFileChange}/>
+                      </div>
+                      <div className="flex justify-end justify-between">
+                        <button
+                          type="button"
+                          onClick={() => setIsEditModalOpen(false)}
+                          className="mr-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded w-1/2"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded w-1/2"
+                        >
+                          Save Changes
+                        </button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
-              </ul>
-            </div>
+                )}
+              </div>
+            </ul>
           </div>
-          </div>}
         </div>
+      )}
+    </div>
       </div>
     </>
   );
