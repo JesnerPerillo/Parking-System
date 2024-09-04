@@ -709,9 +709,8 @@ useEffect(() => {
               >
                 Edit
               </button>
-              <button onClick={() => handleDelete('student')}>Delete Student</button>
-<button onClick={() => handleDelete('faculty')}>Delete Faculty</button>
-
+              {selectedUserType === 'student' ? <button className="mt-4 w-1/4 p-2 bg-red-500 text-white rounded hover:bg-red-700" onClick={() => handleDelete('student')}>Delete Student</button> :
+              <button onClick={() => handleDelete('faculty')}>Delete Faculty</button>}
               <button
                 className="mt-4 w-1/4 p-2 bg-gray-500 text-white rounded hover:bg-gray-700"
                 onClick={() => setPopupData(false)}
