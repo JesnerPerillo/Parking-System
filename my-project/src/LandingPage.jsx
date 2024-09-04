@@ -38,7 +38,7 @@ function LandingPage() {
               <p>STUDENTS</p>
             </Link>
             <Link to="/facultystaffsignup" className="block mb-4 p-4 bg-blue-900 text-center text-xl rounded-md hover:bg-blue-700 no-underline tracking-widest text-white font-semibold">
-              <p>FACULTY | STAFF</p>
+              <p>FACULTY|STAFF</p>
             </Link>
             <Link to="/adminlogin" className="block mb-4 p-4 bg-blue-900 text-center text-xl rounded-md hover:bg-blue-700 no-underline tracking-widest text-white font-semibold">
               <p>ADMIN</p>
