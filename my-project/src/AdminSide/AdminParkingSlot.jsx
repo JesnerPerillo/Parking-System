@@ -1,12 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { BsTaxiFront, BsCreditCard2Front, BsFillPersonVcardFill, BsQuestionSquare } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { BsEyeFill } from "react-icons/bs";
 import QRScanner from '../components/QRScanner.jsx';
+import { BrowserMultiFormatReader } from '@zxing/library';
 
 export default function AdminParkingSlot() {
   const [error, setError] = useState('');
@@ -18,6 +19,13 @@ export default function AdminParkingSlot() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImageSrc, setModalImageSrc] = useState('');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [scanResult, setScanResult] = useState('');
+  const [imageFile, setImageFile] = useState(null);
+  const [scanning, setScanning] = useState(false);
+  const videoRef = useRef(null);
+  const codeReader = useRef(null);
+  const streamRef = useRef(null);
+  const [reader, setReader] = useState(null);
   const [occupiedSpots, setOccupiedSpots] = useState({
     motorcycle: [],
     tricycle: [],
@@ -236,25 +244,172 @@ const handleTimeOut = async () => {
   alert('Time Out recorded successfully!');
 };
 
-const handleScanSuccess = async (scannedData) => {
+// Function to handle QR code scan success
+const onScanSuccess = async (slotType, slotNumber) => {
   try {
-    const response = await axios.post('http://localhost/website/my-project/Backend/verifyqr.php', {
-      qr_data: scannedData
-    }, { withCredentials: true });
+    setSelectedVehicle(slotType);
+    setSelectedSpot(parseInt(slotNumber, 10));
 
+    const fetchUrl = selectedUserType === 'faculty'
+      ? 'http://localhost/website/my-project/Backend/fetchfacultydata.php'
+      : 'http://localhost/website/my-project/Backend/fetchstudentsdata.php';
+
+    const response = await axios.get(fetchUrl, { withCredentials: true });
+    console.log('Response:', response.data);
+    
     if (response.data.success) {
-      // Process scanned data here
-      const { spotNumber, userType } = response.data.data;
-      setSelectedUserType(userType);
-      handleSpotSelection(spotNumber);
+      const data = selectedUserType === 'faculty' ? response.data.faculty : response.data.students;
+      console.log('Fetched user data:', data);
+      
+      const userData = data.find(user => user.slot_number === slotNumber);
+
+      if (userData) {
+        setPopupData(userData);
+        setLicenseSrc(userData.License ? `data:image/jpeg;base64,${userData.License}` : null);
+        setOrcrSrc(userData.ORCR ? `data:image/jpeg;base64,${userData.ORCR}` : null);
+      } else {
+        alert('No user data found for this slot.');
+      }
     } else {
-      alert('Failed to verify QR code.');
+      alert('Failed to retrieve user data.');
     }
   } catch (error) {
-    alert('Error verifying QR code: ' + error.message);
+    console.error('Error fetching user data:', error.message);
+    alert('Error fetching user data: ' + error.message);
   }
 };
-  
+
+
+// Function to handle QR code scan and parse the data
+const handleQRCodeScan = (qrCodeData) => {
+  const { slot_type, slot_number } = qrCodeData;
+
+  if (slot_type && slot_number) {
+    onScanSuccess(slot_type, slot_number);
+  } else {
+    console.error('Invalid QR code data');
+  }
+};
+
+// Handle internal QR code scan result
+// Handle internal QR code scan result
+const handleScanSuccessInternal = (result) => {
+  if (result && result.text) {
+    const scannedData = result.text.trim();
+    const [slotType, slotNumber] = scannedData.split(':');
+
+    if (slotType && slotNumber) {
+      handleQRCodeScan({ slot_type: slotType.trim(), slot_number: slotNumber.trim() });
+      setScanning(false);
+      reader.stop(); // Stop scanning after a successful scan
+    } else {
+      console.error('Slot type or slot number is missing in the scanned data.');
+    }
+  } else {
+    console.error('Result is null or undefined or does not contain text');
+  }
+};
+
+// Start and stop camera based on scanning state
+useEffect(() => {
+  if (scanning) {
+    startCamera();
+  } else {
+    stopCamera();
+  }
+  return () => stopCamera();
+}, [scanning]);
+
+
+// Initialize and start the camera for QR code scanning
+const startCamera = async () => {
+  if (!codeReader.current) {
+    codeReader.current = new BrowserMultiFormatReader();
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    streamRef.current = stream;
+    videoRef.current.srcObject = stream;
+    
+    codeReader.current.decodeFromVideoDevice(null, videoRef.current, handleScanSuccessInternal)
+      .then(() => {
+        console.log('Camera started');
+      })
+      .catch(err => {
+        console.error('Error starting camera:', err);
+      });
+  } catch (err) {
+    console.error('Error accessing camera:', err);
+  }
+};
+
+// Stop the camera when not scanning
+const stopCamera = () => {
+  if (streamRef.current) {
+    const stream = streamRef.current;
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+    }
+
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+      videoRef.current.pause();
+    }
+
+    streamRef.current = null;
+  }
+
+  if (codeReader.current) {
+    codeReader.current.stopContinuousDecode();
+    codeReader.current = null;
+  }
+};
+
+// Start and stop camera based on scanning state
+useEffect(() => {
+  if (scanning) {
+    startCamera();
+  } else {
+    stopCamera();
+  }
+  return () => stopCamera();
+}, [scanning]);
+
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImageFile(file);
+      decodeQRCodeFromFile(file);
+    }
+  };
+
+  const decodeQRCodeFromFile = async (file) => {
+    try {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const result = e.target.result;
+        try {
+          const image = await new BrowserMultiFormatReader().decodeFromImage(undefined, result);
+          handleScanSuccessInternal({ text: image.text }); // Pass result.text to the handler
+        } catch (decodeError) {
+          console.error('Error decoding QR code from file:', decodeError);
+          setScanResult('Failed to decode QR code from image.');
+        }
+      };
+      reader.onerror = (error) => {
+        console.error('Error reading file:', error);
+        setScanResult('Failed to read file.');
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setScanResult('Unexpected error occurred.');
+    }
+  };
+
+
 
   return (
     <div className="relative w-full h-screen bg-blue-900 flex">
@@ -299,118 +454,166 @@ const handleScanSuccess = async (scannedData) => {
       </nav>
 
       {/* Main Content */}
-      <div className="w-full h-screen">
+      <div className="w-full h-screen bg-blue-900">
         <div className="w-full h-20 flex justify-end items-end border-b-2">
           <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
         </div>
-        <div className="container bg-blue-900 mx-auto p-4 h-4/5 overflow-auto mt-20 border-2 rounded">
-          <div className="mb-4">
-            <label className="mr-4 text-white">Select User Type:</label>
-            <select
-              value={selectedUserType}
-              onChange={(e) => setSelectedUserType(e.target.value)}
-              className="p-2 w-40 rounded bg-blue-200 text-blue-900 font-semibold"
-            >
-              <option value="student">Student</option>
-              <option value="faculty">Faculty</option>
-            </select>
+        <div  className="w-full h-full flex flex-col">
+          <div onScanSuccess={handleQRCodeScan} className="mt-10 flex flex-col items-center justify-center">
+              <div className="bg-gray-700 text-white p-8 rounded-lg shadow-md w-full max-w-md">
+                <h1 className="text-3xl font-bold mb-6 text-center">QR Code Scanner</h1>
+                
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold mb-2">Upload QR Code Image</h2>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none"
+                  />
+                  {imageFile && <p className="mt-2 text-sm">Image file selected: {imageFile.name}</p>}
+                  <p className="mt-2 text-sm"> {scanResult}</p>
+                </div>
+                <div className="mb-6">
+                  <h2 className="text-xl font-semibold mb-2">Scan QR Code with Camera</h2>
+                  <button
+                    onClick={() => setScanning(prev => !prev)}
+                    className="w-full bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded"
+                  >
+                    {scanning ? 'Stop Scanning' : 'Start Scanning'}
+                  </button>
+                  {scanning && (
+                    <div className="relative w-full mt-4" style={{ height: '240px' }}>
+                      <video ref={videoRef} autoPlay className="rounded-lg w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <p className="mt-2 text-sm">{scanResult}</p>
+                </div>
+              </div>
+            </div>
+            <div className="w-full h-screen bg-blue-900">
+              <div className="container bg-blue-900 mx-auto p-4 h-4/5 overflow-auto mt-10 border-2 rounded">
+                <div className="mb-4">
+                  <label className="mr-4 text-white">Select User Type:</label>
+                  <select
+                    value={selectedUserType}
+                    onChange={(e) => setSelectedUserType(e.target.value)}
+                    className="p-2 w-40 rounded bg-blue-200 text-blue-900 font-semibold"
+                  >
+                    <option value="student">Student</option>
+                    <option value="faculty">Faculty</option>
+                  </select>
+                </div>
+                <div className="mb-4">
+                  <label className="mr-4 text-white">Select Vehicle Type:</label>
+                  <select
+                    value={selectedVehicle}
+                    onChange={(e) => setSelectedVehicle(e.target.value)}
+                    className="p-2 rounded bg-blue-200 text-blue-900 font-semibold"
+                  >
+                    <option value="motorcycle">Motorcycle</option>
+                    <option value="tricycle">Tricycle</option>
+                    <option value="fourwheeler">Four Wheeler</option>
+                  </select>
+                </div>
+                <div className="grid grid-cols-10 gap-4 text-white">
+                  {renderSpots(categories[selectedVehicle].count, categories[selectedVehicle].color, selectedVehicle)}
+                </div>
+                </div>
+              <div>
+            </div>
           </div>
-          <div className="mb-4">
-            <label className="mr-4 text-white">Select Vehicle Type:</label>
-            <select
-              value={selectedVehicle}
-              onChange={(e) => setSelectedVehicle(e.target.value)}
-              className="p-2 rounded bg-blue-200 text-blue-900 font-semibold"
-            >
-              <option value="motorcycle">Motorcycle</option>
-              <option value="tricycle">Tricycle</option>
-              <option value="fourwheeler">Four Wheeler</option>
-            </select>
-          </div>
-          <div className="grid grid-cols-10 gap-4 text-white">
-            {renderSpots(categories[selectedVehicle].count, categories[selectedVehicle].color, selectedVehicle)}
-          </div>
-        </div>
-        <div>
-          <QRScanner onScanSuccess={handleScanSuccess} />
         </div>
       </div>
 
       {/* Pop-up for showing user data */}
       {popupData && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-2/5">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-2/4">
             <h2 className="text-2xl font-semibold mb-4">Slot User Information</h2>
             <div>
               {selectedUserType === 'student' ? (
                 <div>
-                  <p><strong>Student id:</strong> {popupData.id}</p>
-                  <p><strong>Student Number:</strong> {popupData['Student Number']}</p>
-                  <p><strong>Name:</strong> {popupData.Name}</p>
-                  <p><strong>Email:</strong> {popupData.Email}</p>
-                  <p><strong>Vehicle:</strong> {popupData.Vehicle}</p>
-                  <p><strong>Plate Number:</strong> {popupData['Plate Number']}</p>
-                  <p><strong>Slot Number:</strong> {popupData.slot_number}</p>
-                  <p><strong>Time In:</strong> {popupData[`Time In`] ? formatAMPM(popupData[`Time In`]) : 'N/A'}</p>
-                  <p><strong>Time Out:</strong> {popupData[`Time Out`] ? formatAMPM(popupData[`Time Out`]) : 'N/A'}</p>
+                  <p><strong>Student ID:</strong> {popupData.id || 'N/A'}</p>
+                  <p><strong>Student Number:</strong> {popupData['Student Number'] || 'N/A'}</p>
+                  <p><strong>Name:</strong> {popupData.Name || 'N/A'}</p>
+                  <p><strong>Email:</strong> {popupData.Email || 'N/A'}</p>
+                  <p><strong>Vehicle:</strong> {popupData.Vehicle || 'N/A'}</p>
+                  <p><strong>Plate Number:</strong> {popupData['Plate Number'] || 'N/A'}</p>
+                  <p><strong>Slot Number:</strong> {popupData.slot_number || 'N/A'}</p>
+                  <p><strong>Time In:</strong> {popupData['Time In'] ? formatAMPM(popupData['Time In']) : 'N/A'}</p>
+                  <p><strong>Time Out:</strong> {popupData['Time Out'] ? formatAMPM(popupData['Time Out']) : 'N/A'}</p>
                 </div>
               ) : (
                 <div>
-                  <p><strong>Name:</strong> {popupData.Name}</p>
-                  <p><strong>Email:</strong> {popupData.Email}</p>
-                  <p><strong>Position:</strong> {popupData.Position}</p>
-                  <p><strong>Building:</strong> {popupData.Building}</p>
-                  <p><strong>Vehicle:</strong> {popupData.Vehicle}</p>
-                  <p><strong>Plate Number:</strong> {popupData['Plate Number']}</p>
-                  <p><strong>Slot Number:</strong> {popupData.slot_number}</p>
-                  <p><strong>Time In:</strong> {popupData[`Time In`] ? formatAMPM(popupData[`Time In`]) : 'N/A'}</p>
-                  <p><strong>Time Out:</strong> {popupData[`Time Out`] ? formatAMPM(popupData[`Time Out`]) : 'N/A'}</p>
+                  <p><strong>Name:</strong> {popupData.Name || 'N/A'}</p>
+                  <p><strong>Email:</strong> {popupData.Email || 'N/A'}</p>
+                  <p><strong>Position:</strong> {popupData.Position || 'N/A'}</p>
+                  <p><strong>Building:</strong> {popupData.Building || 'N/A'}</p>
+                  <p><strong>Vehicle:</strong> {popupData.Vehicle || 'N/A'}</p>
+                  <p><strong>Plate Number:</strong> {popupData['Plate Number'] || 'N/A'}</p>
+                  <p><strong>Slot Number:</strong> {popupData.slot_number || 'N/A'}</p>
+                  <p><strong>Time In:</strong> {popupData['Time In'] ? formatAMPM(popupData['Time In']) : 'N/A'}</p>
+                  <p><strong>Time Out:</strong> {popupData['Time Out'] ? formatAMPM(popupData['Time Out']) : 'N/A'}</p>
                 </div>
               )}
+
               <div className="w-full flex justify-around mt-4">
                 {licenseSrc ? (
                   <div className="flex flex-col">
                     <p>License</p>
                     <div className="flex">
                       <img src={licenseSrc} alt="License" className="w-40 h-32 inline-block max-sm:w-24" />
-                      <button onClick={() => handleOpenModal(licenseSrc)} className="ml-2 text-blue-500 hover:text-blue-700">
+                      <button
+                        onClick={() => handleOpenModal(licenseSrc)}
+                        className="ml-2 text-blue-500 hover:text-blue-700"
+                        aria-label="View License"
+                      >
                         <BsEyeFill className="w-10 h-7"/>
                       </button>
                     </div>
                   </div>
-                ) : 'No License image available'}
+                ) : <p>No License image available</p>}
                 {orcrSrc ? (
                   <div className="flex flex-col">
                     <p>ORCR</p>
                     <div className="flex">
                       <img src={orcrSrc} alt="ORCR" className="w-40 h-32 inline-block max-sm:w-24" />
-                      <button onClick={() => handleOpenModal(orcrSrc)} className="ml-2 text-blue-500 hover:text-blue-700">
+                      <button
+                        onClick={() => handleOpenModal(orcrSrc)}
+                        className="ml-2 text-blue-500 hover:text-blue-700"
+                        aria-label="View ORCR"
+                      >
                         <BsEyeFill className="w-10 h-7"/>
                       </button>
                     </div>
                   </div>
-                ) : 'No image available'}
+                ) : <p>No image available</p>}
               </div>
 
-              {/*Buttons for Time in and Time out */}
-              <div className="w-full flex justify-around mt-4">
+              {/* Buttons for Time in and Time out */}
+              <div className="w-full flex items-center justify-evenly mt-20">
                 <button
-                    className="p-2 w-24 bg-green-500 text-white rounded hover:bg-green-700"
-                    onClick={handleTimeIn}
+                  className="p-4 w-48 bg-green-500 text-white text-xl rounded hover:bg-green-700"
+                  onClick={handleTimeIn}
                 >
-                    Time In
+                  Time In
                 </button>
                 <button
-                    className="p-2 bg-red-500 text-white rounded hover:bg-red-700"
-                    onClick={handleTimeOut}
+                  className="p-4 w-48 bg-red-500 text-white text-xl rounded hover:bg-red-700"
+                  onClick={handleTimeOut}
                 >
-                    Time Out
+                  Time Out
                 </button>
               </div>
               {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                   <div className="relative bg-white p-4 rounded-lg shadow-lg flex justify-center w-3/4 h-3/4 max-sm:h-1/3 max-sm:w-full">
-                  <button onClick={handleCloseModal} className="absolute top-0 right-0 mt-2 mr-2 text-gray-500 hover:text-gray-700">
+                    <button
+                      onClick={handleCloseModal}
+                      className="absolute top-0 right-0 mt-2 mr-2 text-gray-500 hover:text-gray-700"
+                      aria-label="Close Modal"
+                    >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                       </svg>
@@ -435,7 +638,7 @@ const handleScanSuccess = async (scannedData) => {
               </button>
               <button
                 className="mt-4 w-1/4 p-2 bg-gray-500 text-white rounded hover:bg-gray-700"
-                onClick={() => setPopupData(null)}
+                onClick={() => setPopupData(false)}
               >
                 Close
               </button>

@@ -39,7 +39,7 @@ export default function StudentMotorcyclePDF() {
 
   // Prepare the data for the bar chart
   const chartData = {
-    labels: Object.keys(vehicleCounts), // Vehicle types
+    labels: ['Motorcycle', 'Tricycle', 'Fourwheeler'], // Vehicle types
     datasets: [
       {
         label: 'Number of Students',

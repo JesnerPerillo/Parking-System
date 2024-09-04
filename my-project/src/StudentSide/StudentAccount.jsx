@@ -203,30 +203,9 @@ export default function StudentAccount() {
   }, []);
   
 
-  const qrValue = slot.length ? `
-|  S T U D E N T   I N F O  |
-
----------------------------------------
-
-STUDENT NUMBER:         ${userData['Student Number']}
-
-NAME:                                ${userData.Name}
-
-EMAIL:                                ${userData.Email}
-
-YEAR SECTION:                ${userData['Year and Section']}
-
-COURSE:                            ${userData.Course}
-
-VEHICLE:                           ${userData.Vehicle}
-
-PLATE NUMBER:              ${userData['Plate Number']}
-
-SLOT TYPE:                       ${slot.map((s) => s.slot_type).join(', ')}
-
-SLOT NUMBER:                 ${slot.map((s) => s.slot_number).join(', ')}
-
-`.trim() : '';
+  const qrValue = slot.length
+  ? slot.map((s) => `${s.slot_type}:${s.slot_number}`).join(',')
+  : '';
 
 
 

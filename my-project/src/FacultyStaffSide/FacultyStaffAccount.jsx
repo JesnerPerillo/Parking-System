@@ -186,26 +186,7 @@ export default function FacultyStaffAccount() {
   }, []);
   
 
-  const qrValue = slot.length ? `
-|  F A C U L T Y   I N F O  |
-
----------------------------------------
-
-NAME:                                ${userData.Name}
-
-EMAIL:                                ${userData.Email}
-
-POSITION:                ${userData.Position}
-
-BUILDING:                            ${userData.Building}
-
-VEHICLE:                           ${userData.Vehicle}
-
-PLATE NUMBER:              ${userData['Plate Number']}
-
-SLOT NUMBER:                 ${slot.map((s) => s.slot_number).join(', ')}
-
-`.trim() : '';
+  const qrValue = slot.length ? slot.map((s) => `${s.slot_type}:${s.slot_number}`).join(',') : '';
 
 
 

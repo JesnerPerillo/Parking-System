@@ -25,9 +25,9 @@ export default function StudentParkingSlots() {
   });
 
   const categories = {
-    motorcycle: { count: 300, color: 'bg-green-500 text-white' },
-    tricycle: { count: 20, color: 'bg-green-500 text-white' },
-    fourwheeler: { count: 20, color: 'bg-green-500 text-white' }
+    motorcycle: { count: 500, color: 'bg-green-500 text-white' },
+    tricycle: { count: 40, color: 'bg-green-500 text-white' },
+    fourwheeler: { count: 40, color: 'bg-green-500 text-white' }
   };
 
   const toggleNav = () => {
