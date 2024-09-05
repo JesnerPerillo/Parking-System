@@ -198,7 +198,7 @@ export default function StudentAbout() {
                 </div>
                 <div className="w-68 bg-white rounded p-4 flex flex-col items-center text-blue-900 text-xl">
                   <img src={VanImg} alt="Van Image" className="w-40 h-40 rounded-full mb-2"/>
-                  <p>Van Carell S.J. Roldan</p>
+                  <p>Van Carell H. Roldan</p>
                   <p>Documents</p>
                 </div>
               </div>
