@@ -107,22 +107,22 @@ export default function StudentAbout() {
             <h1 className="text-bold text-3xl sm:text-2xl md:text-4xl lg:text-2xl xl:text-4xl tracking-widest">PARKING SYSTEM</h1>
           </div>
           <div className="flex flex-col justify-evenly w-full h-2/4 relative">
-            <Link to="/studentdashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+            <Link to="/facultystaffdashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
                 <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/studentparkingslot" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+            <Link to="/facultystaffparkingslot" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
                 <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <Link to="/studentaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+            <Link to="/facultystaffaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
                 <BsFillPersonVcardFill /> <span className="ml-5">Account</span>
               </li>
             </Link>
-            <Link to="/studentabout" className="group no-underline h-16 flex items-center pl-8 bg-blue-900 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+            <Link to="/facultystaffabout" className="group no-underline h-16 flex items-center pl-8 bg-blue-900 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
                 <BsQuestionSquare /> <span className="ml-5">About</span>
               </li>
