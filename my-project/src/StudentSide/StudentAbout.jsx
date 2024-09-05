@@ -129,7 +129,9 @@ export default function StudentAbout() {
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">About</p>
           </div>
-          
+          <div className="w-full h-auto bg-red-900 overflow-auto">
+
+          </div>
         </div>
       </div>
     </>

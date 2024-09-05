@@ -19,16 +19,18 @@ function LandingPage() {
   return (
     <div className="bg-blue-700 min-h-screen flex flex-col items-center">
       <header className="text-center py-4">
-      <div className="relative flex flex-col items-center sm:flex-row sm:justify-center sm:space-x-4 lg:space-x-8 p-4">
+      <div className="relative flex flex-col items-center sm:flex-row sm:mr-16 sm:justify-between sm:space-x-4 lg:space-x-8 p-4">
+        <div className="flex justify-between w-1/2 sm:w-auto">
         <img src={GSOLogo} alt="GSO LOGO" className="w-24 h-24 sm:w-36 sm:h-36" />
-        <p className="text-white text-4xl text-center mt-2 sm:mt-0 sm:text-left sm:text-4xl md:text-5xl lg:text-6xl sm:mx-4">
+        <img src={URSLogo} alt="URS LOGO" className="w-16 h-24 sm:w-24 sm:h-36" />
+        </div>
+        <p className="text-white text-5xl text-center mt-2 sm:mt-0 sm:text-left sm:text-4xl md:text-5xl lg:text-6xl sm:mx-4">
           UNIVERSITY OF RIZAL SYSTEM
         </p>
-        <img src={URSLogo} alt="URS LOGO" className="w-16 h-24 sm:w-24 sm:h-36" />
       </div>
         <span className="text-white text-2xl sm:text-3xl md:text-4xl">MORONG CAMPUS</span>
       </header>
-      <h1 className="text-white text-center text-6xl md:text-7xl tracking-widest"><ColoredLine color="white" />
+      <h1 className="text-white text-center w-full text-4xl md:text-7xl tracking-widest"><ColoredLine color="white" />
       PARKING SYSTEM
       <ColoredLine color="white" />
       </h1>
