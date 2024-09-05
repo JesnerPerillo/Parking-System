@@ -534,9 +534,6 @@ useEffect(() => {
 
       {/* Main Content */}
       <div className="w-full h-screen bg-blue-900">
-        <div className="w-full h-20 flex justify-end items-end border-b-2">
-          <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
-        </div>
         <div className="w-full h-full flex flex-col overflow-auto">
           <div onScanSuccess={handleQRCodeScan} className="mt-10 flex flex-col items-center justify-center">
               <div className="bg-gray-700 text-white p-8 rounded-lg shadow-md w-full max-w-md">

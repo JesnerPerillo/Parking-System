@@ -111,9 +111,6 @@ export default function AdminDashboard() {
 
 
         <div className="w-full h-full flex flex-col">
-          <div className="w-full h-20 flex justify-end items-end border-b-2">
-            <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
-          </div>
           <div className="w-full h-full overflow-auto flex flex-col">
             <h1 className="text-white p-3">Welcome To Your Dashboard</h1>
             <div className="w-full h-1/2 flex justify-around">
