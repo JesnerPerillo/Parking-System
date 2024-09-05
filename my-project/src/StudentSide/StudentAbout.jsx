@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 /* eslint-disable no-unused-vars */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState, useEffect } from 'react';
@@ -12,6 +13,14 @@ import { FiLogOut } from "react-icons/fi";
 import { BsEyeFill } from "react-icons/bs";
 import { BsPersonFillGear } from "react-icons/bs";
 import { BsQuestionSquare } from "react-icons/bs";
+import AboutUS from '../Pictures/aboutimg.png';
+import GSOLogo from '../Pictures/gsoo.png';
+import URSLogo from '../Pictures/urs.png';
+import AboutPark from '../Pictures/aboutparking.jpg';
+import JesnerImg from '../Pictures/jesner.png';
+import JomImg from '../Pictures/jom.png';
+import JesterImg from '../Pictures/jester.png';
+import VanImg from '../Pictures/van.png';
 
 export default function StudentAbout() {
   const [userData, setUserData] = useState({});
@@ -125,12 +134,75 @@ export default function StudentAbout() {
         </nav>
 
         {/*Main Content */}
-        <div className="w-full h-screen">
+        <div className="w-full h-screen bg-blue-900">
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">About</p>
           </div>
-          <div className="w-full h-auto bg-red-900 overflow-auto">
+          <div className="w-full h-[calc(100vh-5rem)] overflow-auto bg-blue-900 p-4">
+            <div className="flex flex-col md:flex-row w-full h-auto justify-around mb-10">
+              <div className="w-full md:w-1/2 flex items-center justify-center mb-4 md:mb-0">
+                <img src={AboutUS} alt="About Us Logo" className="max-w-full h-auto" />
+              </div>
+              <div className="w-full md:w-1/2 text-white text-center md:text-left">
+                <h1 className="text-3xl md:text-4xl mb-4">About Us</h1>
+                <p>Content goes here...</p>
+              </div>
+            </div>
 
+            <div className="flex flex-col-reverse md:flex-row w-full h-auto justify-around mb-10">
+              <div className="w-full md:w-1/2 text-justify text-white mb-4 md:mb-0">
+                <h1 className="text-3xl md:text-4xl text-center md:text-left">University of Rizal System</h1>
+                <p>Content goes here...</p>
+              </div>
+              <div className="w-full md:w-1/2 flex items-center justify-center">
+                <img src={URSLogo} alt="URS Logo" className="max-w-full h-auto" />
+              </div>
+            </div>
+
+            <div className="flex flex-col md:flex-row w-full h-auto justify-around mb-10">
+              <div className="w-full md:w-1/2 flex items-center justify-center mb-4 md:mb-0">
+                <img src={GSOLogo} alt="GSO Logo" className="max-w-full h-auto" />
+              </div>
+              <div className="w-full md:w-1/2 text-justify text-white">
+                <h1 className="text-3xl md:text-4xl text-center md:text-left">General Services Office</h1>
+                <p>Content goes here...</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col-reverse md:flex-row w-full h-auto justify-around mb-10">
+              <div className="w-full md:w-1/2 text-justify text-white mb-4 md:mb-0">
+                <h1 className="text-3xl md:text-4xl text-center md:text-left">URSM ParkSpot</h1>
+                <p>Content goes here...</p>
+              </div>
+              <div className="w-full md:w-1/2 flex items-center justify-center">
+                <img src={AboutPark} alt="About Park Img" className="rounded max-w-full h-auto" />
+              </div>
+            </div>
+            <div className="w-full h-auto w-auto flex flex-col items-center justify-center mt-10">
+              <h1 className="text-white text-3xl md:text-5xl mb-6">Meet Our Team</h1>
+              <div className="flex flex-col w-auto justify-center gap-6 sm:flex-row">
+                <div className="w-68 bg-white rounded p-4 flex flex-col items-center text-blue-900 text-xl">
+                  <img src={JesnerImg} alt="Jesner Image" className="w-40 h-40 rounded-full mb-2"/>
+                  <p>Jesner Arlan D. Perillo</p>
+                  <p>Developer</p>
+                </div>
+                <div className="w-68 bg-white rounded p-4 flex flex-col items-center text-blue-900 text-xl">
+                  <img src={JesterImg} alt="Jester Image" className="w-40 h-40 rounded-full mb-2"/>
+                  <p>Jester T. Bacsain</p>
+                  <p>Documents</p>
+                </div>
+                <div className="w-68 bg-white rounded p-4 flex flex-col items-center text-blue-900 text-xl">
+                  <img src={JomImg} alt="Jom Image" className="w-40 h-40 rounded-full mb-2"/>
+                  <p>Jomarie M. Dumasapal</p>
+                  <p>Designer</p>
+                </div>
+                <div className="w-68 bg-white rounded p-4 flex flex-col items-center text-blue-900 text-xl">
+                  <img src={VanImg} alt="Van Image" className="w-40 h-40 rounded-full mb-2"/>
+                  <p>Van Carell S.J. Roldan</p>
+                  <p>Documents</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

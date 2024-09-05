@@ -30,7 +30,7 @@ function LandingPage() {
       </div>
         <span className="text-white text-2xl sm:text-3xl md:text-4xl">MORONG CAMPUS</span>
       </header>
-      <h1 className="text-white text-center w-full text-4xl md:text-7xl tracking-widest"><ColoredLine color="white" />
+      <h1 className="text-white text-center w-full text-4xl sm:w-auto md:text-7xl tracking-widest"><ColoredLine color="white" />
       PARKING SYSTEM
       <ColoredLine color="white" />
       </h1>
