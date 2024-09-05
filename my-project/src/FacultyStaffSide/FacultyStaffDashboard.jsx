@@ -117,7 +117,7 @@ export default function FacultyStaffDashboard() {
               <BsFillPersonVcardFill /> <span className="ml-5">Account</span>
               </li>
             </Link>
-            <Link to="/gsoabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+            <Link to="/facultystaffabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsQuestionSquare /> <span className="ml-5">About</span>
               </li>
