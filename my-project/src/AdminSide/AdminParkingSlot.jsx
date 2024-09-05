@@ -49,7 +49,10 @@ export default function AdminParkingSlot() {
     studentNumber: '',
     fullname: '',
     email: '',
+    position: '',
+    building: '',
     yearsection: '',
+    plateNumber: '',
     course: '',
     password: '',
     license: null,
@@ -72,20 +75,26 @@ export default function AdminParkingSlot() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e, type) => {
     e.preventDefault();
-  
+    
     const form = new FormData();
     for (const key in formData) {
       form.append(key, formData[key]);
     }
   
-    // Add studentNumber to the form data
+    // Add ID to the form data
     form.append('id', popupData.id);
+  
+    // Determine the URL based on the type (student or faculty/staff)
+    const url = type === 'student'
+      ? 'http://localhost/website/my-project/Backend/admineditstudent.php'
+      : 'http://localhost/website/my-project/Backend/admineditfaculty.php';
+  
     console.log('Form data being sent:', form);
   
     try {
-      const response = await axios.post('http://localhost/website/my-project/Backend/admineditstudent.php', form, {
+      const response = await axios.post(url, form, {
         withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -101,6 +110,8 @@ export default function AdminParkingSlot() {
           password: '', // Don't show the password in user data
         }));
         alert('Account updated successfully');
+        setIsEditModalOpen(false);
+        setPopupData(false);
       } else {
         alert('Error updating account: ' + response.data.message);
       }
@@ -109,6 +120,7 @@ export default function AdminParkingSlot() {
       alert('Error updating account. Please try again.');
     }
   };
+  
   
 
 
@@ -231,6 +243,12 @@ export default function AdminParkingSlot() {
   };
 
   const handleDelete = async (userType) => {
+
+    const isConfirmed = window.confirm('Are you sure you want to delete this user?');
+
+    if (!isConfirmed) {
+      return;
+    }
     try {
       // Log the data being sent
       console.log('Sending request with:', { id: popupData.id });
@@ -259,8 +277,6 @@ export default function AdminParkingSlot() {
       alert('Error deleting user: ' + error.message);
     }
   };
-  
-  
   
 
   const updateTime = async (userType, id, timeIn, timeOut) => {
@@ -707,7 +723,7 @@ useEffect(() => {
                 Edit
               </button>
               {selectedUserType === 'student' ? <button className="mt-4 w-1/4 p-2 bg-red-500 text-white rounded hover:bg-red-700" onClick={() => handleDelete('student')}>Delete Student</button> :
-              <button onClick={() => handleDelete('faculty')}>Delete Faculty</button>}
+              <button className="mt-4 w-1/4 p-2 bg-red-500 text-white rounded hover:bg-red-700" onClick={() => handleDelete('faculty')}>Delete Faculty</button>}
               <button
                 className="mt-4 w-1/4 p-2 bg-gray-500 text-white rounded hover:bg-gray-700"
                 onClick={() => setPopupData(false)}
@@ -721,7 +737,7 @@ useEffect(() => {
       {isEditModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30 max-sm:w-full">
         <div className="bg-opacity-50 p-2 rounded-lg max-sm:h-full max-sm:w-full overflow-auto">
-          <form onSubmit={handleSubmit} encType="multipart/form-data" className="flex flex-col w-full gap-3 float:right h-auto max-w-3xl p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 max-sm:w-full sm:p-5">
+          {selectedUserType === 'student' ? (<form onSubmit={handleSubmit} encType="multipart/form-data" className="flex flex-col w-full gap-3 float:right h-auto max-w-3xl p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 max-sm:w-full sm:p-5">
               <p className="text-3xl font-semibold tracking-tight relative flex items-center justify-center text-cyan-500 sm:text-2xl max-sm:text-base">
               <BsPersonFillGear className="mr-5 w-10"/> Edit Account
               </p>
@@ -775,6 +791,15 @@ useEffect(() => {
               </select>
             </label>
             <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
+              <label className="relative w-full">
+                <select name="vehicleType" value={formData.vehicleType} onChange={handleChange} className="placeholder:text-gray-400 w-full bg-gray-800 text-red-500 py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" disabled required>
+                  <option>{popupData.Vehicle}</option>
+                </select>
+              </label>
+              <label className="relative w-full">
+                <input name="plateNumber" value={formData.plateNumber} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Plate Number</span>
+              </label>
             </div>
             <label className="relative">
               <input name="password" value={formData.password} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="password" placeholder=" " required />
@@ -803,7 +828,71 @@ useEffect(() => {
                 Save Changes
               </button>
             </div>
-          </form>
+          </form>) : (<div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
+              <div className="bg-gray-900 bg-opacity-90 rounded-lg max-w-3xl w-full max-sm:w-full overflow-auto">
+                <form onSubmit={handleSubmit} encType="multipart/form-data" className="flex p-3 flex-col w-full gap-3 h-auto bg-gray-900 text-white border border-gray-700 rounded-lg">
+                <p className="text-3xl font-semibold tracking-tight relative flex items-center justify-center text-cyan-500 sm:text-2xl max-sm:text-base">
+                  <BsPersonFillGear className="mr-5 w-10"/> Edit Account
+                </p>
+                <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
+                  <label className="relative w-full">
+                    <input name="fullname" value={formData.fullname} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                    <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">FullName</span>
+                  </label>
+                  <label className="relative w-full">
+                    <input name="email" value={formData.email}  onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="email" placeholder=" " required />
+                    <span className="text-gray-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Email</span>
+                  </label>
+                </div>
+                <label className="relative">
+                  <input name="position" value={formData.position} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                  <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Position</span>
+                </label>
+                <label className="relative">
+                  <input name="building" value={formData.building} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                  <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Building</span>
+                </label>
+                <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
+                  <label className="relative w-full">
+                    <select name="vehicleType" value={formData.vehicleType} onChange={handleChange} className="placeholder:text-gray-400 w-full bg-gray-800 text-red-500 py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" disabled required>
+                      <option>{popupData.Vehicle}</option>
+                    </select>
+                  </label>
+                  <label className="relative w-full">
+                    <input name="plateNumber" value={formData.plateNumber} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                    <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Plate Number</span>
+                  </label>
+                </div>
+                <label className="relative">
+                  <input name="password" value={formData.password} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="password" placeholder=" " required />
+                  <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Password</span>
+                </label>
+                <div>
+                  <label for="formFile" class="form-label">License</label>
+                  <input name="license" onChange={handleFileChange} class="form-control" type="file" id="formFile" />
+                </div>
+                <div>
+                  <label for="formFile" class="form-label">ORCR</label>
+                  <input name="orcr" onChange={handleFileChange} class="form-control" type="file" id="formFile" />
+                </div>
+                  <div className="flex justify-end justify-between">
+                    <button
+                      type="button"
+                      onClick={() => setIsEditModalOpen(false)}
+                      className="mr-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded w-1/2"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded w-1/2"
+                    >
+                    Save Changes
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>)}
         </div>
       </div>
       )}

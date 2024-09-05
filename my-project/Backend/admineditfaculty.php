@@ -15,22 +15,23 @@ error_reporting(E_ALL);
 $response = array();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Retrieve student ID from POST request
-    $studentId = $_POST['id'] ?? '';
+    // Retrieve faculty ID from POST request
+    $facultyId = $_POST['id'] ?? '';
 
-    if (empty($studentId)) {
-        echo json_encode(['success' => false, 'message' => 'Student ID is required.']);
+    if (empty($facultyId)) {
+        echo json_encode(['success' => false, 'message' => 'Faculty ID is required.']);
         exit();
     }
 
     // Retrieve other fields
-    $studentNumber = $_POST['studentNumber'] ?? '';
     $name = $_POST['fullname'] ?? '';
     $email = $_POST['email'] ?? '';
-    $yearAndSection = $_POST['yearsection'] ?? '';
-    $course = $_POST['course'] ?? '';
+    $position = $_POST['position'] ?? '';
+    $building = $_POST['building'] ?? '';
+    $vehicle = $_POST['vehicle'] ?? '';
     $plateNumber = $_POST['plateNumber'] ?? '';
     $password = $_POST['password'] ?? '';
+
     $license = $_FILES['license'] ?? null;
     $orcr = $_FILES['orcr'] ?? null;
 
@@ -38,11 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $params = [];
     $types = '';
 
-    if (!empty($studentNumber)) {
-    $updateFields[] = '`Student Number` = ?';
-    $params[] = $studentNumber;
-    $types .= 's';
-  }
     if (!empty($name)) {
         $updateFields[] = 'Name = ?';
         $params[] = $name;
@@ -53,18 +49,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $params[] = $email;
         $types .= 's';
     }
-    if (!empty($yearAndSection)) {
-        $updateFields[] = '`Year and Section` = ?';
-        $params[] = $yearAndSection;
+    if (!empty($position)) {
+        $updateFields[] = 'Position = ?';
+        $params[] = $position;
         $types .= 's';
     }
-    if (!empty($course)) {
-        $updateFields[] = 'Course = ?';
-        $params[] = $course;
+    if (!empty($building)) {
+        $updateFields[] = 'Building = ?';
+        $params[] = $building;
+        $types .= 's';
+    }
+    if (!empty($vehicle)) {
+        $updateFields[] = 'Vehicle = ?';
+        $params[] = $vehicle;
         $types .= 's';
     }
     if (!empty($plateNumber)) {
-        $updateFields[] = 'Plate Number = ?';
+        $updateFields[] = '`Plate Number` = ?';
         $params[] = $plateNumber;
         $types .= 's';
     }
@@ -99,12 +100,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $types .= 'b';
     }
 
-    // Add student ID for the WHERE clause
-    $params[] = $studentId;
+    // Add faculty ID for the WHERE clause
+    $params[] = $facultyId;
     $types .= 's';
 
     // Prepare SQL query
-    $sql = "UPDATE students SET " . implode(', ', $updateFields) . " WHERE id = ?";
+    $sql = "UPDATE facultystaff SET " . implode(', ', $updateFields) . " WHERE id = ?";
     $stmt = $conn->prepare($sql);
 
     if ($stmt === false) {
@@ -143,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $response['success'] = true;
-    $response['message'] = 'User updated successfully.';
+    $response['message'] = 'Faculty member updated successfully.';
 
     // Close connections
     $stmt->close();

@@ -10,6 +10,8 @@ import StudentTricyclePDF from '../components/StudentTricyclePDF.jsx';
 import StudentFourwheelsPDF from '../components/StudentFourwheelsPDF.jsx';
 import StudentParkingDataPDF from '../components/StudentParkingDataPDF.jsx';
 import FacultyFourwheelsPDF from '../components/FacultyFourwheelsPDF.jsx';
+import FacultyMotorcyclePDF from '../components/FacultyMotorcyclePDF.jsx';
+import FacultyParkingDataPDF from '../components/FacultyParkingDataPDF.jsx';
 
 
 export default function AdminReport() {
@@ -141,12 +143,9 @@ export default function AdminReport() {
               </li>
             </Link>
           </div>
-          <button
-            className="w-3/4 h-14 rounded-xl text-white font-semibold tracking-widest text-2xl bg-red-600"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+          <button className="w-3/4 h-14 rounded-xl text-red-600 border border-red-500 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center hover:bg-red-600" onClick={handleLogout}>
+          <span className="hover:text-white hover:bg-red-600 rounded-xl flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut className="rotate-180"/>Logout</span>
+        </button>
         </nav>
 
         {/*Main Content */}
@@ -174,7 +173,7 @@ export default function AdminReport() {
                 </div>
                 <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl">
                   <StudentParkingDataPDF />
-                  <p className="text-lg font-bold"> Total User</p>
+                  <p className="text-lg font-bold">Student Total User</p>
                 </div>
               </div>
             </div>
@@ -188,6 +187,14 @@ export default function AdminReport() {
                 <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl mb-2">
                   <FacultyFourwheelsPDF />
                   <p className="text-lg font-bold">FourWheeler</p>
+                </div>
+                <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl mb-2">
+                  <FacultyMotorcyclePDF />
+                  <p className="text-lg font-bold">FourWheeler</p>
+                </div>
+                <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl mb-2">
+                  <FacultyParkingDataPDF />
+                  <p className="text-lg font-bold">Faculty Total User</p>
                 </div>
               </div>
             </div>

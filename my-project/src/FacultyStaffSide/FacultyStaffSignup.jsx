@@ -112,7 +112,6 @@ export default function FacultyStaffSignup(){
               <select name="vehicleType" value={formData.vehicleType} onChange={handleChange} className="placeholder:text-gray-400 w-full bg-gray-800 text-white py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" required>
               <option value="" disabled  hidden>Type of Vehicle</option>
                 <option>Motorcycle</option>
-                <option>Tricycle</option>
                 <option>Fourwheeler</option>
               </select>
             </label>
