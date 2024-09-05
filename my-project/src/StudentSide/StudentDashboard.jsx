@@ -90,11 +90,11 @@ export default function StudentDashboard() {
       <div className="w-full h-screen bg-blue-900 flex">
         {/* Navigation button */}
         <button
-            className="lg:hidden bg-white text-blue-900 p-2 rounded-full fixed top-4 left-4 z-50"
-            onClick={toggleNav}
-          >
-            {isNavOpen ? '✕' : '☰'}
-          </button>
+          className="lg:hidden bg-white text-blue-900 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-10"
+          onClick={toggleNav}
+        >
+          {isNavOpen ? '✕' : '☰'}
+        </button>
 
           {/* Navigation menu */}
           <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-md:flex max-md:flex-col max-md:items-center md:flex md:flex-col md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>

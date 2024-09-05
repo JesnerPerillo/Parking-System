@@ -95,7 +95,7 @@ export default function StudentAbout() {
       <div className="relative w-full lg:h-screen bg-blue-900 flex">
         {/* Navigation button */}
         <button
-          className="lg:hidden bg-white text-blue-900 p-2 rounded-full fixed top-4 left-4 z-10"
+          className="lg:hidden bg-white text-blue-900 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-10"
           onClick={toggleNav}
         >
           {isNavOpen ? '✕' : '☰'}
