@@ -10,6 +10,7 @@ import FacultyStaffLogin from '././FacultyStaffSide/FacultyStaffLogin.jsx'
 import FacultyStaffDashboard from '././FacultyStaffSide/FacultyStaffDashboard.jsx'
 import FacultyStaffParkingSlot from '././FacultyStaffSide/FacultyStaffParkingSlot.jsx'
 import FacultyStaffAccount from '././FacultyStaffSide/FacultyStaffAccount.jsx'
+import FacultyStaffAbout from '././FacultyStaffSide/FacultyStaffAbout.jsx';
 import AdminLogin from '././AdminSide/AdminLogin.jsx'
 import AdminDashboard from '././AdminSide/AdminDashboard.jsx'
 import AdminReport from '././AdminSide/AdminReport.jsx'
@@ -37,6 +38,7 @@ export default function App(){
             <Route path="/facultystaffdashboard" element={<FacultyStaffDashboard />} />
             <Route path="/facultystaffparkingslot" element={<FacultyStaffParkingSlot />} />
             <Route path="/facultystaffaccount" element={<FacultyStaffAccount />} />
+            <Route path="/facultystaffabout" element={<FacultyStaffAbout />} />
             <Route path="/adminlogin" element={<AdminLogin />} />
             <Route path="/admindashboard" element={<AdminDashboard />} />
             <Route path="/adminparkingslot" element={<AdminParkingSlot />} />
