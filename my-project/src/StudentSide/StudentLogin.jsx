@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import URSlogo from '../Pictures/urs.png';
 import GSOlogo from '../Pictures/gsoo.png';
 import '../App.css';
+import SideImg from '../Pictures/sideimg.png';
 
 export default function StudentLogin() {
     const [studentNumber, setStudentNumber] = useState('');
@@ -43,21 +44,10 @@ export default function StudentLogin() {
 
     return (
         <div className="bg-gradient-to-r from-blue-700 w-full to-teal-700 min-h-screen flex flex-col items-center">
-            <div className="form xl:w-2/4 mt-28 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-blue-900">
+            <div className="relative form xl:w-2/4 mt-28 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-white">
                 <div className="header flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
-                    <div className="gso-logo flex items-center justify-center w-full md:w-1/3">
-                        <img src={GSOlogo} alt="GSOLogo" className="w-24 h-24 md:w-36 md:h-36" />
-                    </div>
-                    <div className="gso-title flex items-center justify-center w-full md:w-1/3 text-center md:text-left">
-                        <h1 className="text-white font-bold text-2xl md:text-3xl lg:text-5xl ">
-                            <span className="text-4xl md:text-6xl tracking-wider">G</span>eneral{' '}
-                            <span className="text-4xl md:text-6xl tracking-wider">S</span>ervices{' '}
-                            <span className="text-4xl md:text-6xl tracking-wider">O</span>ffice
-                        </h1>
-                    </div>
-                    <div className="urs-logo flex items-center justify-center w-full md:w-1/3">
-                        <img src={URSlogo} alt="URS Logo" className="w-20 h-24 md:w-28 md:h-32" />
-                    </div>
+                <div className="w-96 h-96 bg-blue-900 rounded-full absolute left-0"></div>
+                    <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />
                 </div>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4 float:right w-2/4 p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 max-sm:w-full sm:p-5">
                     <p className="text-3xl font-semibold tracking-tight relative flex items-center pl-7 text-cyan-500 sm:text-2xl">

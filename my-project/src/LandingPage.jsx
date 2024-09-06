@@ -38,7 +38,7 @@ function LandingPage() {
         <div className="text-center h-1/3 w-2/5 flex flex-col justify-center min-w-full md:min-w-[700px]">
           <img src={Car} alt="GSO LOGO" className="w-full h-full" />
         </div>
-        <div className="bg-gray-200 p-6 h-auto rounded-lg mt-5 m-2 w-full md:w-[450px] flex flex-col justify-center mt-8 md:mt-24">
+        <div className="bg-gray-200 z-20 p-6 h-auto rounded-lg mt-5 m-2 w-full md:w-[450px] flex flex-col justify-center mt-8 md:mt-24">
           <div className="mb-4">
             <p className="text-lg">Log in as :</p>
           </div>
