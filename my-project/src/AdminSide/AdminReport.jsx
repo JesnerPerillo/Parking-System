@@ -185,11 +185,11 @@ export default function AdminReport() {
             <div>
               <div className="W-4/5 h-1/3 flex justify-around">
                 <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl mb-2">
-                  <FacultyFourwheelsPDF />
-                  <p className="text-lg font-bold">FourWheeler</p>
+                  <FacultyMotorcyclePDF />
+                  <p className="text-lg font-bold">Motorcycle</p>
                 </div>
                 <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl mb-2">
-                  <FacultyMotorcyclePDF />
+                  <FacultyFourwheelsPDF />
                   <p className="text-lg font-bold">FourWheeler</p>
                 </div>
                 <div className="w-60 h-60 bg-white rounded flex flex-col justify-between items-center border shadow-xl mb-2">
