@@ -223,9 +223,9 @@ export default function AdminParkingSlot() {
     tricycle: { count: 40, color: 'bg-green-500' },
     fourwheeler: { count: 40, color: 'bg-green-500' }
   } : {
-    motorcycle: { count: 110, color: 'bg-yellow-500' },
+    motorcycle: { count: 110, color: 'bg-yellow-400' },
     tricycle: { count: 0, color: 'bg-orange-500' },
-    fourwheeler: { count: 25, color: 'bg-orange-500' }
+    fourwheeler: { count: 25, color: 'bg-yellow-400' }
   };
   
   const renderSpots = (count, color, vehicleType) => {
@@ -596,8 +596,8 @@ useEffect(() => {
         const doc = new jsPDF();
   
         // Add title to the PDF
-        doc.setFontSize(18);
-        doc.text('Logs Report', 14, 22);
+        doc.setFontSize(15);
+        doc.text('Logs Report', 14, 20);
   
         // Define table columns and data
         const columns = [
@@ -610,11 +610,18 @@ useEffect(() => {
           { header: 'Time Out', dataKey: 'Time Out' },
           { header: 'Created At', dataKey: 'created_at' },
         ];
+
+        const formattedLogs = logs.map(log => ({
+          ...log,
+          'Time In' : formatAMPM(log['Time In']),
+          'Time Out' : formatAMPM(log['Time Out']),
+          'created_at' : formatDateTime(log['created_at']),
+        }));
   
         // Add table to PDF
         doc.autoTable({
           head: [columns.map(col => col.header)],
-          body: logs.map(log => columns.map(col => log[col.dataKey] || 'NA')),
+          body: formattedLogs.map(log => columns.map(col => log[col.dataKey || '--:--:--'])),
           startY: 30,
         });
   
@@ -628,6 +635,82 @@ useEffect(() => {
     }
   };
 
+  
+  const sortLogsByHour = (logs) => {
+    return logs.sort((a, b) => new Date(a['Time In']).getHours() - new Date(b['Time In']).getHours());
+  };
+  
+  const sortLogsByDay = (logs) => {
+    return logs.sort((a, b) => new Date(a.created_at).getDate() - new Date(b.created_at).getDate());
+  };
+  
+  const sortLogsByWeek = (logs) => {
+    const getWeek = (date) => {
+      const d = new Date(date);
+      const day = d.getDay();
+      const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust for week start
+      return new Date(d.setDate(diff));
+    };
+    return logs.sort((a, b) => getWeek(a.created_at) - getWeek(b.created_at));
+  };
+  
+  const filterByUserType = (logs, userType) => {
+    return logs.filter(log => log.user_type === userType);
+  };
+  
+  const [sortCriteria, setSortCriteria] = useState('day'); // Default sort by day
+
+  // Sorting and filtering logic
+  let filteredLogs = [...logs];
+
+  if (selectedUserType) {
+    filteredLogs = filterByUserType(filteredLogs, selectedUserType);
+  }
+
+  if (sortCriteria === 'hour') {
+    filteredLogs = sortLogsByHour(filteredLogs);
+  } else if (sortCriteria === 'day') {
+    filteredLogs = sortLogsByDay(filteredLogs);
+  } else if (sortCriteria === 'week') {
+    filteredLogs = sortLogsByWeek(filteredLogs);
+  }
+
+  const [popupVisible, setIsPopupVisible] = useState(false);
+  const [selectedSelection, setSelectedSelection] = useState('');
+
+  const handleDeleteLogs = async (selection) => {
+    const isConfirmed = window.confirm('Are you sure you want to delete these logs?');
+
+    if (!isConfirmed) {
+      return;
+    }
+    try {
+      // Log the data being sent
+      console.log('Sending request with:', { selection });
+
+      // Send POST request
+      const response = await axios.post('http://localhost/website/my-project/Backend/logsdelete.php',
+        { 
+          selection // Include the selection criteria
+        },
+        { 
+          withCredentials: true,
+          headers: { 'Content-Type': 'application/json' } // Ensure the content type is correct
+        }
+      );
+
+      // Handle the response
+      console.log('Response data:', response.data);
+      if (response.data.success) {
+        alert('Logs deleted successfully.');
+        setIsPopupVisible(false); // Hide popup on success
+      } else {
+        alert('Failed to delete logs: ' + response.data.message);
+      }
+    } catch (error) {
+      alert('Error deleting logs: ' + error.message);
+    }
+  };
 
 
   return (
@@ -705,28 +788,101 @@ useEffect(() => {
               </div>
             </div>
             <div className="w-1/2 h-auto flex relative">
-              {isNavOpen ? '' : <img src={Beep} alt="Beep Vehicle Image" className="drop-shadow-2xl w-2/3 md:w-2/3" />}
-              <button onClick={fetchLogs} className="absolute right-0 bg-gray-400 w-40 h-10 rounded text-white tracking-widest">Logs</button>
+              {isNavOpen ? '' : <img src={Beep} alt="Beep Vehicle Image" className="drop-shadow-2xl w-full md:w-2/3" />}
             </div>
             </div>
             {isPopupVisible && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
                 <div className="bg-white p-8 rounded-lg shadow-lg h-9/10 w-4/5">
                   <div className="flex justify-between items-center">
                     <div className="flex">
                       <h2 className="text-xl font-bold mr-5">Logs</h2>
-                      <button onClick={downloadLogsAsPDF} className="h-10 w-48 bg-red-500 rounded text-white flex justify-evenly items-center hover:bg-red-700"><span>Download Logs</span> <MdOutlineFileDownload /></button>
+                      <button onClick={downloadLogsAsPDF} className="h-10 w-48 bg-red-500 rounded text-white flex justify-evenly items-center hover:bg-red-700">
+                        <span>Download Logs</span> <MdOutlineFileDownload />
+                      </button>
                     </div>
-                    <button onClick={closePopup} className="text-gray-500 hover:text-gray-700">
-                      Close
+                    <button onClick={closePopup} className="text-gray-500 hover:text-gray-700">Close</button>
+                  </div>
+
+                  {/* Sorting Buttons */}
+                  <div className="mt-4 flex space-x-4">
+                    <select
+                      value={selectedUserType}
+                      onChange={(e) => setSelectedUserType(e.target.value)}
+                      className="p-2 w-full md:w-40 rounded text-blue-900 font-semibold"
+                    >
+                      <option value="">All Users</option>
+                      <option value="student">Student</option>
+                      <option value="faculty">Faculty</option>
+                    </select>
+                  </div>
+
+                  {/* Sorting Selection */}
+                  <div className="mt-4 flex space-x-4">
+                    <button
+                      onClick={() => setSortCriteria('hour')}
+                      className={`btn ${sortCriteria === 'hour' ? 'btn-active' : ''}`}
+                    >
+                      Sort by Hour
+                    </button>
+                    <button
+                      onClick={() => setSortCriteria('day')}
+                      className={`btn ${sortCriteria === 'day' ? 'btn-active' : ''}`}
+                    >
+                      Sort by Day
+                    </button>
+                    <button
+                      onClick={() => setSortCriteria('week')}
+                      className={`btn ${sortCriteria === 'week' ? 'btn-active' : ''}`}
+                    >
+                      Sort by Week
+                    </button>
+                    <button onClick={() => setIsPopupVisible(true)}>
+                      Delete Logs
                     </button>
                   </div>
+                  <div>
+                    {/* Popup */}
+                    {popupVisible && (
+                      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        <div className="bg-white p-8 rounded-lg shadow-lg w-1/4">
+                          <h2 className="text-xl font-bold mb-4">Delete Logs</h2>
+                          <div className="mb-4">
+                            <label className="block mb-2">Select Criteria:</label>
+                            <select
+                              value={selectedSelection}
+                              onChange={(e) => setSelectedSelection(e.target.value)}
+                              className="p-2 w-full border rounded"
+                            >
+                              <option value="" disabled  hidden>Select...</option>
+                              <option value="student">Students</option>
+                              <option value="faculty">Faculty</option>
+                            </select>
+                          </div>
+                          <div className="flex justify-end">
+                            <button
+                              onClick={() => handleDeleteLogs(selectedSelection)}
+                              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
+                            >
+                              Confirm Delete
+                            </button>
+                            <button
+                              onClick={() => setIsPopupVisible(false)}
+                              className="ml-4 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                   {/* Logs Table */}
-                  <div className="overflow-auto w-full max-h-1/4 mt-4">
+                  <div className="overflow-auto w-full h-4/5 mt-4">
                     <table className="min-w-full table-auto border-collapse border border-gray-200">
                       <thead>
                         <tr className="bg-gray-100">
-                          <th className="border border-gray-300 px-4 py-2">ID</th>
+                          <th className="border border-gray-300 px-4 py-2">#</th>
                           <th className="border border-gray-300 px-4 py-2">User Type</th>
                           <th className="border border-gray-300 px-4 py-2">User ID</th>
                           <th className="border border-gray-300 px-4 py-2">Student Number</th>
@@ -734,14 +890,14 @@ useEffect(() => {
                           <th className="border border-gray-300 px-4 py-2">Position</th>
                           <th className="border border-gray-300 px-4 py-2">Time In</th>
                           <th className="border border-gray-300 px-4 py-2">Time Out</th>
-                          <th className="border border-gray-300 px-4 py-2">Created At</th>
+                          <th className="border border-gray-300 px-4 py-2">Time Stamp</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {logs.length > 0 ? (
-                          logs.map((log) => (
+                        {filteredLogs.length > 0 ? (
+                          filteredLogs.map((log, index) => (
                             <tr key={log.id} className="hover:bg-gray-100">
-                              <td className="border border-gray-300 px-4 py-2">{log.id}</td>
+                              <td className="border border-gray-300 px-4 py-2">{index+1}</td>
                               <td className="border border-gray-300 px-4 py-2">{log.user_type}</td>
                               <td className="border border-gray-300 px-4 py-2">{log.user_id}</td>
                               <td className="border border-gray-300 px-4 py-2">{log['Student Number'] || <span className="text-gray-500">NA</span>}</td>
@@ -784,18 +940,19 @@ useEffect(() => {
               </div>
             )}
           <div className="w-full h-full mt-6">
-            <div className="bg-gray-700 w-full p-4 h-full md:h-full overflow-auto border-2 rounded">
+            <div className="bg-gray-700 w-full p-4 h-auto md:h-full border-2 rounded">
               <div className="mb-4 flex flex-col md: space-y-4 md:space-y-0">
-                <div className="flex flex-col mb-2 md:flex-row items-center">
+                <div className="relative flex flex-col mb-2 md:flex-row items-center">
                   <label className="mr-4 text-white">Select User Type:</label>
                   <select
-                    value={selectedUserType}
                     onChange={(e) => setSelectedUserType(e.target.value)}
-                    className="p-2 w-full md:w-40 rounded bg-blue-200 text-blue-900 font-semibold"
+                    className="p-2 w-full md:w-40 bg-blue-200 rounded text-blue-900 font-semibold"
+                    value={selectedUserType}
                   >
                     <option value="student">Student</option>
                     <option value="faculty">Faculty</option>
                   </select>
+                  <button onClick={fetchLogs} className="block mt-3 sm:absolute right-0 bg-gray-400 w-40 h-10 rounded text-white tracking-widest">Logs</button>
                 </div>
                 <div className="flex flex-col md:flex-row items-center">
                   <label className="mr-4 text-white">Select Vehicle Type:</label>
@@ -854,7 +1011,7 @@ useEffect(() => {
                 <div className="flex flex-col items-center">
                   <p>License</p>
                   <div className="flex items-center">
-                    <img src={licenseSrc} alt="License" className="w-32 h-24 md:w-40 md:h-32" />
+                    <img src={licenseSrc} alt="License" className="w-60 h-40 md:w-40 md:h-32" />
                     <button
                       onClick={() => handleOpenModal(licenseSrc)}
                       className="ml-2 text-blue-500 hover:text-blue-700"
@@ -869,7 +1026,7 @@ useEffect(() => {
                 <div className="flex flex-col items-center">
                   <p>ORCR</p>
                   <div className="flex items-center">
-                    <img src={orcrSrc} alt="ORCR" className="w-32 h-24 md:w-40 md:h-32" />
+                    <img src={orcrSrc} alt="ORCR" className="w-60 h-40 md:w-40 md:h-32" />
                     <button
                       onClick={() => handleOpenModal(orcrSrc)}
                       className="ml-2 text-blue-500 hover:text-blue-700"
@@ -881,7 +1038,6 @@ useEffect(() => {
                 </div>
               ) : <p className="text-center">No ORCR image available</p>}
             </div>
-      
             <div className="w-full flex flex-col md:flex-row items-center justify-evenly mt-16">
               <button
                 className="p-2 flex justify-center items-center w-full md:w-48 bg-green-500 text-white text-lg md:text-xl rounded hover:bg-green-700 mb-4 md:mb-0"
@@ -898,8 +1054,8 @@ useEffect(() => {
             </div>
       
             {isModalOpen && (
-              <div className="fixed inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="relative bg-white p-4 rounded-lg shadow-lg flex justify-center w-11/12 max-w-lg">
+              <div className="fixed w-full h-full inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="relative bg-white p-4 rounded-lg shadow-lg flex justify-center w-2/4 h-2/3">
                   <button
                     onClick={handleCloseModal}
                     className="absolute top-0 right-0 mt-2 mr-2 text-gray-500 hover:text-gray-700"
