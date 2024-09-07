@@ -243,132 +243,162 @@ export default function AdminAccount() {
         <div className="w-full h-20 flex justify-end items-end border-b-2">
           <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
         </div>
-        <div className="w-full h-9/10.5 overflow-auto">
-          <div className="w-full h-20 p-4 text-white">
-            <h1 className="ml-3">Users</h1>
-          </div>
-          <div className="w-2/5 flex justify-evenly items-center">
-            <input onChange={(e) => setSearchTerm(e.target.value)} value={searchTerm} type="text" className="w-60 h-10 rounded pl-3" placeholder="Search user"></input>
-            <button className="bg-white w-20 h-10 rounded font-bold text-gray-500 hover:text-black">Go</button>
-            <button onClick={handleNewAdminClick} className="bg-white w-40 h-10 rounded text-gray-500 hover:text-black">+ New Admin</button>
-          </div>
-          <div className="w-full h-auto p-10">
-            <table className="w-full border-collapse">
-              <thead className="bg-blue-900 text-white">
-                <tr>
-                  <th className="p-3 border">#</th>
-                  <th className="p-3 border">Name</th>
-                  <th className="p-3 border">Email</th>
-                  <th className="p-3 border">Password</th>
-                  <th className="p-3 border">Edit</th>
-                  <th className="p-3 border">Delete</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white">
-                {filteredAdmins.length > 0 ? (
-                  filteredAdmins.map((admin, index) => (
-                    <tr key={admin.id} className="hover:bg-gray-100">
-                  <td className="p-3 border">{index+1}</td>
-                  <td className="p-3 border">{admin.Name}</td>
-                  <td className="p-3 border">{admin.Email}</td>
-                  <td className="p-3 border">{admin.Password}</td>
-                  <td className="p-3 border">
-                    <button onClick={() => handleEditClick(admin)} className="bg-green-500 rounded text-white p-2 flex items-center space-x-1">
-                      <span>Edit</span>
-                      <MdEditSquare />
-                    </button>
-                  </td>
-                  <td className="p-3 border">
-                    <button onClick={() => handleDeleteClick(admin.id)} className="bg-red-500 rounded text-white p-2 flex items-center space-x-1">
-                      <span>Delete</span>
-                      <MdDeleteForever />
-                    </button>
-                  </td>
-                </tr>
-                  ))
-                ) : (
+        <div className="w-full h-9/10.5 bg-blue-800">
+          <div className="w-full h-full sm:p-4">
+            <div className="w-full flex flex-col md:flex-row justify-between items-center mb-6">
+              <h1 className="text-white text-lg md:text-xl">Users</h1>
+              <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-2 md:space-y-0">
+                <input
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchTerm}
+                  type="text"
+                  className="w-full md:w-60 h-10 rounded pl-3"
+                  placeholder="Search user"
+                />
+                <button className="bg-white w-full md:w-20 h-10 rounded font-bold text-gray-500 hover:text-black">
+                  Go
+                </button>
+                <button
+                  onClick={handleNewAdminClick}
+                  className="bg-white w-full md:w-40 h-10 rounded text-gray-500 hover:text-black"
+                >
+                  + New Admin
+                </button>
+              </div>
+            </div>
+            <div className="w-full h-auto overflow-auto">
+              <table className="w-full border-collapse text-sm md:text-base">
+                <thead className="bg-blue-900 text-white">
                   <tr>
-                    <td colSpan="6" className="text-center text-gray-500">No admin data available.</td>
+                    <th className="p-3 border">#</th>
+                    <th className="p-3 border">Name</th>
+                    <th className="p-3 border">Email</th>
+                    <th className="p-3 border">Password</th>
+                    <th className="p-3 border">Edit</th>
+                    <th className="p-3 border">Delete</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-          {showForm && (
-            <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
-              <form onSubmit={handleSubmit} className="mt-4 bg-white p-6 rounded shadow-md w-full max-w-md">
-                <div className="mb-4">
-                  <label htmlFor="name" className="block text-gray-700">
-                    Name:
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="email" className="block text-gray-700">
-                    Email:
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label htmlFor="password" className="block text-gray-700">
-                    Password:
-                  </label>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
-                {isEditMode ? (
-              <>
-                <button type="submit" className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-700">
-                  Update Admin
-                </button>
-                <button
-                  onClick={() => setShowForm(false)}
-                  type="button"
-                  className="w-full mt-3 bg-gray-500 text-white p-2 rounded hover:bg-gray-700"
+                </thead>
+                <tbody className="bg-white">
+                  {filteredAdmins.length > 0 ? (
+                    filteredAdmins.map((admin, index) => (
+                      <tr key={admin.id} className="hover:bg-gray-100">
+                        <td className="p-3 border">{index + 1}</td>
+                        <td className="p-3 border">{admin.Name}</td>
+                        <td className="p-3 border">{admin.Email}</td>
+                        <td className="p-3 border">{admin.Password}</td>
+                        <td className="p-3 border">
+                          <button
+                            onClick={() => handleEditClick(admin)}
+                            className="bg-green-500 rounded text-white p-2 flex items-center space-x-1"
+                          >
+                            <span>Edit</span>
+                            <MdEditSquare />
+                          </button>
+                        </td>
+                        <td className="p-3 border">
+                          <button
+                            onClick={() => handleDeleteClick(admin.id)}
+                            className="bg-red-500 rounded text-white p-2 flex items-center space-x-1"
+                          >
+                            <span>Delete</span>
+                            <MdDeleteForever />
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="text-center text-gray-500">No admin data available.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            {showForm && (
+              <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
+                <form
+                  onSubmit={handleSubmit}
+                  className="bg-white p-6 rounded shadow-md w-full max-w-md"
                 >
-                  Close
-                </button>
-              </>
-            ) : (
-              <>
-                <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700">
-                  Create Admin
-                </button>
-                <button
-                  onClick={() => setShowForm(false)}
-                  type="button"
-                  className="w-full mt-3 bg-gray-500 text-white p-2 rounded hover:bg-gray-700"
-                >
-                  Close
-                </button>
-              </>
+                  <div className="mb-4">
+                    <label htmlFor="name" className="block text-gray-700">
+                      Name:
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      className="w-full p-2 border rounded"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label htmlFor="email" className="block text-gray-700">
+                      Email:
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      className="w-full p-2 border rounded"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label htmlFor="password" className="block text-gray-700">
+                      Password:
+                    </label>
+                    <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
+                      className="w-full p-2 border rounded"
+                    />
+                  </div>
+                  {isEditMode ? (
+                    <>
+                      <button
+                        type="submit"
+                        className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-700"
+                      >
+                        Update Admin
+                      </button>
+                      <button
+                        onClick={() => setShowForm(false)}
+                        type="button"
+                        className="w-full mt-3 bg-gray-500 text-white p-2 rounded hover:bg-gray-700"
+                      >
+                        Close
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        type="submit"
+                        className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
+                      >
+                        Create Admin
+                      </button>
+                      <button
+                        onClick={() => setShowForm(false)}
+                        type="button"
+                        className="w-full mt-3 bg-gray-500 text-white p-2 rounded hover:bg-gray-700"
+                      >
+                        Close
+                      </button>
+                    </>
+                  )}
+                </form>
+              </div>
             )}
-            </form>
           </div>
-          )}
         </div>
       </div>
     </div>
