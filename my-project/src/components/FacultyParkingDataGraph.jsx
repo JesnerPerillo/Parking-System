@@ -39,18 +39,16 @@ export default function FacultyParkingDataGraph() {
 
   // Prepare the data for the bar chart
   const chartData = {
-    labels: ['Motorcycle', 'Tricycle', 'Fourwheeler'], // Explicit order
+    labels: ['Motorcycle', 'Fourwheeler'], // Explicit order
     datasets: [
       {
         label: 'Number of Users',
         data: [
           vehicleCounts['Motorcycle'] || 0,
-          vehicleCounts['Tricycle'] || 0,
           vehicleCounts['Fourwheeler'] || 0,
         ],
         backgroundColor: [
           'rgba(222, 210, 0, 0.8)',  // Yellow for Motorcycle
-          'rgba(54, 162, 235, 0.8)',  // Blue for Tricycle
           'rgba(255, 99, 132, 0.8)',  // Red for Fourwheeler
         ],
         borderColor: 'rgba(255, 255, 255, 0.8)', // White border color
@@ -113,10 +111,6 @@ export default function FacultyParkingDataGraph() {
         <div className="flex items-center space-x-2">
           <div className="w-8 h-4 bg-yellow-400 rounded"></div>
           <span className="text-white text-sm">Motorcycle</span>
-        </div>
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-4 bg-blue-400 rounded"></div>
-          <span className="text-white text-sm">Tricycle</span>
         </div>
         <div className="flex items-center space-x-2">
           <div className="w-8 h-4 bg-red-400 rounded"></div>

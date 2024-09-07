@@ -10,8 +10,10 @@ import { BsExclamationTriangle, BsPersonFillGear } from "react-icons/bs";
 import QRScanner from '../components/QRScanner.jsx';
 import { BrowserMultiFormatReader } from '@zxing/library';
 import Beep from '../Pictures/beep.png';
-import { MdTimerOff, MdTimer, MdDeleteForever } from "react-icons/md";
+import { MdTimerOff, MdTimer, MdDeleteForever, MdOutlineFileDownload  } from "react-icons/md";
 import { FaUserEdit } from "react-icons/fa";
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 
 export default function AdminParkingSlot() {
   const [error, setError] = useState('');
@@ -38,6 +40,12 @@ export default function AdminParkingSlot() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [popupData, setPopupData] = useState(null);
   const navigate = useNavigate();
+  const [logs, setLogs] = useState([]);
+  const [isPopupVisible, setPopupVisible] = useState(false);
+
+  const closePopup = () => {
+    setPopupVisible(false);
+  };
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -302,7 +310,6 @@ export default function AdminParkingSlot() {
                 time_out: timeOut || ''
             }),
         });
-
         const result = await response.json();
         if (result.status === 'success') {
             console.log(result.message);
@@ -312,15 +319,69 @@ export default function AdminParkingSlot() {
     } catch (error) {
         console.error('Error:', error);
     }
-};
+  };
 
-const formatAMPM = (timeStr) => {
-  const [hours, minutes] = timeStr.split(':').map(num => parseInt(num, 10));
-  const ampm = hours >= 12 ? 'AM' : 'PM';
+  const fetchLogs = async () => {
+    try {
+      const response = await fetch('http://localhost/website/my-project/Backend/Logs.php', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setLogs(result.logs); // Store logs in state
+        setPopupVisible(true); // Show popup after logs are fetched
+      } else {
+        console.error(result.message);
+      }
+    } catch (error) {
+      console.error('Error fetching logs:', error);
+    }
+  };
+
+
+  const formatAMPM = (timeStr) => {
+    if (timeStr === '00:00:00' || !timeStr) return '--:--:--'; // Return 'NA' if timeStr is null or undefined
+  
+    const [hours, minutes] = timeStr.split(':').map(num => parseInt(num, 10));
+    if (isNaN(hours) || isNaN(minutes)) return 'NA'; // Return 'NA' if timeStr is invalid
+  
+    const ampm = hours >= 12 ? 'AM' : 'PM';
+    const hours12 = hours % 12 || 12;
+    const minutesFormatted = minutes < 10 ? '0' + minutes : minutes;
+    return `${hours12}:${minutesFormatted} ${ampm}`;
+  };
+  
+
+const formatDateTime = (timestamp) => {
+  if (!timestamp) return 'NA'; // Handle undefined or null timestamp
+
+  const date = new Date(timestamp);
+
+  // Array of month names
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  // Extract date components
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
   const hours12 = hours % 12 || 12;
   const minutesFormatted = minutes < 10 ? '0' + minutes : minutes;
-  return `${hours12}:${minutesFormatted} ${ampm}`;
+
+  // Format date and time
+  return `${month} ${day}, ${year} ${hours12}:${minutesFormatted} ${ampm}`;
 };
+
 
 // Function to handle Time In for both students and faculty
 const handleTimeIn = async () => {
@@ -516,6 +577,57 @@ useEffect(() => {
     }
   };
 
+  const downloadLogsAsPDF = async () => {
+    try {
+      // Fetch logs from your server
+      const response = await fetch('http://localhost/website/my-project/Backend/logs.php', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      const result = await response.json();
+  
+      if (result.success) {
+        const logs = result.logs;
+  
+        // Create a new jsPDF instance
+        const doc = new jsPDF();
+  
+        // Add title to the PDF
+        doc.setFontSize(18);
+        doc.text('Logs Report', 14, 22);
+  
+        // Define table columns and data
+        const columns = [
+          { header: 'User Type', dataKey: 'user_type' },
+          { header: 'User ID', dataKey: 'user_id' },
+          { header: 'Student Number', dataKey: 'Student Number' },
+          { header: 'Name', dataKey: 'Name' },
+          { header: 'Position', dataKey: 'Position' },
+          { header: 'Time In', dataKey: 'Time In' },
+          { header: 'Time Out', dataKey: 'Time Out' },
+          { header: 'Created At', dataKey: 'created_at' },
+        ];
+  
+        // Add table to PDF
+        doc.autoTable({
+          head: [columns.map(col => col.header)],
+          body: logs.map(log => columns.map(col => log[col.dataKey] || 'NA')),
+          startY: 30,
+        });
+  
+        // Save the PDF
+        doc.save('Logs_Report.pdf');
+      } else {
+        console.error(result.message);
+      }
+    } catch (error) {
+      console.error('Error fetching logs:', error);
+    }
+  };
+
 
 
   return (
@@ -530,28 +642,28 @@ useEffect(() => {
 
       {/* Navigation menu */}
       <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
-          <div className="border-b-2 border-blue-600 w-full h-32 text-blue-600 flex flex-col items-center justify-center text-xl tracking-wider">
+          <div className="border-b-2 border-blue-800 w-full h-32 text-blue-800 flex flex-col items-center justify-center text-xl tracking-wider">
           <h1 className="text-bold text-4xl tracking-widest mb-3">ADMIN</h1>
           <h1 className="text-bold text-4xl tracking-widest">PARKING SYSTEM</h1>
         </div>
         <div className="flex flex-col justify-evenly w-full h-2/4 relative">
-            <Link to="/admindashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-600 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-600 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/admindashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-800 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-800 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/adminparkingslot" className="group no-underline h-16 flex items-center pl-8 bg-blue-600 hover:bg-blue-600 mb-2 duration-200 lg:pl-3">
+            <Link to="/adminparkingslot" className="group no-underline h-16 flex items-center pl-8 bg-blue-800 hover:bg-blue-800 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
               <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <Link to="/adminreport" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-600 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-600 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/adminreport" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-800 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-800 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Report</span>
               </li>
             </Link>
-            <Link to="/adminaccount" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-600 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-600 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/adminaccount" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-800 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-800 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsQuestionSquare /> <span className="ml-5">Account</span>
               </li>
             </Link>
@@ -562,7 +674,7 @@ useEffect(() => {
       </nav>
 
       {/* Main Content */}
-      <div className="w-full h-screen bg-blue-600">
+      <div className="w-full h-screen bg-blue-700">
         <div className="w-full h-20 flex justify-end items-end border-b-2">
           <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
         </div>
@@ -592,8 +704,67 @@ useEffect(() => {
                 </button> }
               </div>
             </div>
-            {isNavOpen ? '' : <img src={Beep} alt="Beep Vehicle Image" className="drop-shadow-2xl w-2/3 md:w-1/3" />}
+            <div className="w-1/2 h-auto flex relative">
+              {isNavOpen ? '' : <img src={Beep} alt="Beep Vehicle Image" className="drop-shadow-2xl w-2/3 md:w-2/3" />}
+              <button onClick={fetchLogs} className="absolute right-0 bg-gray-400 w-40 h-10 rounded text-white tracking-widest">Logs</button>
             </div>
+            </div>
+            {isPopupVisible && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white p-8 rounded-lg shadow-lg h-9/10 w-4/5">
+                  <div className="flex justify-between items-center">
+                    <div className="flex">
+                      <h2 className="text-xl font-bold mr-5">Logs</h2>
+                      <button onClick={downloadLogsAsPDF} className="h-10 w-48 bg-red-500 rounded text-white flex justify-evenly items-center hover:bg-red-700"><span>Download Logs</span> <MdOutlineFileDownload /></button>
+                    </div>
+                    <button onClick={closePopup} className="text-gray-500 hover:text-gray-700">
+                      Close
+                    </button>
+                  </div>
+                  {/* Logs Table */}
+                  <div className="overflow-auto w-full max-h-1/4 mt-4">
+                    <table className="min-w-full table-auto border-collapse border border-gray-200">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="border border-gray-300 px-4 py-2">ID</th>
+                          <th className="border border-gray-300 px-4 py-2">User Type</th>
+                          <th className="border border-gray-300 px-4 py-2">User ID</th>
+                          <th className="border border-gray-300 px-4 py-2">Student Number</th>
+                          <th className="border border-gray-300 px-4 py-2">Name</th>
+                          <th className="border border-gray-300 px-4 py-2">Position</th>
+                          <th className="border border-gray-300 px-4 py-2">Time In</th>
+                          <th className="border border-gray-300 px-4 py-2">Time Out</th>
+                          <th className="border border-gray-300 px-4 py-2">Created At</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {logs.length > 0 ? (
+                          logs.map((log) => (
+                            <tr key={log.id} className="hover:bg-gray-100">
+                              <td className="border border-gray-300 px-4 py-2">{log.id}</td>
+                              <td className="border border-gray-300 px-4 py-2">{log.user_type}</td>
+                              <td className="border border-gray-300 px-4 py-2">{log.user_id}</td>
+                              <td className="border border-gray-300 px-4 py-2">{log['Student Number'] || <span className="text-gray-500">NA</span>}</td>
+                              <td className="border border-gray-300 px-4 py-2">{log.Name}</td>
+                              <td className="border border-gray-300 px-4 py-2">{log.Position || <span className="text-gray-500">NA</span>}</td>
+                              <td className="border border-gray-300 px-4 py-2">{formatAMPM(log['Time In'])}</td>
+                              <td className="border border-gray-300 px-4 py-2">{formatAMPM(log['Time Out'])}</td>
+                              <td className="border border-gray-300 px-4 py-2">{formatDateTime(log.created_at)}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="9" className="text-center p-4">
+                              No logs available.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
             {scanning && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20 p-4">
                 <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
@@ -613,7 +784,7 @@ useEffect(() => {
               </div>
             )}
           <div className="w-full h-full mt-6">
-            <div className="bg-gray-700 w-full p-4 h-full md:h-4/5 overflow-auto mt-10 border-2 rounded">
+            <div className="bg-gray-700 w-full p-4 h-full md:h-full overflow-auto border-2 rounded">
               <div className="mb-4 flex flex-col md: space-y-4 md:space-y-0">
                 <div className="flex flex-col mb-2 md:flex-row items-center">
                   <label className="mr-4 text-white">Select User Type:</label>
@@ -634,7 +805,7 @@ useEffect(() => {
                     className="p-2 w-full md:w-40 rounded bg-blue-200 text-blue-900 font-semibold"
                   >
                     <option value="motorcycle">Motorcycle</option>
-                    <option value="tricycle">Tricycle</option>
+                    {selectedUserType === 'student' ? (<option value="tricycle">Tricycle</option>) : ''}
                     <option value="fourwheeler">Four Wheeler</option>
                   </select>
                 </div>

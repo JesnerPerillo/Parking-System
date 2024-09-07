@@ -207,27 +207,27 @@ export default function AdminAccount() {
 
       {/* Navigation menu */}
       <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
-          <div className="border-b-2 border-blue-600 w-full h-32 text-blue-600 flex flex-col items-center justify-center text-xl tracking-wider">
+          <div className="border-b-2 border-blue-800 w-full h-32 text-blue-800 flex flex-col items-center justify-center text-xl tracking-wider">
           <h1 className="text-bold text-4xl tracking-widest mb-3">ADMIN</h1>
           <h1 className="text-bold text-4xl tracking-widest">PARKING SYSTEM</h1>
         </div>
         <div className="flex flex-col justify-evenly w-full h-2/4 relative">
-            <Link to="/admindashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-600 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-600 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/admindashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-800 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-800 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/adminparkingslot" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-600 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-600 tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
+            <Link to="/adminparkingslot" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-800 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-800 tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
               <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <Link to="/adminreport" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-600 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-600 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/adminreport" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-800 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-800 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Report</span>
               </li>
             </Link>
-            <Link to="/adminaccount" className="group no-underline h-16 flex items-center pl-8 bg-blue-600 hover:bg-blue-600 mb-2 duration-200 lg:pl-3">
+            <Link to="/adminaccount" className="group no-underline h-16 flex items-center pl-8 bg-blue-800 hover:bg-blue-800 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsQuestionSquare /> <span className="ml-5">Account</span>
               </li>
