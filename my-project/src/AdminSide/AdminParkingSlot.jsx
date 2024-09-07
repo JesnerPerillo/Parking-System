@@ -32,6 +32,7 @@ export default function AdminParkingSlot() {
   const codeReader = useRef(null);
   const streamRef = useRef(null);
   const [reader, setReader] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const [occupiedSpots, setOccupiedSpots] = useState({
     motorcycle: [],
     tricycle: [],
@@ -42,6 +43,7 @@ export default function AdminParkingSlot() {
   const navigate = useNavigate();
   const [logs, setLogs] = useState([]);
   const [isPopupVisible, setPopupVisible] = useState(false);
+
 
   const closePopup = () => {
     setPopupVisible(false);
@@ -350,7 +352,7 @@ export default function AdminParkingSlot() {
     const [hours, minutes] = timeStr.split(':').map(num => parseInt(num, 10));
     if (isNaN(hours) || isNaN(minutes)) return 'NA'; // Return 'NA' if timeStr is invalid
   
-    const ampm = hours >= 12 ? 'AM' : 'PM';
+    const ampm = hours >= 12 ? 'PM' : 'AM';
     const hours12 = hours % 12 || 12;
     const minutesFormatted = minutes < 10 ? '0' + minutes : minutes;
     return `${hours12}:${minutesFormatted} ${ampm}`;
@@ -635,45 +637,69 @@ useEffect(() => {
     }
   };
 
-  
-  const sortLogsByHour = (logs) => {
-    return logs.sort((a, b) => new Date(a['Time In']).getHours() - new Date(b['Time In']).getHours());
-  };
-  
-  const sortLogsByDay = (logs) => {
-    return logs.sort((a, b) => new Date(a.created_at).getDate() - new Date(b.created_at).getDate());
-  };
-  
-  const sortLogsByWeek = (logs) => {
-    const getWeek = (date) => {
-      const d = new Date(date);
-      const day = d.getDay();
-      const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust for week start
-      return new Date(d.setDate(diff));
-    };
-    return logs.sort((a, b) => getWeek(a.created_at) - getWeek(b.created_at));
-  };
-  
-  const filterByUserType = (logs, userType) => {
-    return logs.filter(log => log.user_type === userType);
-  };
-  
-  const [sortCriteria, setSortCriteria] = useState('day'); // Default sort by day
+  const sortLogs = (logs) => {
+    return logs.sort((a, b) => {
+      // Default sorting by created_at if no search term
+      if (!searchTerm) {
+        return new Date(b.created_at) - new Date(a.created_at);
+      }
 
-  // Sorting and filtering logic
-  let filteredLogs = [...logs];
+      // Sorting logic based on search term and user type
+      if (searchTerm) {
+        // Compare based on search term and fields
+        const term = searchTerm.toLowerCase();
+        const aMatches = 
+          a.Name.toLowerCase().includes(term) ||
+          a.Email.toLowerCase().includes(term) ||
+          a['Student Number']?.toLowerCase().includes(term) ||
+          a.user_type?.toLowerCase().includes(term) ||
+          new Date(a['Time In']).toLocaleTimeString().toLowerCase().includes(term) ||
+          new Date(a.created_at).toLocaleDateString().toLowerCase().includes(term);
 
-  if (selectedUserType) {
-    filteredLogs = filterByUserType(filteredLogs, selectedUserType);
-  }
+        const bMatches = 
+          b.Name.toLowerCase().includes(term) ||
+          b.Email.toLowerCase().includes(term) ||
+          b['Student Number']?.toLowerCase().includes(term) ||
+          b.user_type?.toLowerCase().includes(term) ||
+          new Date(b['Time In']).toLocaleTimeString().toLowerCase().includes(term) ||
+          new Date(b.created_at).toLocaleDateString().toLowerCase().includes(term);
 
-  if (sortCriteria === 'hour') {
-    filteredLogs = sortLogsByHour(filteredLogs);
-  } else if (sortCriteria === 'day') {
-    filteredLogs = sortLogsByDay(filteredLogs);
-  } else if (sortCriteria === 'week') {
-    filteredLogs = sortLogsByWeek(filteredLogs);
-  }
+        if (aMatches && !bMatches) return -1;
+        if (!aMatches && bMatches) return 1;
+      }
+
+      return 0; // No sorting if neither a nor b matches the term
+    });
+  };
+
+  // Filter logs by user type and then sort
+  const filteredLogs = (logs) => {
+    return logs.filter(log => {
+      const term = searchTerm.toLowerCase();
+  
+      // Ensure that all properties are defined before using them
+      const nameMatch = log.Name ? log.Name.toLowerCase().includes(term) : false;
+      const positionMatch = log.Position ? log.Position.toLowerCase().includes(term) : false;
+      const studentNumberMatch = log['Student Number'] ? log['Student Number'].toLowerCase().includes(term) : false;
+      const userTypeMatch = log.user_type ? log.user_type.toLowerCase().includes(term) : false;
+  
+      // Debugging logs for date formatting
+      console.log('Time In:', log['Time In'], 'Formatted Time In:', new Date(log['Time In']).toLocaleTimeString());
+      const timeInMatch = log['Time In'] ? new Date(log['Time In']).toLocaleTimeString().toLowerCase().includes(term) : false;
+  
+      console.log('Created At:', log.created_at, 'Formatted Created At:', new Date(log.created_at).toLocaleDateString());
+      const createdAtMatch = log.created_at ? new Date(log.created_at).toLocaleDateString().toLowerCase().includes(term) : false;
+  
+      console.log('Time Stamp:', log['Time Stamp'], 'Formatted Time Stamp:', formatDateTime(log['Time Stamp']));
+      const timeStampMatch = log['Time Stamp'] ? formatDateTime(log['Time Stamp']).toLowerCase().includes(term) : false;
+  
+      return nameMatch || positionMatch || studentNumberMatch || userTypeMatch || timeInMatch || createdAtMatch || timeStampMatch;
+    });
+  };
+  
+  
+  
+  
 
   const [popupVisible, setIsPopupVisible] = useState(false);
   const [selectedSelection, setSelectedSelection] = useState('');
@@ -815,28 +841,17 @@ useEffect(() => {
                       <option value="student">Student</option>
                       <option value="faculty">Faculty</option>
                     </select>
+                    <input
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      value={searchTerm}
+                      type="text"
+                      className="w-full md:w-60 h-10 rounded pl-3 border drop-shadow-xl"
+                      placeholder="Search user"
+                    />
                   </div>
 
                   {/* Sorting Selection */}
                   <div className="mt-4 flex space-x-4">
-                    <button
-                      onClick={() => setSortCriteria('hour')}
-                      className={`btn ${sortCriteria === 'hour' ? 'btn-active' : ''}`}
-                    >
-                      Sort by Hour
-                    </button>
-                    <button
-                      onClick={() => setSortCriteria('day')}
-                      className={`btn ${sortCriteria === 'day' ? 'btn-active' : ''}`}
-                    >
-                      Sort by Day
-                    </button>
-                    <button
-                      onClick={() => setSortCriteria('week')}
-                      className={`btn ${sortCriteria === 'week' ? 'btn-active' : ''}`}
-                    >
-                      Sort by Week
-                    </button>
                     <button onClick={() => setIsPopupVisible(true)}>
                       Delete Logs
                     </button>
@@ -878,7 +893,7 @@ useEffect(() => {
                     )}
                   </div>
                   {/* Logs Table */}
-                  <div className="overflow-auto w-full h-4/5 mt-4">
+                  <div className="overflow-auto w-full drop-shadow-xl h-4/5 mt-4">
                     <table className="min-w-full table-auto border-collapse border border-gray-200">
                       <thead>
                         <tr className="bg-gray-100">
@@ -894,19 +909,19 @@ useEffect(() => {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredLogs.length > 0 ? (
-                          filteredLogs.map((log, index) => (
+                        {filteredLogs(logs).length > 0 ? (
+                          filteredLogs(logs).map((log, index) => (
                             <tr key={log.id} className="hover:bg-gray-100">
-                              <td className="border border-gray-300 px-4 py-2">{index+1}</td>
-                              <td className="border border-gray-300 px-4 py-2">{log.user_type}</td>
-                              <td className="border border-gray-300 px-4 py-2">{log.user_id}</td>
-                              <td className="border border-gray-300 px-4 py-2">{log['Student Number'] || <span className="text-gray-500">NA</span>}</td>
-                              <td className="border border-gray-300 px-4 py-2">{log.Name}</td>
-                              <td className="border border-gray-300 px-4 py-2">{log.Position || <span className="text-gray-500">NA</span>}</td>
-                              <td className="border border-gray-300 px-4 py-2">{formatAMPM(log['Time In'])}</td>
-                              <td className="border border-gray-300 px-4 py-2">{formatAMPM(log['Time Out'])}</td>
-                              <td className="border border-gray-300 px-4 py-2">{formatDateTime(log.created_at)}</td>
-                            </tr>
+                            <td className="border border-gray-300 px-4 py-2">{log.id}</td>
+                            <td className="border border-gray-300 px-4 py-2">{log.user_type}</td>
+                            <td className="border border-gray-300 px-4 py-2">{log.user_id}</td>
+                            <td className="border border-gray-300 px-4 py-2">{log['Student Number'] || <span className="text-gray-500">NA</span>}</td>
+                            <td className="border border-gray-300 px-4 py-2">{log.Name}</td>
+                            <td className="border border-gray-300 px-4 py-2">{log.Position || <span className="text-gray-500">NA</span>}</td>
+                            <td className="border border-gray-300 px-4 py-2">{formatAMPM(log['Time In'])}</td>
+                            <td className="border border-gray-300 px-4 py-2">{formatAMPM(log['Time Out'])}</td>
+                            <td className="border border-gray-300 px-4 py-2">{formatDateTime(log.created_at)}</td>
+                          </tr>
                           ))
                         ) : (
                           <tr>
