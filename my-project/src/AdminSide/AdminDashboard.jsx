@@ -9,6 +9,7 @@ import StudentParkingDataGraph from '../components/StudentParkingDataGraph.jsx';
 import FacultyParkingDataGraph from '../components/FacultyParkingDataGraph.jsx';
 import TotalUsersData from '../components/TotalUsersData.jsx';
 import AdminStats from '../Pictures/adminstats.png';
+import GSO from '../Pictures/gsoo.png';
 
 export default function AdminDashboard() {
   const [userData, setUserData] = useState({});
@@ -79,8 +80,8 @@ export default function AdminDashboard() {
             isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'
           }`}
         >
-          <div className="border-b-2 border-blue-700 w-full h-32 text-blue-700 flex flex-col items-center justify-center text-xl tracking-wider">
-              <h1 className="text-bold text-4xl tracking-widest mb-3">ADMIN</h1>
+          <div className="border-b-2 border-blue-700 w-full h-40 text-blue-700 flex flex-col items-center justify-center text-xl tracking-wider">
+              <img src={GSO} className="w-24 h-24" />
               <h1 className="text-bold text-4xl tracking-widest">PARKING SYSTEM</h1>
             </div>
           <div className="flex w-full flex-col justify-evenly h-2/4 relative">
