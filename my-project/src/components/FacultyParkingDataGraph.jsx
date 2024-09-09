@@ -105,7 +105,7 @@ export default function FacultyParkingDataGraph() {
   const totalUsers = Object.values(vehicleCounts).reduce((total, count) => total + count, 0);
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-r from-gray-800 to-gray-900 p-6 rounded-lg shadow-2xl">
+    <div className="w-auto h-auto flex flex-col items-center justify-center p-2 bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg shadow-2xl">
       <h1 className="text-white text-xl tracking-widest">Faculty|Staff Parking Data</h1>
       <div className="flex justify-center space-x-6 mb-6">
         <div className="flex items-center space-x-2">

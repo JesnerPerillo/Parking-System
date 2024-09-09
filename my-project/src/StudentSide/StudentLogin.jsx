@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import URSlogo from '../Pictures/urs.png';
@@ -11,6 +12,17 @@ export default function StudentLogin() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
+    const [isVisible, setIsVisible] = useState(false);
+
+    const handleOpenModal = () => {
+        setIsVisible(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsVisible(false);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -40,6 +52,37 @@ export default function StudentLogin() {
             setError('An unexpected error occurred.');
         }
     };
+
+    const handleSubmitForgetPassword = async (e) => {
+        e.preventDefault();
+    
+        try {
+            const response = await fetch('http://localhost/website/my-project/Backend/forgetpassword.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email }),
+                credentials: 'include', // Include credentials if needed
+            });
+    
+            const contentType = response.headers.get('Content-Type');
+            if (contentType && contentType.includes('application/json')) {
+                const data = await response.json();
+                if (data.success) {
+                    setMessage('A temporary password has been sent to your email.');
+                } else {
+                    setMessage(data.message || 'Something went wrong. Please try again.');
+                }
+            } else {
+                setMessage('Unexpected response format.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setMessage('An error occurred. Please try again later.');
+        }
+    };
+    
 
 
     return (
@@ -111,7 +154,33 @@ export default function StudentLogin() {
                         </Link>
                         <Link to="/studentDashboard" ><button className="w-40 h-10 bg-red-200">Click</button></Link>
                     </p>
+                    <a onClick={handleOpenModal} className="text-blue-500 no-underline hover:cursor-pointer">
+                            Forgot Password?
+                        </a>
                 </form>
+                {isVisible && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30 max-sm:w-full">
+                <form onSubmit={handleSubmitForgetPassword} className="bg-white p-6 rounded shadow-md">
+                    <h2 className="text-xl font-bold mb-4">Forgot Password</h2>
+                    <p className="text-sm">Please enter your registered email.</p>
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email"
+                        className="border p-2 rounded w-full mb-4"
+                        required
+                    />
+                    <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">
+                        Submit
+                    </button>
+                    <button onClick={handleCloseModal}className="bg-blue-500 text-white py-2 px-4 rounded">
+                        Cancel
+                    </button>
+                    {message && <p className="mt-4 text-red-500">{message}</p>}
+                </form>
+                </div>
+                )}
             </div>
         </div>
     );
