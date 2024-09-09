@@ -67,8 +67,8 @@ export default function AdminDashboard() {
   return (
     <>
       <div className="relative w-full h-screen bg-blue-700 flex">
-        <button
-          className="lg:hidden bg-white text-blue-700 p-2 rounded-full fixed top-4 left-4 z-50"
+      <button
+          className="lg:hidden bg-white text-blue-700 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-10"
           onClick={toggleNav}
         >
           {isNavOpen ? '✕' : '☰'}
