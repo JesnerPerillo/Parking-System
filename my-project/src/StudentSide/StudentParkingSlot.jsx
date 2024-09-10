@@ -37,7 +37,7 @@ export default function StudentParkingSlots() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost/website/my-project/Backend/fetchdata.php', {
+        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', {
           withCredentials: true
         });
 
@@ -61,7 +61,7 @@ export default function StudentParkingSlots() {
 
     const fetchOccupiedSlots = async () => {
       try {
-        const response = await axios.get('http://localhost/website/my-project/Backend/fetchoccupiedslot.php', {
+        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchoccupiedslot.php', {
           withCredentials: true
         });
 
@@ -92,7 +92,7 @@ export default function StudentParkingSlots() {
   const handleLogout = async () => {
     try {
       console.log('Attempting to log out...');
-      const response = await axios.get('http://localhost/website/my-project/Backend/logout.php', {
+      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -139,7 +139,7 @@ export default function StudentParkingSlots() {
     }
   
     try {
-      const response = await axios.post('http://localhost/website/my-project/Backend/selectparkingslot.php', {
+      const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/selectparkingslot.php', {
         slotType: selectedVehicle,
         slotNumber: selectedSpot,
         id: userData.id

@@ -65,7 +65,7 @@ export default function StudentAccount() {
     }
 
     try {
-      const response = await axios.post('http://localhost/website/my-project/Backend/edituser.php', form, {
+      const response = await axios.post('hhttps://seagreen-wallaby-986472.hostingersite.com/edituser.php', form, {
         withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -100,7 +100,7 @@ export default function StudentAccount() {
   };
 
   useEffect(() => {
-    axios.get('http://localhost/website/my-project/Backend/fetchdata.php', { withCredentials: true })
+    axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', { withCredentials: true })
       .then(response => {
         console.log('Fetched user data:', response.data); // Log the response
         if (response.data.success) {
@@ -114,26 +114,11 @@ export default function StudentAccount() {
       });
   }, []);
   
-
-  useEffect(() => {
-    axios.get('http://localhost/website/my-project/Backend/fetchdata.php', { withCredentials: true })
-      .then(response => {
-        console.log('Fetched user data:', response.data); // Log the response
-        if (response.data.success) {
-          setUserData(response.data.data);
-        } else {
-          console.log(response.data.message);
-        }
-      })
-      .catch(error => {
-        console.log('Error fetching user data:', error);
-      });
-  }, []);
   
   useEffect(() => {
     const fetchImage = async (type) => {
       try {
-        const response = await axios.get(`http://localhost/website/my-project/Backend/fetchimage.php?type=${type}`, {
+        const response = await axios.get(`https://seagreen-wallaby-986472.hostingersite.com/fetchimage.php?type=${type}`, {
           responseType: 'blob',
           withCredentials: true
         });
@@ -160,7 +145,7 @@ export default function StudentAccount() {
   const handleLogout = async () => {
     try {
       console.log('Attempting to log out...');
-      const response = await axios.get('http://localhost/website/my-project/Backend/logout.php', {
+      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -184,7 +169,7 @@ export default function StudentAccount() {
   useEffect(() => {
     const fetchStudentParkingSlots = async () => {
       try {
-        const response = await axios.get('http://localhost/website/my-project/Backend/fetchstudentparkingslots.php', {
+        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchstudentparkingslots.php', {
           withCredentials: true // Send cookies with the request if needed
         });
 

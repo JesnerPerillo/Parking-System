@@ -32,7 +32,7 @@ export default function StudentAbout() {
 
   useEffect(() => {
     // Fetch user data
-    axios.get('http://localhost/website/my-project/Backend/fetchdata.php', { withCredentials: true })
+    axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', { withCredentials: true })
       .then(response => {
         console.log('Fetched user data:', response.data); // Log the response
         if (response.data.success) {
@@ -45,19 +45,6 @@ export default function StudentAbout() {
         console.log('Error fetching user data:', error);
       });
 
-    // Fetch admin data
-    axios.get('http://localhost/website/my-project/Backend/adminfetchdata.php', { withCredentials: true })
-      .then(response => {
-        console.log('Fetched admin data:', response.data);
-        if (response.data.success) {
-          setAdminEmail(response.data.data.email);
-        } else {
-          console.log(response.data.message);
-        }
-      })
-      .catch(error => {
-        console.log('Error fetching admin data:', error);
-      });
   }, []);
 
   const toggleNav = () => {
@@ -67,7 +54,7 @@ export default function StudentAbout() {
   const handleLogout = async () => {
     try {
       console.log('Attempting to log out...');
-      const response = await axios.get('http://localhost/website/my-project/Backend/logout.php', {
+      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -82,12 +69,6 @@ export default function StudentAbout() {
       setError('Error logging out: ' + error.message);
       console.error('Error logging out: ', error);
     }
-  };
-
-  const handleMessageSend = () => {
-    const subject = 'Student Report';
-    const mailtoLink = `mailto:${adminEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}&cc=${encodeURIComponent(userData.email)}`;
-    window.location.href = mailtoLink;
   };
 
   return (

@@ -27,7 +27,7 @@ export default function StudentLogin() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost/website/my-project/Backend/studentlogin.php', {
+            const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/studentlogin.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ export default function StudentLogin() {
         e.preventDefault();
     
         try {
-            const response = await fetch('http://localhost/website/my-project/Backend/forgetpassword.php', {
+            const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/forgetpassword.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
