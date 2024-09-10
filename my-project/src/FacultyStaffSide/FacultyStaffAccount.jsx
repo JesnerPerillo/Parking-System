@@ -337,7 +337,7 @@ const handleDownloadQRCode = () => {
                 Download QR Code
               </button>
             </div>
-            <div className="w-full sm:w-4/5 ml-5 flex flex-col justify-between text-sm">
+            <ul className="w-full sm:w-4/5 flex flex-col justify-between text-sm">
               <p className="mb-0 mt-4 sm:mt-0 text-4xl sm:text-6xl font-bold">
                 {userData.Name}
               </p>
@@ -478,7 +478,7 @@ const handleDownloadQRCode = () => {
               </div>
               )}
               </div>
-            </div>
+            </ul>
           </div>
         </div>
       )}
