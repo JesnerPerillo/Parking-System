@@ -20,12 +20,13 @@ export default function StudentLogin() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                fullname,
-                password,
-            }),
-            credentials: 'include', // Ensure cookies are included
+            body: JSON.stringify({ fullname, password }),
+            credentials: 'include',
         });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
         const data = await response.json();
 
@@ -35,10 +36,11 @@ export default function StudentLogin() {
             setError(data.message);
         }
     } catch (error) {
-        console.error(error);
+        console.error('Fetch error:', error);
         alert('An unexpected error occurred.');
     }
 };
+
 
 
 
@@ -80,7 +82,6 @@ export default function StudentLogin() {
       <button type="submit" className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5 mb-10">
         Submit
       </button>
-      <Link to="/admindashboard" ><button>Click</button></Link>
       {error && <p className="text-red-500 text-sm">{error}</p>}
     </form>
       </div>
