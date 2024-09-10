@@ -463,7 +463,6 @@ const handleQRCodeScan = (qrCodeData) => {
   }
 };
 
-// Handle internal QR code scan result
 const handleScanSuccessInternal = (result) => {
   if (result && result.text) {
     const scannedData = result.text.trim();
@@ -472,7 +471,7 @@ const handleScanSuccessInternal = (result) => {
     if (slotType && slotNumber) {
       handleQRCodeScan({ slot_type: slotType.trim(), slot_number: slotNumber.trim() });
       setScanning(false);
-      reader.stop(); // Stop scanning after a successful scan
+      stopCamera(); // Stop scanning after a successful scan
     } else {
       console.error('Slot type or slot number is missing in the scanned data.');
     }
@@ -481,18 +480,6 @@ const handleScanSuccessInternal = (result) => {
   }
 };
 
-// Start and stop camera based on scanning state
-useEffect(() => {
-  if (scanning) {
-    startCamera();
-  } else {
-    stopCamera();
-  }
-  return () => stopCamera();
-}, [scanning]);
-
-
-// Initialize and start the camera for QR code scanning
 const startCamera = async () => {
   if (!codeReader.current) {
     codeReader.current = new BrowserMultiFormatReader();
@@ -502,7 +489,8 @@ const startCamera = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     streamRef.current = stream;
     videoRef.current.srcObject = stream;
-    
+    videoRef.current.play(); // Ensure video element starts playing
+
     codeReader.current.decodeFromVideoDevice(null, videoRef.current, handleScanSuccessInternal)
       .then(() => {
         console.log('Camera started');
@@ -515,7 +503,6 @@ const startCamera = async () => {
   }
 };
 
-// Stop the camera when not scanning
 const stopCamera = () => {
   if (streamRef.current) {
     const stream = streamRef.current;
@@ -537,7 +524,6 @@ const stopCamera = () => {
   }
 };
 
-// Start and stop camera based on scanning state
 useEffect(() => {
   if (scanning) {
     startCamera();
@@ -547,38 +533,37 @@ useEffect(() => {
   return () => stopCamera();
 }, [scanning]);
 
+const handleFileUpload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    setImageFile(file);
+    decodeQRCodeFromFile(file);
+  }
+};
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImageFile(file);
-      decodeQRCodeFromFile(file);
-    }
-  };
-
-  const decodeQRCodeFromFile = async (file) => {
-    try {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const result = e.target.result;
-        try {
-          const image = await new BrowserMultiFormatReader().decodeFromImage(undefined, result);
-          handleScanSuccessInternal({ text: image.text }); // Pass result.text to the handler
-        } catch (decodeError) {
-          console.error('Error decoding QR code from file:', decodeError);
-          setScanResult('Failed to decode QR code from image.');
-        }
-      };
-      reader.onerror = (error) => {
-        console.error('Error reading file:', error);
-        setScanResult('Failed to read file.');
-      };
-      reader.readAsDataURL(file);
-    } catch (err) {
-      console.error('Unexpected error:', err);
-      setScanResult('Unexpected error occurred.');
-    }
-  };
+const decodeQRCodeFromFile = async (file) => {
+  try {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const result = e.target.result;
+      try {
+        const image = await new BrowserMultiFormatReader().decodeFromImage(undefined, result);
+        handleScanSuccessInternal({ text: image.text }); // Pass result.text to the handler
+      } catch (decodeError) {
+        console.error('Error decoding QR code from file:', decodeError);
+        setScanResult('Failed to decode QR code from image.');
+      }
+    };
+    reader.onerror = (error) => {
+      console.error('Error reading file:', error);
+      setScanResult('Failed to read file.');
+    };
+    reader.readAsDataURL(file);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    setScanResult('Unexpected error occurred.');
+  }
+};
 
   const downloadLogsAsPDF = async () => {
     try {
@@ -806,12 +791,11 @@ useEffect(() => {
               <div className="text-center mb-3"> - OR - </div>
               <div className="mb-6">
                 <h2 className="text-xl font-semibold mb-2">Scan QR Code with Camera</h2>
-                {isNavOpen ? '' : <button
-                  onClick={() => setScanning(true)}
-                  className="w-full bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
-                >
-                  Start Scanning
-                </button> }
+                {isNavOpen ? '' : <><video ref={videoRef} style={{ width: '100%' }} />
+      <input type="file" accept="image/*" onChange={handleFileUpload} />
+      <button onClick={() => setScanning(true)}>Start Scanning</button>
+      <button onClick={() => setScanning(false)}>Stop Scanning</button>
+      {scanResult && <p>{scanResult}</p>}</> }
               </div>
             </div>
             <div className="w-1/2 h-auto flex relative">
