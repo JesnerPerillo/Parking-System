@@ -15,30 +15,31 @@ export default function StudentLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/adminlogin.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-          body: JSON.stringify({
-            fullname,
-            password,
-          }),
-          credentials: 'include',
-      });
+        const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/adminlogin.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                fullname,
+                password,
+            }),
+            credentials: 'include', // Ensure cookies are included
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (data.success) {
-        navigate('/admindashboard');
-      } else {
-        setError(data.message);
-      }
+        if (data.success) {
+            navigate('/admindashboard');
+        } else {
+            setError(data.message);
+        }
     } catch (error) {
-      console.error(error);
-      alert('An unexpected error occurred.');
+        console.error(error);
+        alert('An unexpected error occurred.');
     }
-  };
+};
+
 
 
   return (
