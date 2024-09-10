@@ -13,7 +13,7 @@ export default function StudentFourwheelsPDF() {
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
-        const response = await axios.get('http://localhost/website/my-project/Backend/fetchstudentsdata.php', {
+        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchstudentsdata.php', {
           withCredentials: true,
         });
 
