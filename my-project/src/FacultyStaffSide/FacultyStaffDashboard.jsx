@@ -188,8 +188,6 @@ export default function FacultyStaffDashboard() {
             </div>
           </div>}
         {error && <p className="absolute" style={{ color: 'red'}}>{error}</p>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        
       </div>
     </>
   );
