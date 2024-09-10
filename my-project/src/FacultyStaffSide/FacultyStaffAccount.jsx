@@ -65,7 +65,7 @@ export default function FacultyStaffAccount() {
     }
 
     try {
-      const response = await axios.post('http://localhost/website/my-project/Backend/facultyedituser.php', form, {
+      const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/facultyedituser.php', form, {
         withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -107,7 +107,7 @@ export default function FacultyStaffAccount() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost/website/my-project/Backend/facultyfetchdata.php', {
+        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/facultyfetchdata.php', {
           withCredentials: true
         });
 
@@ -128,7 +128,7 @@ export default function FacultyStaffAccount() {
   useEffect(() => {
     const fetchImage = async (type) => {
       try {
-        const response = await axios.get(`http://localhost/website/my-project/Backend/facultyfetchimage.php?type=${type}`, {
+        const response = await axios.get(`https://seagreen-wallaby-986472.hostingersite.com/facultyfetchimage.php?type=${type}`, {
           responseType: 'blob',
           withCredentials: true
         });
@@ -150,7 +150,7 @@ export default function FacultyStaffAccount() {
   const handleLogout = async () => {
     try {
       console.log('Attempting to log out...');
-      const response = await axios.get('http://localhost/website/my-project/Backend/logout.php', {
+      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -170,7 +170,7 @@ export default function FacultyStaffAccount() {
   useEffect(() => {
     const fetchFacultyParkingSlots = async () => {
       try {
-        const response = await axios.get('http://localhost/website/my-project/Backend/fetchfacultyparkingslots.php', {
+        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchfacultyparkingslots.php', {
           withCredentials: true // Send cookies with the request if needed
         });
   

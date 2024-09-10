@@ -32,7 +32,7 @@ export default function StudentAbout() {
 
   useEffect(() => {
     // Fetch user data
-    axios.get('http://localhost/website/my-project/Backend/fetchdata.php', { withCredentials: true })
+    axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', { withCredentials: true })
       .then(response => {
         console.log('Fetched user data:', response.data); // Log the response
         if (response.data.success) {
@@ -46,7 +46,7 @@ export default function StudentAbout() {
       });
 
     // Fetch admin data
-    axios.get('http://localhost/website/my-project/Backend/adminfetchdata.php', { withCredentials: true })
+    axios.get('https://seagreen-wallaby-986472.hostingersite.com/adminfetchdata.php', { withCredentials: true })
       .then(response => {
         console.log('Fetched admin data:', response.data);
         if (response.data.success) {
@@ -67,7 +67,7 @@ export default function StudentAbout() {
   const handleLogout = async () => {
     try {
       console.log('Attempting to log out...');
-      const response = await axios.get('http://localhost/website/my-project/Backend/logout.php', {
+      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
