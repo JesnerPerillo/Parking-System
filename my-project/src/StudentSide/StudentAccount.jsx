@@ -116,16 +116,18 @@ export default function StudentAccount() {
   
 
   useEffect(() => {
-    axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', {
-      withCredentials: true
-    })
-    .then(response => {
-      console.log(response.data);
-    })
-    .catch(error => {
-      console.error('Error fetching data:', error);
-    });
-    
+    axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', { withCredentials: true })
+      .then(response => {
+        console.log('Fetched user data:', response.data); // Log the response
+        if (response.data.success) {
+          setUserData(response.data.data);
+        } else {
+          console.log(response.data.message);
+        }
+      })
+      .catch(error => {
+        console.log('Error fetching user data:', error);
+      });
   }, []);
   
   useEffect(() => {
