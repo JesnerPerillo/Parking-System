@@ -29,14 +29,8 @@ export default function StudentLogin() {
         try {
             const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/studentlogin.php', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    studentNumber,
-                    fullname,
-                    password,
-                }),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ studentNumber, fullname, password }),
                 credentials: 'include', // Include cookies in the request
             });
 
@@ -45,7 +39,7 @@ export default function StudentLogin() {
             if (data.success) {
                 navigate('/studentdashboard');
             } else {
-                setError(data.message);
+                setError(data.message || 'Login failed. Please try again.');
             }
         } catch (error) {
             console.error('Error:', error);
@@ -55,25 +49,23 @@ export default function StudentLogin() {
 
     const handleSubmitForgetPassword = async (e) => {
         e.preventDefault();
-    
+        if (!email) {
+            setMessage('Please enter your email.');
+            return;
+        }
+
         try {
             const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/forgetpassword.php', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),
-                credentials: 'include', // Include credentials if needed
+                credentials: 'include',
             });
-    
+
             const contentType = response.headers.get('Content-Type');
             if (contentType && contentType.includes('application/json')) {
                 const data = await response.json();
-                if (data.success) {
-                    setMessage('A temporary password has been sent to your email.');
-                } else {
-                    setMessage(data.message || 'Something went wrong. Please try again.');
-                }
+                setMessage(data.success ? 'A temporary password has been sent to your email.' : data.message || 'Something went wrong. Please try again.');
             } else {
                 setMessage('Unexpected response format.');
             }
