@@ -97,8 +97,8 @@ export default function AdminParkingSlot() {
   
     // Determine the URL based on the type (student or faculty/staff)
     const url = type === 'student'
-      ? 'http://localhost/website/my-project/Backend/admineditstudent.php'
-      : 'http://localhost/website/my-project/Backend/admineditfaculty.php';
+      ? 'https://seagreen-wallaby-986472.hostingersite.com/admineditstudent.php'
+      : 'https://seagreen-wallaby-986472.hostingersite.com/admineditfaculty.php';
   
     console.log('Form data being sent:', form);
   
@@ -145,7 +145,7 @@ export default function AdminParkingSlot() {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.get('http://localhost/website/my-project/Backend/logout.php', {
+      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -163,8 +163,8 @@ export default function AdminParkingSlot() {
     const fetchOccupiedSlots = async () => {
       try {
         const url = selectedUserType === 'faculty'
-          ? 'http://localhost/website/my-project/Backend/facultyfetchoccupiedslot.php'
-          : 'http://localhost/website/my-project/Backend/fetchoccupiedslot.php';
+          ? 'https://seagreen-wallaby-986472.hostingersite.com/facultyfetchoccupiedslot.php'
+          : 'https://seagreen-wallaby-986472.hostingersite.com/fetchoccupiedslot.php';
 
         const response = await axios.get(url, {
           withCredentials: true
@@ -196,8 +196,8 @@ export default function AdminParkingSlot() {
     } else {
       try {
         const fetchUrl = selectedUserType === 'faculty'
-          ? 'http://localhost/website/my-project/Backend/fetchfacultydata.php'
-          : 'http://localhost/website/my-project/Backend/fetchstudentsdata.php';
+          ? 'https://seagreen-wallaby-986472.hostingersite.com/fetchfacultydata.php'
+          : 'https://seagreen-wallaby-986472.hostingersite.com/fetchstudentsdata.php';
     
         const response = await axios.get(fetchUrl, { withCredentials: true });
     
@@ -273,7 +273,7 @@ export default function AdminParkingSlot() {
       console.log('Sending request with:', { id: popupData.id });
       
       // Send POST request
-      const response = await axios.post('http://localhost/website/my-project/Backend/delete.php', 
+      const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/delete.php', 
         { 
           id: popupData.id,
           userType: userType // Include userType to help PHP determine which table to use
@@ -300,7 +300,7 @@ export default function AdminParkingSlot() {
 
   const updateTime = async (userType, id, timeIn, timeOut) => {
     try {
-        const response = await fetch('http://localhost/website/my-project/Backend/settime.php', {
+        const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/settime.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -326,7 +326,7 @@ export default function AdminParkingSlot() {
 
   const fetchLogs = async () => {
     try {
-      const response = await fetch('http://localhost/website/my-project/Backend/Logs.php', {
+      const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/Logs.php', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -423,8 +423,8 @@ const onScanSuccess = async (slotType, slotNumber) => {
     setSelectedSpot(parseInt(slotNumber, 10));
 
     const fetchUrl = selectedUserType === 'faculty'
-      ? 'http://localhost/website/my-project/Backend/fetchfacultydata.php'
-      : 'http://localhost/website/my-project/Backend/fetchstudentsdata.php';
+      ? 'https://seagreen-wallaby-986472.hostingersite.com/fetchfacultydata.php'
+      : 'https://seagreen-wallaby-986472.hostingersite.com/fetchstudentsdata.php';
 
     const response = await axios.get(fetchUrl, { withCredentials: true });
     console.log('Response:', response.data);
@@ -583,7 +583,7 @@ useEffect(() => {
   const downloadLogsAsPDF = async () => {
     try {
       // Fetch logs from your server
-      const response = await fetch('http://localhost/website/my-project/Backend/logs.php', {
+      const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/logs.php', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -716,7 +716,7 @@ useEffect(() => {
       console.log('Sending request with:', { selection });
 
       // Send POST request
-      const response = await axios.post('http://localhost/website/my-project/Backend/logsdelete.php',
+      const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/logsdelete.php',
         { 
           selection // Include the selection criteria
         },

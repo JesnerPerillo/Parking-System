@@ -77,7 +77,7 @@ export default function AdminAccount() {
   
       if (isEditMode) {
         // Update existing admin
-        const response = await axios.put(`http://localhost/website/my-project/Backend/adminupdate.php?id=${id}`, params.toString(), {
+        const response = await axios.put(`https://seagreen-wallaby-986472.hostingersite.com/adminupdate.php?id=${id}`, params.toString(), {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           }
@@ -92,7 +92,7 @@ export default function AdminAccount() {
         }
       } else {
         // Create new admin
-        const response = await axios.post('http://localhost/website/my-project/Backend/admincreate.php', params.toString(), {
+        const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/admincreate.php', params.toString(), {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           }
@@ -121,7 +121,7 @@ export default function AdminAccount() {
     }
 
     try {
-      const response = await axios.delete(`http://localhost/website/my-project/Backend/admindelete.php?id=${id}`);
+      const response = await axios.delete(`https://seagreen-wallaby-986472.hostingersite.com/admindelete.php?id=${id}`);
       if (response.data.success) {
         setSuccess('Admin deleted successfully!');
         fetchAdmins();
@@ -142,7 +142,7 @@ export default function AdminAccount() {
   const handleLogout = async () => {
     try {
       console.log('Attempting to log out...');
-      const response = await axios.get('http://localhost/website/my-project/Backend/logout.php', {
+      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -162,7 +162,7 @@ export default function AdminAccount() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost/website/my-project/Backend/adminfetchdata.php', {
+        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/adminfetchdata.php', {
           withCredentials: true,
         });
 
@@ -182,7 +182,7 @@ export default function AdminAccount() {
 
   const fetchAdmins = async () => {
     try {
-      const response = await axios.get('http://localhost/website/my-project/Backend/admingetadmins.php', {
+      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/admingetadmins.php', {
         withCredentials: true,
       });
       setAdmins(response.data);

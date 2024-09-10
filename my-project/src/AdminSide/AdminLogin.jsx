@@ -15,7 +15,7 @@ export default function StudentLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost/website/my-project/Backend/adminlogin.php', {
+      const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/adminlogin.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
