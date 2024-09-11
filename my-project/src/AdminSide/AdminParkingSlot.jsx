@@ -536,8 +536,8 @@ const handleQRCodeScan = (qrCodeData) => {
 
   if (slot_type && slot_number) {
     // Handle scan success
-    console.log(`${slot_number}:${slot_type}`);
-    setScanResult(`${slot_number}:${slot_type}`);
+    console.log(`${slot_type}:${slot_number}`);
+    setScanResult(`${slot_type}:${slot_number}`);
   } else {
     console.error('Invalid QR code data');
     setScanResult('Invalid QR code data.');
