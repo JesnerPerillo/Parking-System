@@ -33,9 +33,9 @@ export default function StudentLogin() {
                 body: JSON.stringify({ studentNumber, fullname, password }),
                 credentials: 'include', // Include cookies in the request
             });
-
+    
             const data = await response.json();
-
+    
             if (data.success) {
                 navigate('/studentdashboard');
             } else {
@@ -46,6 +46,7 @@ export default function StudentLogin() {
             setError('An unexpected error occurred.');
         }
     };
+    
 
     const handleSubmitForgetPassword = async (e) => {
         e.preventDefault();
