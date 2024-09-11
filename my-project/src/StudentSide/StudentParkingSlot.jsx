@@ -34,6 +34,66 @@ export default function StudentParkingSlots() {
     setIsNavOpen(!isNavOpen);
   };
 
+  const renderSpots = (count, color, vehicleType) => {
+    const occupied = occupiedSpots[vehicleType] || [];
+    const currentUserSpot = userData.parkingSlot ? userData.parkingSlot.slotNumber : null;
+    const currentUserVehicleType = userData.parkingSlot ? userData.parkingSlot.slotType : null;
+
+    console.log(`Rendering spots for ${vehicleType}`);
+    console.log('Occupied spots:', occupied);
+    console.log('Current User Spot:', currentUserSpot, 'Current User Vehicle Type:', currentUserVehicleType);
+
+    return Array.from({ length: count }, (_, index) => {
+      const spotNumber = index + 1;
+      const isOccupied = occupied.map(Number).includes(spotNumber); // Convert occupied spots to numbers for comparison
+      const isSelected = selectedSpot === spotNumber && selectedVehicle === vehicleType;
+      const isCurrentUserSpot = currentUserSpot === spotNumber && currentUserVehicleType === vehicleType;
+
+      console.log(`Spot ${spotNumber}: isOccupied=${isOccupied}, isSelected=${isSelected}, isCurrentUserSpot=${isCurrentUserSpot}`);
+
+      let spotColorClass = '';
+      if (isCurrentUserSpot) {
+        spotColorClass = 'bg-orange-500';
+      } else if (isSelected) {
+        spotColorClass = 'bg-red-400';
+      } else if (isOccupied) {
+        spotColorClass = 'bg-red-600 cursor-not-allowed';
+      } else {
+        spotColorClass = 'bg-green-500';
+      }
+
+      return (
+        <div
+          key={index}
+          className={`rounded-xl h-20 flex items-center justify-center cursor-pointer ${color} ${spotColorClass}`}
+          style={{
+            borderColor: isSelected || isOccupied ? '#E53E3E' : 'transparent',
+            color: isSelected || isOccupied ? '#FFFFFF' : '#000000',
+            boxShadow: isSelected ? '0 0 0 2px rgba(66, 153, 225, 0.5)' : 'none'
+          }}
+          onClick={() => {
+            if (!isOccupied && !isCurrentUserSpot) {
+              handleSpotSelection(spotNumber);
+            } else if (isOccupied) {
+              alert('This parking spot is already occupied.');
+            }
+          }}
+        >
+          {spotNumber}
+        </div>
+      );
+    });
+  };
+
+  const handleSpotSelection = (spotNumber) => {
+    if (selectedVehicle !== userData.Vehicle.toLowerCase()) {
+      alert(`Warning: Your registered vehicle type is ${userData.Vehicle}. Please select a parking slot matching your vehicle type.`);
+      return; // Prevent selecting the spot if vehicle type doesn't match
+    }
+    setSelectedSpot(spotNumber);
+  };
+  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -89,34 +149,6 @@ export default function StudentParkingSlots() {
     console.log('Occupied spots:', occupiedSpots);
   }, [occupiedSpots]);
 
-  const handleLogout = async () => {
-    try {
-      console.log('Attempting to log out...');
-      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
-        withCredentials: true,
-      });
-
-      console.log('Logout response:', response.data);
-
-      if (response.data.success) {
-        navigate('/');
-      } else {
-        setError('Logout failed. Please try again.');
-      }
-    } catch (error) {
-      setError('Error logging out: ' + error.message);
-      console.error('Error logging out: ', error);
-    }
-  };
-
-  const handleSpotSelection = (spotNumber) => {
-    if (selectedVehicle !== userData.Vehicle.toLowerCase()) {
-      alert(`Warning: Your registered vehicle type is ${userData.Vehicle}. Please select a parking slot matching your vehicle type.`);
-      return; // Prevent selecting the spot if vehicle type doesn't match
-    }
-    setSelectedSpot(spotNumber);
-  };
-  
   const handleSubmit = async () => {
     if (selectedSpot === null || !userData || !userData.id) {
       alert('Please select a parking spot and ensure you are logged in');
@@ -170,57 +202,25 @@ export default function StudentParkingSlots() {
       alert('Error selecting parking slot: ' + error.message);
     }
   };
-  
 
-  const renderSpots = (count, color, vehicleType) => {
-    const occupied = occupiedSpots[vehicleType] || [];
-    const currentUserSpot = userData.parkingSlot ? userData.parkingSlot.slotNumber : null;
-    const currentUserVehicleType = userData.parkingSlot ? userData.parkingSlot.slotType : null;
+  const handleLogout = async () => {
+    try {
+      console.log('Attempting to log out...');
+      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
+        withCredentials: true,
+      });
 
-    console.log(`Rendering spots for ${vehicleType}`);
-    console.log('Occupied spots:', occupied);
-    console.log('Current User Spot:', currentUserSpot, 'Current User Vehicle Type:', currentUserVehicleType);
+      console.log('Logout response:', response.data);
 
-    return Array.from({ length: count }, (_, index) => {
-      const spotNumber = index + 1;
-      const isOccupied = occupied.map(Number).includes(spotNumber); // Convert occupied spots to numbers for comparison
-      const isSelected = selectedSpot === spotNumber && selectedVehicle === vehicleType;
-      const isCurrentUserSpot = currentUserSpot === spotNumber && currentUserVehicleType === vehicleType;
-
-      console.log(`Spot ${spotNumber}: isOccupied=${isOccupied}, isSelected=${isSelected}, isCurrentUserSpot=${isCurrentUserSpot}`);
-
-      let spotColorClass = '';
-      if (isCurrentUserSpot) {
-        spotColorClass = 'bg-orange-500';
-      } else if (isSelected) {
-        spotColorClass = 'bg-red-400';
-      } else if (isOccupied) {
-        spotColorClass = 'bg-red-600 cursor-not-allowed';
+      if (response.data.success) {
+        navigate('/');
       } else {
-        spotColorClass = 'bg-green-500';
+        setError('Logout failed. Please try again.');
       }
-
-      return (
-        <div
-          key={index}
-          className={`rounded-xl h-20 flex items-center justify-center cursor-pointer ${color} ${spotColorClass}`}
-          style={{
-            borderColor: isSelected || isOccupied ? '#E53E3E' : 'transparent',
-            color: isSelected || isOccupied ? '#FFFFFF' : '#000000',
-            boxShadow: isSelected ? '0 0 0 2px rgba(66, 153, 225, 0.5)' : 'none'
-          }}
-          onClick={() => {
-            if (!isOccupied && !isCurrentUserSpot) {
-              handleSpotSelection(spotNumber);
-            } else if (isOccupied) {
-              alert('This parking spot is already occupied.');
-            }
-          }}
-        >
-          {spotNumber}
-        </div>
-      );
-    });
+    } catch (error) {
+      setError('Error logging out: ' + error.message);
+      console.error('Error logging out: ', error);
+    }
   };
   
 
