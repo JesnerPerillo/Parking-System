@@ -423,8 +423,8 @@ const onScanSuccess = async (slotType, slotNumber) => {
     setSelectedSpot(parseInt(slotNumber, 10));
 
     const fetchUrl = selectedUserType === 'faculty'
-      ? 'https://seagreen-wallaby-986472.hostingersite.com/fetchfacultydata.php'
-      : 'https://seagreen-wallaby-986472.hostingersite.com/fetchstudentsdata.php';
+      ? 'http://localhost/website/my-project/Backend/fetchfacultydata.php'
+      : 'http://localhost/website/my-project/Backend/fetchstudentsdata.php';
 
     const response = await axios.get(fetchUrl, { withCredentials: true });
     console.log('Response:', response.data);
@@ -452,6 +452,36 @@ const onScanSuccess = async (slotType, slotNumber) => {
 };
 
 
+// Function to handle QR code scan and parse the data
+const handleQRCodeScan = (qrCodeData) => {
+  const { slot_type, slot_number } = qrCodeData;
+
+  if (slot_type && slot_number) {
+    onScanSuccess(slot_type, slot_number);
+  } else {
+    console.error('Invalid QR code data');
+  }
+};
+
+// Handle internal QR code scan result
+// Handle internal QR code scan result
+const handleScanSuccessInternal = (result) => {
+  if (result && result.text) {
+    const scannedData = result.text.trim();
+    const [slotType, slotNumber] = scannedData.split(':');
+
+    if (slotType && slotNumber) {
+      handleQRCodeScan({ slot_type: slotType.trim(), slot_number: slotNumber.trim() });
+      setScanning(false);
+      reader.stop(); // Stop scanning after a successful scan
+    } else {
+      console.error('Slot type or slot number is missing in the scanned data.');
+    }
+  } else {
+    console.error('Result is null or undefined or does not contain text');
+  }
+};
+
 // Start and stop camera based on scanning state
 useEffect(() => {
   if (scanning) {
@@ -461,6 +491,7 @@ useEffect(() => {
   }
   return () => stopCamera();
 }, [scanning]);
+
 
 // Initialize and start the camera for QR code scanning
 const startCamera = async () => {
@@ -472,19 +503,16 @@ const startCamera = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     streamRef.current = stream;
     videoRef.current.srcObject = stream;
-    videoRef.current.play();
-
+    
     codeReader.current.decodeFromVideoDevice(null, videoRef.current, handleScanSuccessInternal)
       .then(() => {
         console.log('Camera started');
       })
       .catch(err => {
         console.error('Error starting camera:', err);
-        setScanResult('Error starting camera.');
       });
   } catch (err) {
     console.error('Error accessing camera:', err);
-    setScanResult('Error accessing camera.');
   }
 };
 
@@ -510,73 +538,49 @@ const stopCamera = () => {
   }
 };
 
-// Handle internal QR code scan result
-const handleScanSuccessInternal = (result) => {
-  if (result && result.text) {
-    const scannedData = result.text.trim();
-    const [slotType, slotNumber] = scannedData.split(':');
+// Start and stop camera based on scanning state
+useEffect(() => {
+  if (scanning) {
+    startCamera();
+  } else {
+    stopCamera();
+  }
+  return () => stopCamera();
+}, [scanning]);
 
-    if (slotType && slotNumber) {
-      handleQRCodeScan({ slot_type: slotType.trim(), slot_number: slotNumber.trim() });
-      setScanning(false);
-      stopCamera(); // Stop scanning after a successful scan
-    } else {
-      console.error('Slot type or slot number is missing in the scanned data.');
-      setScanResult('Invalid QR code data.');
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImageFile(file);
+      decodeQRCodeFromFile(file);
     }
-  } else {
-    console.error('Result is null or undefined or does not contain text');
-    setScanResult('No QR code detected.');
-  }
-};
+  };
 
-// Handle QR code scan result
-const handleQRCodeScan = (qrCodeData) => {
-  const { slot_type, slot_number } = qrCodeData;
+  const decodeQRCodeFromFile = async (file) => {
+    try {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const result = e.target.result;
+        try {
+          const image = await new BrowserMultiFormatReader().decodeFromImage(undefined, result);
+          handleScanSuccessInternal({ text: image.text }); // Pass result.text to the handler
+        } catch (decodeError) {
+          console.error('Error decoding QR code from file:', decodeError);
+          setScanResult('Failed to decode QR code from image.');
+        }
+      };
+      reader.onerror = (error) => {
+        console.error('Error reading file:', error);
+        setScanResult('Failed to read file.');
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setScanResult('Unexpected error occurred.');
+    }
+  };
 
-  if (slot_type && slot_number) {
-    // Handle scan success
-    console.log(`${slot_type}:${slot_number}`);
-    setScanResult(`${slot_type}:${slot_number}`);
-  } else {
-    console.error('Invalid QR code data');
-    setScanResult('Invalid QR code data.');
-  }
-};
-
-// Handle file upload
-const handleFileUpload = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    setImageFile(file);
-    decodeQRCodeFromFile(file);
-  }
-};
-
-// Decode QR code from uploaded file
-const decodeQRCodeFromFile = async (file) => {
-  try {
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const result = e.target.result;
-      try {
-        const image = await new BrowserMultiFormatReader().decodeFromImage(undefined, result);
-        handleScanSuccessInternal({ text: image.text }); // Pass result.text to the handler
-      } catch (decodeError) {
-        console.error('Error decoding QR code from file:', decodeError);
-        setScanResult('Failed to decode QR code from image.');
-      }
-    };
-    reader.onerror = (error) => {
-      console.error('Error reading file:', error);
-      setScanResult('Failed to read file.');
-    };
-    reader.readAsDataURL(file);
-  } catch (err) {
-    console.error('Unexpected error:', err);
-    setScanResult('Unexpected error occurred.');
-  }
-};
 
   const downloadLogsAsPDF = async () => {
     try {
