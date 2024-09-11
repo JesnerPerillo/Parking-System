@@ -452,35 +452,6 @@ const onScanSuccess = async (slotType, slotNumber) => {
 };
 
 
-// Function to handle QR code scan and parse the data
-const handleQRCodeScan = (qrCodeData) => {
-  const { slot_type, slot_number } = qrCodeData;
-
-  if (slot_type && slot_number) {
-    onScanSuccess(slot_type, slot_number);
-  } else {
-    console.error('Invalid QR code data');
-  }
-};
-
-// Handle internal QR code scan result
-const handleScanSuccessInternal = (result) => {
-  if (result && result.text) {
-    const scannedData = result.text.trim();
-    const [slotType, slotNumber] = scannedData.split(':');
-
-    if (slotType && slotNumber) {
-      handleQRCodeScan({ slot_type: slotType.trim(), slot_number: slotNumber.trim() });
-      setScanning(false);
-      reader.stop(); // Stop scanning after a successful scan
-    } else {
-      console.error('Slot type or slot number is missing in the scanned data.');
-    }
-  } else {
-    console.error('Result is null or undefined or does not contain text');
-  }
-};
-
 // Start and stop camera based on scanning state
 useEffect(() => {
   if (scanning) {
@@ -490,7 +461,6 @@ useEffect(() => {
   }
   return () => stopCamera();
 }, [scanning]);
-
 
 // Initialize and start the camera for QR code scanning
 const startCamera = async () => {
@@ -502,16 +472,19 @@ const startCamera = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
     streamRef.current = stream;
     videoRef.current.srcObject = stream;
-    
+    videoRef.current.play();
+
     codeReader.current.decodeFromVideoDevice(null, videoRef.current, handleScanSuccessInternal)
       .then(() => {
         console.log('Camera started');
       })
       .catch(err => {
         console.error('Error starting camera:', err);
+        setScanResult('Error starting camera.');
       });
   } catch (err) {
     console.error('Error accessing camera:', err);
+    setScanResult('Error accessing camera.');
   }
 };
 
@@ -537,48 +510,73 @@ const stopCamera = () => {
   }
 };
 
-// Start and stop camera based on scanning state
-useEffect(() => {
-  if (scanning) {
-    startCamera();
+// Handle internal QR code scan result
+const handleScanSuccessInternal = (result) => {
+  if (result && result.text) {
+    const scannedData = result.text.trim();
+    const [slotType, slotNumber] = scannedData.split(':');
+
+    if (slotType && slotNumber) {
+      handleQRCodeScan({ slot_type: slotType.trim(), slot_number: slotNumber.trim() });
+      setScanning(false);
+      stopCamera(); // Stop scanning after a successful scan
+    } else {
+      console.error('Slot type or slot number is missing in the scanned data.');
+      setScanResult('Invalid QR code data.');
+    }
   } else {
-    stopCamera();
+    console.error('Result is null or undefined or does not contain text');
+    setScanResult('No QR code detected.');
   }
-  return () => stopCamera();
-}, [scanning]);
+};
 
+// Handle QR code scan result
+const handleQRCodeScan = (qrCodeData) => {
+  const { slot_type, slot_number } = qrCodeData;
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImageFile(file);
-      decodeQRCodeFromFile(file);
-    }
-  };
+  if (slot_type && slot_number) {
+    // Handle scan success
+    console.log(`Slot Type: ${slot_type}, Slot Number: ${slot_number}`);
+    setScanResult(`Slot Type: ${slot_type}, Slot Number: ${slot_number}`);
+  } else {
+    console.error('Invalid QR code data');
+    setScanResult('Invalid QR code data.');
+  }
+};
 
-  const decodeQRCodeFromFile = async (file) => {
-    try {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const result = e.target.result;
-        try {
-          const image = await new BrowserMultiFormatReader().decodeFromImage(undefined, result);
-          handleScanSuccessInternal({ text: image.text }); // Pass result.text to the handler
-        } catch (decodeError) {
-          console.error('Error decoding QR code from file:', decodeError);
-          setScanResult('Failed to decode QR code from image.');
-        }
-      };
-      reader.onerror = (error) => {
-        console.error('Error reading file:', error);
-        setScanResult('Failed to read file.');
-      };
-      reader.readAsDataURL(file);
-    } catch (err) {
-      console.error('Unexpected error:', err);
-      setScanResult('Unexpected error occurred.');
-    }
-  };
+// Handle file upload
+const handleFileUpload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    setImageFile(file);
+    decodeQRCodeFromFile(file);
+  }
+};
+
+// Decode QR code from uploaded file
+const decodeQRCodeFromFile = async (file) => {
+  try {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const result = e.target.result;
+      try {
+        const image = await new BrowserMultiFormatReader().decodeFromImage(undefined, result);
+        handleScanSuccessInternal({ text: image.text }); // Pass result.text to the handler
+      } catch (decodeError) {
+        console.error('Error decoding QR code from file:', decodeError);
+        setScanResult('Failed to decode QR code from image.');
+      }
+    };
+    reader.onerror = (error) => {
+      console.error('Error reading file:', error);
+      setScanResult('Failed to read file.');
+    };
+    reader.readAsDataURL(file);
+  } catch (err) {
+    console.error('Unexpected error:', err);
+    setScanResult('Unexpected error occurred.');
+  }
+};
 
   const downloadLogsAsPDF = async () => {
     try {
@@ -791,30 +789,35 @@ useEffect(() => {
         </div>
         <div className="w-full h-9/10.5 flex flex-col overflow-auto">
           <div onScanSuccess={handleQRCodeScan} className="mt-10 flex flex-col md:flex-row items-center justify-evenly w-full space-y-4 md:space-y-0">
-            <div className="bg-gray-700 border text-white p-8 rounded-lg shadow-md w-full max-w-md">
-              <h1 className="text-3xl font-bold mb-6 text-center">QR Code Scanner</h1>
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold mb-2">Upload QR Code Image</h2>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileUpload}
-                  className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none"
-                />
-                {imageFile && <p className="mt-2 text-sm">Image file selected: {imageFile.name}</p>}
-                <p className="mt-2 text-sm">{scanResult}</p>
-              </div>
-              <div className="text-center mb-3"> - OR - </div>
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold mb-2">Scan QR Code with Camera</h2>
-                {isNavOpen ? '' : <button
-                  onClick={() => setScanning(true)}
-                  className="w-full bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
-                >
-                  Start Scanning
-                </button> }
-              </div>
-            </div>
+          <div className="bg-gray-700 border text-white p-8 rounded-lg shadow-md w-full max-w-md">
+      <h1 className="text-3xl font-bold mb-6 text-center">QR Code Scanner</h1>
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold mb-2">Upload QR Code Image</h2>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileUpload}
+          className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none"
+        />
+        {imageFile && <p className="mt-2 text-sm">Image file selected: {imageFile.name}</p>}
+        <p className="mt-2 text-sm">{scanResult}</p>
+      </div>
+      <div className="text-center mb-3"> - OR - </div>
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold mb-2">Scan QR Code with Camera</h2>
+        {!scanning ? (
+          <button
+            onClick={() => setScanning(true)}
+            className="w-full bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
+          >
+            Start Scanning
+          </button>
+        ) : (
+          <p className="text-center">Scanning...</p>
+        )}
+        <video ref={videoRef} style={{ width: '100%', height: 'auto' }}></video>
+      </div>
+    </div>
             <div className="w-1/2 h-auto flex relative">
               {isNavOpen ? '' : <img src={Beep} alt="Beep Vehicle Image" className="drop-shadow-2xl w-full md:w-2/3" />}
             </div>
