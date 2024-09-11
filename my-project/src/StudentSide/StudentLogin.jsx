@@ -144,7 +144,6 @@ export default function StudentLogin() {
                         <Link to="/studentsignup" className="text-cyan-500 hover:underline ml-1">
                             Signup
                         </Link>
-                        <Link to="/studentDashboard" ><button className="w-40 h-10 bg-red-200">Click</button></Link>
                     </p>
                     <a onClick={handleOpenModal} className="text-blue-500 no-underline hover:cursor-pointer">
                             Forgot Password?
