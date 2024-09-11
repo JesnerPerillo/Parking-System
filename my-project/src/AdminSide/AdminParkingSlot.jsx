@@ -326,7 +326,7 @@ export default function AdminParkingSlot() {
 
   const fetchLogs = async () => {
     try {
-      const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/Logs.php', {
+      const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/logs.php', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
