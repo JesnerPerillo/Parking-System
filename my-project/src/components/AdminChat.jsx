@@ -11,7 +11,7 @@ const AdminChat = ({ userId, userType }) => {
     const fetchChatSession = async () => {
       const adminId = 1; // Replace with actual admin ID
       try {
-        const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/chat.php', {
+        const response = await axios.post('http://localhost/website/my-project/Backend/chat.php', {
           action: 'createChatSession',
           user_id: userId,
           user_type: userType,

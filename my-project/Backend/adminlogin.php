@@ -17,7 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $fullname = $data["fullname"];
         $password = $data["password"];
 
-        if (!preg_match('/^[a-zA-Z0-9]+$/', $fullname) || !preg_match('/^[a-zA-Z0-9]+$/', $password)) {
+        // Update validation to accept any characters (no longer restricted to alphanumeric)
+        if (empty($fullname) || empty($password)) {
             $response['success'] = false;
             $response['message'] = 'Invalid input data.';
             echo json_encode($response);
@@ -30,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute();
             $result = $stmt->get_result();
 
-            if ($result->num_rows > 0 ) {
+            if ($result->num_rows > 0) {
                 $row = $result->fetch_assoc();
 
                 if ($fullname == $row["Name"] && password_verify($password, $row["Password"])) {

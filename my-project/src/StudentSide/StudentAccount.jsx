@@ -24,6 +24,7 @@ export default function StudentAccount() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [licenseSrc, setLicenseSrc] = useState('');
   const [orcrSrc, setOrcrSrc] = useState('');
+  const [corSrc, setCorSrc] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImageSrc, setModalImageSrc] = useState('');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -37,7 +38,8 @@ export default function StudentAccount() {
     course: '',
     password: '',
     license: null,
-    orcr: null
+    orcr: null,
+    cor: null,
   });
 
   const handleChange = (e) => {
@@ -58,12 +60,12 @@ export default function StudentAccount() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const form = new FormData();
     for (const key in formData) {
       form.append(key, formData[key]);
     }
-
+  
     try {
       const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/edituser.php', form, {
         withCredentials: true,
@@ -71,15 +73,18 @@ export default function StudentAccount() {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+  
       if (response.data.success) {
-        // Update user data state
+        // Directly update the user data state with the form data
         setUserData((prev) => ({
           ...prev,
           ...formData,
-          password: '', // Don't show the password in user data
+          password: '', // Ensure password is not reflected in the user state
         }));
+        
         alert('Account updated successfully');
+        setIsEditModalOpen(false); // Close the modal after success
+        alert('Please download the new qr code after the modification on your data.');
       } else {
         alert('Error updating account: ' + response.data.message);
       }
@@ -88,6 +93,7 @@ export default function StudentAccount() {
       alert('Error updating account. Please try again.');
     }
   };
+  
 
   const handleOpenModal = (src) => {
     setModalImageSrc(src);
@@ -98,22 +104,6 @@ export default function StudentAccount() {
     setIsModalOpen(false);
     setModalImageSrc('');
   };
-
-  useEffect(() => {
-    axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', { withCredentials: true })
-      .then(response => {
-        console.log('Fetched user data:', response.data); // Log the response
-        if (response.data.success) {
-          setUserData(response.data.data);
-        } else {
-          console.log(response.data.message);
-        }
-      })
-      .catch(error => {
-        console.log('Error fetching user data:', error);
-      });
-  }, []);
-  
 
   useEffect(() => {
     axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', { withCredentials: true })
@@ -142,6 +132,8 @@ export default function StudentAccount() {
           setLicenseSrc(imageUrl);
         } else if (type === 'ORCR') {
           setOrcrSrc(imageUrl);
+        } else if (type === 'COR') {
+          setCorSrc(imageUrl);
         }
       } catch (error) {
         console.error(`Error fetching ${type} image:`, error);
@@ -150,6 +142,7 @@ export default function StudentAccount() {
   
     fetchImage('License');
     fetchImage('ORCR');
+    fetchImage('COR');
   }, []);
   
 
@@ -272,10 +265,10 @@ export default function StudentAccount() {
 
   return (
     <>
-      <div className="relative w-full lg:h-screen bg-blue-900 flex">
+      <div className="relative w-full lg:h-screen bg-blue-700 flex">
         {/* Navigation button */}
         <button
-          className="lg:hidden bg-white text-blue-900 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-10"
+          className="lg:hidden bg-white text-blue-700 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-10"
           onClick={toggleNav}
         >
           {isNavOpen ? '✕' : '☰'}
@@ -283,27 +276,27 @@ export default function StudentAccount() {
 
         {/* Navigation menu */}
         <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
-          <div className="border-b-2 border-blue-900 w-full h-24 text-blue-900 flex flex-col items-center justify-center mt-10 text-xl tracking-wider">
+          <div className="border-b-2 border-blue-700 w-full h-24 text-blue-700 flex flex-col items-center justify-center mt-10 text-xl tracking-wider">
             <h1 className="text-bold text-3xl sm:text-2xl md:text-4xl lg:text-2xl xl:text-4xl tracking-widest">PARKING SYSTEM</h1>
           </div>
           <div className="flex w-full flex-col justify-evenly h-2/4 relative">
-            <Link to="/studentdashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/studentdashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/studentparkingslot" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
+            <Link to="/studentparkingslot" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
               <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <Link to="/studentaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 bg-blue-900 lg:pl-3">
+            <Link to="/studentaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-970 mb-2 duration-200 bg-blue-700 lg:pl-3">
               <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Account</span>
               </li>
             </Link>
-            <Link to="/studentabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/studentabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsQuestionSquare /> <span className="ml-5">About</span>
               </li>
             </Link>
@@ -333,7 +326,7 @@ export default function StudentAccount() {
               <div className="w-full h-5/6 max-h-full bg-white rounded-xl overflow-auto flex flex-col sm:flex-row justify-between items-center p-4">
                 <div
                   ref={canvasRef}
-                  className="w-full sm:w-1/5 bg-gray-200 h-full flex flex-col justify-center items-center mb-4 sm:mb-0"
+                  className="w-full sm:w-1/5 bg-gray-200 h-auto flex flex-col justify-center items-center mb-4 sm:mb-0"
                 >
                   <div className="mt-5">
                     <QRCode value={qrValue} size={200} includeMargin={true} />
@@ -345,11 +338,11 @@ export default function StudentAccount() {
                     Download QR Code
                   </button>
                 </div>
-                <ul className="w-full sm:w-4/5 flex flex-col justify-between text-sm">
-                  <li className="mb-2">Student Number: {userData['Student Number']}</li>
+                <ul className="w-full h-full overflow-auto sm:w-full h-full flex flex-col justify-around text-sm">
                   <li className="mb-4 text-2xl sm:text-3xl font-bold">
                     {userData.Name}
                   </li>
+                  <li className="mb-2">Student Number: {userData['Student Number']}</li>
                   <li className="mb-2">Email: {userData.Email}</li>
                   <li className="mb-2">Year & Section: {userData['Year and Section']}</li>
                   <li className="mb-2">Course: {userData.Course}</li>
@@ -358,46 +351,7 @@ export default function StudentAccount() {
                   {slot.map((s) => (
                     <li key={s.slot_id}>Parking Slot: {s.slot_number}</li>
                   ))}
-                  <div className="mt-5 flex flex-col">
-                    <div className="mb-4">
-                      <b>License:</b>
-                      <br />
-                      {licenseSrc ? (
-                        <div className="flex items-center">
-                          <img
-                            src={licenseSrc}
-                            alt="License"
-                            className="w-24 h-auto"
-                          />
-                          <button
-                            onClick={() => handleOpenModal(licenseSrc)}
-                            className="ml-2 text-blue-500 hover:text-blue-700"
-                          >
-                            <BsEyeFill className="w-6 h-6" />
-                          </button>
-                        </div>
-                      ) : (
-                        'No image available'
-                      )}
-                    </div>
-                    <div className="mb-4">
-                      <b>ORCR:</b>
-                      <br />
-                      {orcrSrc ? (
-                        <div className="flex items-center">
-                          <img src={orcrSrc} alt="ORCR" className="w-24 h-auto" />
-                          <button
-                            onClick={() => handleOpenModal(orcrSrc)}
-                            className="ml-2 text-blue-500 hover:text-blue-700"
-                          >
-                            <BsEyeFill className="w-6 h-6" />
-                          </button>
-                        </div>
-                      ) : (
-                        'No image available'
-                      )}
-                    </div>
-
+                  <div>
                     {isModalOpen && (
                       <div className="fixed inset-0 w-full z-50 flex items-center justify-center bg-black bg-opacity-50">
                         <div className="relative bg-white p-4 rounded-lg shadow-lg flex justify-center w-full h-2/4 max-h-screen sm:w-3/4 sm:h-2/3">
@@ -445,7 +399,8 @@ export default function StudentAccount() {
                             </p>
                           <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
                             <label className="relative w-full">
-                              <input name="studentNumber" value={formData.studentNumber} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5 cursor-no-drop" type="text" placeholder={userData[`Student Number`]} required disabled/> <BsExclamationTriangle className="absolute left-16 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                              <input name="studentNumber" value={formData.studentNumber}  onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder="" required disabled/>
+                              <span className="text-red-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Student Number: {userData[`Student Number`]} <BsExclamationTriangle className="absolute left-48 top-1/2 transform -translate-y-1/2 text-gray-500" /></span>
                             </label>
                             <label className="relative w-full">
                               <input name="fullname" value={formData.fullname} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
@@ -505,6 +460,10 @@ export default function StudentAccount() {
                             <label for="formFile" class="form-label">ORCR</label>
                             <input name="orcr" class="form-control" type="file" id="formFile" onChange={handleFileChange}/>
                           </div>
+                          <div>
+                            <label for="formFile" class="form-label">COR (Certificate of Registration)</label>
+                            <input name="cor" class="form-control" type="file" id="formFile" onChange={handleFileChange}/>
+                          </div>
                           <div className="flex justify-end justify-between">
                             <button
                               type="button"
@@ -526,6 +485,65 @@ export default function StudentAccount() {
                     )}
                   </div>
                 </ul>
+                <div className="w-2/3 h-full">
+                  <div className="mt-5 flex flex-col">
+                    <div className="mb-4">
+                      <b>License:</b>
+                      <br />
+                      {licenseSrc ? (
+                        <div className="flex items-center">
+                          <img
+                            src={licenseSrc}
+                            alt="License"
+                            className="w-24 h-auto"
+                          />
+                          <button
+                            onClick={() => handleOpenModal(licenseSrc)}
+                            className="ml-2 text-blue-500 hover:text-blue-700"
+                          >
+                            <BsEyeFill className="w-6 h-6" />
+                          </button>
+                        </div>
+                      ) : (
+                        'No image available'
+                      )}
+                    </div>
+                    <div className="mb-4">
+                      <b>ORCR:</b>
+                      <br />
+                      {orcrSrc ? (
+                        <div className="flex items-center">
+                          <img src={orcrSrc} alt="ORCR" className="w-24 h-auto" />
+                          <button
+                            onClick={() => handleOpenModal(orcrSrc)}
+                            className="ml-2 text-blue-500 hover:text-blue-700"
+                          >
+                            <BsEyeFill className="w-6 h-6" />
+                          </button>
+                        </div>
+                      ) : (
+                        'No image available'
+                      )}
+                    </div>
+                    <div className="mb-4">
+                      <b>COR:</b>
+                      <br />
+                      {corSrc ? (
+                        <div className="flex items-center">
+                          <img src={corSrc} alt="COR" className="w-24 h-auto" />
+                          <button
+                            onClick={() => handleOpenModal(corSrc)}
+                            className="ml-2 text-blue-500 hover:text-blue-700"
+                          >
+                            <BsEyeFill className="w-6 h-6" />
+                          </button>
+                        </div>
+                      ) : (
+                        'No image available'
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}

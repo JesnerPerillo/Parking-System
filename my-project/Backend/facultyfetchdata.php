@@ -21,10 +21,10 @@ if (!isset($_SESSION["login"]) || !$_SESSION["login"]) {
 include './database.php';
 
 // Retrieve faculty name from session
-$fullname = $_SESSION["fullname"];
+$employeeId = $_SESSION["employeeId"];
 
 // Prepare SQL statement to fetch faculty data based on the name
-$stmt = $conn->prepare("SELECT id, Name, Email, Position, Building, Vehicle, `Plate Number`, Password, License, ORCR FROM facultystaff WHERE Name = ?");
+$stmt = $conn->prepare("SELECT id, `Employee Id`, Name, Email, Position, Building, Vehicle, `Plate Number`, Password, License, ORCR FROM facultystaff WHERE `Employee Id` = ?");
 if (!$stmt) {
     $response['success'] = false;
     $response['message'] = 'Database query preparation failed.';
@@ -32,7 +32,7 @@ if (!$stmt) {
     exit;
 }
 
-$stmt->bind_param("s", $fullname);
+$stmt->bind_param("s", $employeeId);
 $stmt->execute();
 $result = $stmt->get_result();
 

@@ -65,7 +65,7 @@ export default function StudentLogin() {
             const contentType = response.headers.get('Content-Type');
             if (contentType && contentType.includes('application/json')) {
                 const data = await response.json();
-                setMessage(data.success ? 'A temporary password has been sent to your email.' : data.message || 'Something went wrong. Please try again.');
+                setMessage(data.success ? <p className="text-green-500">{'A temporary password has been sent to your email.'}</p> : <p className="text-red-500">{data.message}</p> || 'Something went wrong. Please try again.');
             } else {
                 setMessage('Unexpected response format.');
             }
@@ -78,10 +78,9 @@ export default function StudentLogin() {
 
 
     return (
-        <div className="bg-gradient-to-r from-blue-700 w-full to-teal-700 min-h-screen flex flex-col items-center">
-            <div className="relative form xl:w-2/4 mt-28 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-white">
+        <div className="bg-blue-700 min-h-screen flex flex-col items-center">
+            <div className="relative form xl:w-2/4 mt-28 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full">
                 <div className="header flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
-                <div className="w-96 h-96 bg-blue-900 rounded-full absolute left-0"></div>
                     <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />
                 </div>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4 float:right w-2/4 p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 max-sm:w-full sm:p-5">
@@ -139,21 +138,25 @@ export default function StudentLogin() {
                         Submit
                     </button>
                     {error && <p className="text-red-500 text-sm">{error}</p>}
-                    <p className="text-center text-base text-gray-400 sm:text-sm">
-                        Don't have an account?{' '}
-                        <Link to="/studentsignup" className="text-cyan-500 hover:underline ml-1">
-                            Signup
-                        </Link>
-                        <Link to="/studentDashboard" ><button className="w-40 h-10 bg-red-200">Click</button></Link>
-                    </p>
-                    <a onClick={handleOpenModal} className="text-blue-500 no-underline hover:cursor-pointer">
+                    <div className="flex flex-col items-center justify-center">
+                        <p className="text-center text-base text-gray-400 sm:text-sm">
+                            Don't have an account?{' '}
+                            <Link to="/studentsignup" className="text-cyan-500 hover:underline ml-1">
+                                Signup
+                            </Link>
+                        </p>
+                        <a onClick={handleOpenModal} className="text-blue-400 text-sm no-underline hover:cursor-pointer">
                             Forgot Password?
                         </a>
+                    </div>
                 </form>
                 {isVisible && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30 max-sm:w-full">
                 <form onSubmit={handleSubmitForgetPassword} className="bg-white p-6 rounded shadow-md">
-                    <h2 className="text-xl font-bold mb-4">Forgot Password</h2>
+                    <div className="w-full flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-bold">Forgot Password</h2>
+                        <img src={GSOlogo} alt="GSO Logo"  className="w-10 h-10"/>
+                    </div>
                     <p className="text-sm">Please enter your registered email.</p>
                     <input
                         type="email"
@@ -163,13 +166,15 @@ export default function StudentLogin() {
                         className="border p-2 rounded w-full mb-4"
                         required
                     />
-                    <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">
-                        Submit
-                    </button>
-                    <button onClick={handleCloseModal}className="bg-blue-500 text-white py-2 px-4 rounded">
-                        Cancel
-                    </button>
-                    {message && <p className="mt-4 text-red-500">{message}</p>}
+                    <div className="w-full flex justify-evenly mb-3">
+                        <button type="submit" className="bg-blue-500 w-1/3 text-white py-2 px-4 rounded">
+                            Submit
+                        </button>
+                        <button onClick={handleCloseModal}className="bg-gray-500 w-1/3 text-white py-2 px-4 rounded">
+                            Cancel
+                        </button>
+                    </div>
+                    {message && <p>{message}</p>}
                 </form>
                 </div>
                 )}

@@ -7,11 +7,11 @@ header("Access-Control-Allow-Headers: Content-Type");
 header("Access-Control-Allow-Credentials: true");
 header('Content-Type: application/json');
 
-$fullname = $_SESSION['fullname'];
+$employeeId = $_SESSION['employeeId'];
 
-$sql = "SELECT id FROM facultystaff WHERE Name = ? ";
+$sql = "SELECT id FROM facultystaff WHERE `Employee Id` = ? ";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $fullname);
+$stmt->bind_param("s", $employeeId);
 $stmt->execute();
 $result = $stmt->get_result();
 

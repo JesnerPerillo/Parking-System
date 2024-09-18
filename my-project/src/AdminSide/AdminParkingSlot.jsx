@@ -56,6 +56,7 @@ export default function AdminParkingSlot() {
 
   const [formData, setFormData] = useState({
     studentNumber: '',
+    employeeId: '',
     fullname: '',
     email: '',
     position: '',
@@ -130,8 +131,6 @@ export default function AdminParkingSlot() {
     }
   };
   
-  
-
 
   const handleOpenModal = (src) => {
     setModalImageSrc(src);
@@ -326,7 +325,7 @@ export default function AdminParkingSlot() {
 
   const fetchLogs = async () => {
     try {
-      const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/Logs.php', {
+      const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/logs.php', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -464,6 +463,7 @@ const handleQRCodeScan = (qrCodeData) => {
 };
 
 // Handle internal QR code scan result
+// Handle internal QR code scan result
 const handleScanSuccessInternal = (result) => {
   if (result && result.text) {
     const scannedData = result.text.trim();
@@ -579,6 +579,7 @@ useEffect(() => {
       setScanResult('Unexpected error occurred.');
     }
   };
+
 
   const downloadLogsAsPDF = async () => {
     try {
@@ -791,30 +792,35 @@ useEffect(() => {
         </div>
         <div className="w-full h-9/10.5 flex flex-col overflow-auto">
           <div onScanSuccess={handleQRCodeScan} className="mt-10 flex flex-col md:flex-row items-center justify-evenly w-full space-y-4 md:space-y-0">
-            <div className="bg-gray-700 border text-white p-8 rounded-lg shadow-md w-full max-w-md">
-              <h1 className="text-3xl font-bold mb-6 text-center">QR Code Scanner</h1>
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold mb-2">Upload QR Code Image</h2>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileUpload}
-                  className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none"
-                />
-                {imageFile && <p className="mt-2 text-sm">Image file selected: {imageFile.name}</p>}
-                <p className="mt-2 text-sm">{scanResult}</p>
-              </div>
-              <div className="text-center mb-3"> - OR - </div>
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold mb-2">Scan QR Code with Camera</h2>
-                {isNavOpen ? '' : <button
-                  onClick={() => setScanning(true)}
-                  className="w-full bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
-                >
-                  Start Scanning
-                </button> }
-              </div>
-            </div>
+          <div className="bg-gray-700 border text-white p-8 rounded-lg shadow-md w-full max-w-md">
+      <h1 className="text-3xl font-bold mb-6 text-center">QR Code Scanner</h1>
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold mb-2">Upload QR Code Image</h2>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileUpload}
+          className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none"
+        />
+        {imageFile && <p className="mt-2 text-sm">Image file selected: {imageFile.name}</p>}
+        <p className="mt-2 text-sm">{scanResult}</p>
+      </div>
+      <div className="text-center mb-3"> - OR - </div>
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold mb-2">Scan QR Code with Camera</h2>
+        {!scanning ? (
+          <button
+            onClick={() => setScanning(true)}
+            className="w-full bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
+          >
+            Start Scanning
+          </button>
+        ) : (
+          <p className="text-center">Scanning...</p>
+        )}
+        <video ref={videoRef} style={{ width: '100%', height: 'auto' }}></video>
+      </div>
+    </div>
             <div className="w-1/2 h-auto flex relative">
               {isNavOpen ? '' : <img src={Beep} alt="Beep Vehicle Image" className="drop-shadow-2xl w-full md:w-2/3" />}
             </div>
@@ -1215,14 +1221,18 @@ useEffect(() => {
                 </p>
                 <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
                   <label className="relative w-full">
+                    <input name="employeeId" value={formData.employeeId}  onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                    <span className="text-gray-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Employee Id</span>
+                  </label>
+                  <label className="relative w-full">
                     <input name="fullname" value={formData.fullname} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
                     <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">FullName</span>
                   </label>
-                  <label className="relative w-full">
+                </div>
+                <label className="relative w-full">
                     <input name="email" value={formData.email}  onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="email" placeholder=" " required />
                     <span className="text-gray-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Email</span>
                   </label>
-                </div>
                 <label className="relative">
                   <input name="position" value={formData.position} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
                   <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Position</span>

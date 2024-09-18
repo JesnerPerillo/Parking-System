@@ -5,11 +5,22 @@ import GSOlogo from '.././Pictures/gsoo.png';
 import '.././App.css'
 
 export default function FacultyStaffLogin() {
-  const [fullname, setFullname] = useState('');
-    const [email, setEmail] = useState('');
+    const [fullname, setFullname] = useState('');
+    const [employeeId, setEmployeeId] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
+    const [isVisible, setIsVisible] = useState('');
+
+    const handleOpenModal = () => {
+      setIsVisible(true);
+  };
+
+  const handleCloseModal = () => {
+      setIsVisible(false);
+  };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -20,8 +31,8 @@ export default function FacultyStaffLogin() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
+                    employeeId,
                     fullname,
-                    email,
                     password,
                 }),
                 credentials: 'include',
@@ -40,6 +51,34 @@ export default function FacultyStaffLogin() {
             setError('An unexpected error occurred.');
         }
     };
+
+    const handleSubmitForgetPassword = async (e) => {
+      e.preventDefault();
+      if (!email) {
+          setMessage('Please enter your email.');
+          return;
+      }
+
+      try {
+          const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/facultyforgetpassword.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email }),
+              credentials: 'include',
+          });
+
+          const contentType = response.headers.get('Content-Type');
+          if (contentType && contentType.includes('application/json')) {
+              const data = await response.json();
+              setMessage(data.success ? <p className="text-green-500">{'A temporary password has been sent to your email.'}</p> : <p className="text-red-500">{data.message}</p> || 'Something went wrong. Please try again.');
+          } else {
+              setMessage('Unexpected response format.');
+          }
+      } catch (error) {
+          console.error('Error:', error);
+          setMessage('An error occurred. Please try again later.');
+      }
+  };
   
 
   return (
@@ -67,12 +106,12 @@ export default function FacultyStaffLogin() {
       </p>
       <p className="text-base text-gray-400 sm:text-sm">Login your Account.</p>
       <label className="relative">
-        <input name="fullname" value={fullname} onChange={(e) => setFullname(e.target.value)} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
-        <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Full Name</span>
+        <input name="employeeId" value={employeeId} onChange={(e) => setEmployeeId(e.target.value)} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+        <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Employee Id</span>
       </label>
       <label className="relative">
-        <input name="email" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="email" placeholder=" " required />
-        <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Email</span>
+        <input name="fullname" value={fullname} onChange={(e) => setFullname(e.target.value)} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+        <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Full Name</span>
       </label>
       <label className="relative">
         <input name="password" value={password} onChange={(e) => setPassword(e.target.value)} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="password" placeholder=" " required />
@@ -82,11 +121,46 @@ export default function FacultyStaffLogin() {
         Submit
       </button>
       {error && <p className="text-red-500 text-sm">{error}</p>}
-      <p className="text-center text-base text-gray-400 sm:text-sm">
-        Don't have an account?{' '}
-        <Link to="/facultystaffsignup" className="text-cyan-500 hover:underline ml-1">Signup</Link>
-      </p>
+      <div className="flex flex-col items-center justify-center">
+        <p className="text-center text-base text-gray-400 sm:text-sm">
+            Don't have an account?{' '}
+            <Link to="/studentsignup" className="text-cyan-500 hover:underline ml-1">
+                Signup
+            </Link>
+        </p>
+        <a onClick={handleOpenModal} className="text-blue-400 text-sm no-underline hover:cursor-pointer">
+            Forgot Password?
+        </a>
+      </div>
     </form>
+    {isVisible && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30 max-sm:w-full">
+      <form onSubmit={handleSubmitForgetPassword} className="bg-white p-6 rounded shadow-md">
+          <div className="w-full flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Forgot Password</h2>
+              <img src={GSOlogo} alt="GSO Logo"  className="w-10 h-10"/>
+          </div>
+          <p className="text-sm">Please enter your registered email.</p>
+          <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="border p-2 rounded w-full mb-4"
+              required
+          />
+          <div className="w-full flex justify-evenly mb-3">
+              <button type="submit" className="bg-blue-500 w-1/3 text-white py-2 px-4 rounded">
+                  Submit
+              </button>
+              <button onClick={handleCloseModal}className="bg-gray-500 w-1/3 text-white py-2 px-4 rounded">
+                  Cancel
+              </button>
+          </div>
+          {message && <p>{message}</p>}
+        </form>
+      </div>
+        )}
       </div>
     </div>
   );

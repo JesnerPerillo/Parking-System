@@ -89,26 +89,6 @@ export default function StudentParkingSlots() {
     console.log('Occupied spots:', occupiedSpots);
   }, [occupiedSpots]);
 
-  const handleLogout = async () => {
-    try {
-      console.log('Attempting to log out...');
-      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
-        withCredentials: true,
-      });
-
-      console.log('Logout response:', response.data);
-
-      if (response.data.success) {
-        navigate('/');
-      } else {
-        setError('Logout failed. Please try again.');
-      }
-    } catch (error) {
-      setError('Error logging out: ' + error.message);
-      console.error('Error logging out: ', error);
-    }
-  };
-
   const handleSpotSelection = (spotNumber) => {
     if (selectedVehicle !== userData.Vehicle.toLowerCase()) {
       alert(`Warning: Your registered vehicle type is ${userData.Vehicle}. Please select a parking slot matching your vehicle type.`);
@@ -222,14 +202,34 @@ export default function StudentParkingSlots() {
       );
     });
   };
+
+  const handleLogout = async () => {
+    try {
+      console.log('Attempting to log out...');
+      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
+        withCredentials: true,
+      });
+
+      console.log('Logout response:', response.data);
+
+      if (response.data.success) {
+        navigate('/');
+      } else {
+        setError('Logout failed. Please try again.');
+      }
+    } catch (error) {
+      setError('Error logging out: ' + error.message);
+      console.error('Error logging out: ', error);
+    }
+  };
   
 
   return (
     <>
-      <div className="relative w-full h-screen bg-blue-900 flex">
+      <div className="relative w-full h-screen bg-blue-700 flex">
         {/* Navigation button */}
         <button
-          className="lg:hidden bg-white text-blue-900 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-10"
+          className="lg:hidden bg-white text-blue-700 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-10"
           onClick={toggleNav}
         >
           {isNavOpen ? '✕' : '☰'}
@@ -237,27 +237,27 @@ export default function StudentParkingSlots() {
 
         {/* Navigation menu */}
         <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
-        <div className="border-b-2 border-blue-900 w-full h-24 text-blue-900 flex flex-col items-center justify-center mt-10 text-xl tracking-wider">
+        <div className="border-b-2 border-blue-700 w-full h-24 text-blue-700 flex flex-col items-center justify-center mt-10 text-xl tracking-wider">
         <h1 className="text-bold text-3xl sm:text-2xl md:text-4xl lg:text-2xl xl:text-4xl tracking-widest">PARKING SYSTEM</h1>
           </div>
           <div className="flex flex-col justify-evenly w-full h-2/4 relative">
-          <Link to="/studentdashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+          <Link to="/studentdashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/studentparkingslot" className="group no-underline h-16 flex items-center pl-8 bg-blue-900 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+            <Link to="/studentparkingslot" className="group no-underline h-16 flex items-center pl-8 bg-blue-700 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
               <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <Link to="/studentaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/studentaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Account</span>
               </li>
             </Link>
-            <Link to="/studentabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/studentabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsQuestionSquare /> <span className="ml-5">About</span>
               </li>
             </Link>

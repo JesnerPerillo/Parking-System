@@ -18,13 +18,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     // File upload handling - Check if files are uploaded
-    if (isset($_FILES['license']['tmp_name']) && isset($_FILES['orcr']['tmp_name'])) {
+    if (isset($_FILES['license']['tmp_name']) && isset($_FILES['orcr']['tmp_name']) && isset($_FILES['cor']['tmp_name'])) {
         $licenseFile = $_FILES['license']['tmp_name'];
         $orcrFile = $_FILES['orcr']['tmp_name'];
+        $corFile = $_FILES['cor']['tmp_name'];
 
         // Read file contents for BLOB storage
         $licenseContent = file_get_contents($licenseFile);
         $orcrContent = file_get_contents($orcrFile);
+        $corContent = file_get_contents($corFile);
     } else {
         echo json_encode(array('status' => 'error', 'message' => 'License and ORCR files are required.'));
         exit;
@@ -42,18 +44,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Prepare SQL statement to insert data into database using prepared statements
-    $query = "INSERT INTO students (`Student Number`, Name, Email, `Year and Section`, Course, Vehicle, `Plate Number`, Password, License, ORCR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO students (`Student Number`, Name, Email, `Year and Section`, Course, Vehicle, `Plate Number`, Password, License, ORCR, COR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($conn, $query);
     if (!$stmt) {
         echo json_encode(array('status' => 'error', 'message' => 'Prepared statement failed: ' . mysqli_error($conn)));
         exit;
     }
 
-    mysqli_stmt_bind_param($stmt, 'ssssssssbb', $studentNumber, $fullname, $emailAddress, $yearsection, $course, $vehicleType, $plateNumber, $hashedPassword, $licenseContent, $orcrContent);
+    mysqli_stmt_bind_param($stmt, 'ssssssssbbb', $studentNumber, $fullname, $emailAddress, $yearsection, $course, $vehicleType, $plateNumber, $hashedPassword, $licenseContent, $orcrContent, $corContent);
 
     // Bind the BLOB parameters
     mysqli_stmt_send_long_data($stmt, 8, $licenseContent);
     mysqli_stmt_send_long_data($stmt, 9, $orcrContent);
+    mysqli_stmt_send_long_data($stmt, 10, $corContent);
 
     // Execute the statement
     if (mysqli_stmt_execute($stmt)) {

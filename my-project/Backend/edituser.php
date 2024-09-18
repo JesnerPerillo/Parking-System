@@ -12,17 +12,17 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$response = array();
+$response = array('success' => false, 'message' => '');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_SESSION['studentNumber'])) {
-        echo json_encode(['success' => false, 'message' => 'User not logged in.']);
+        $response['message'] = 'User not logged in.';
+        echo json_encode($response);
         exit();
     }
 
     $studentNumber = $_SESSION['studentNumber'];
 
-    $studentNumber = $_POST['studentNumber'] ?? '';
     $name = $_POST['fullname'] ?? '';
     $email = $_POST['email'] ?? '';
     $yearAndSection = $_POST['yearsection'] ?? '';
@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $license = $_FILES['license'] ?? null;
     $orcr = $_FILES['orcr'] ?? null;
+    $cor = $_FILES['cor'] ?? null;
 
     $updateFields = [];
     $params = [];
@@ -67,10 +68,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $params[] = $hashedPassword;
         $types .= 's';
     }
+    
     if ($license) {
         $licenseContent = file_get_contents($license['tmp_name']);
         if ($licenseContent === false) {
-            $response['success'] = false;
             $response['message'] = 'Error reading license file.';
             echo json_encode($response);
             exit();
@@ -82,7 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($orcr) {
         $orcrContent = file_get_contents($orcr['tmp_name']);
         if ($orcrContent === false) {
-            $response['success'] = false;
             $response['message'] = 'Error reading ORCR file.';
             echo json_encode($response);
             exit();
@@ -90,6 +90,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $updateFields[] = 'ORCR = ?';
         $params[] = $orcrContent;
         $types .= 'b';
+    }
+    if ($cor) {
+        $corContent = file_get_contents($cor['tmp_name']);
+        if ($corContent === false) {
+            $response['message'] = 'Error reading COR file.';
+            echo json_encode($response);
+            exit();
+        }
+        $updateFields[] = 'COR = ?';
+        $params[] = $corContent;
+        $types .= 'b';
+    }
+
+    if (empty($updateFields)) {
+        $response['message'] = 'No data to update.';
+        echo json_encode($response);
+        exit();
     }
 
     $params[] = $studentNumber;
@@ -99,7 +116,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $conn->prepare($sql);
 
     if ($stmt === false) {
-        $response['success'] = false;
         $response['message'] = 'Error preparing statement: ' . $conn->error;
         echo json_encode($response);
         exit();
@@ -108,7 +124,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Bind the parameters
     $bindResult = $stmt->bind_param($types, ...$params);
     if ($bindResult === false) {
-        $response['success'] = false;
         $response['message'] = 'Error binding parameters: ' . $stmt->error;
         echo json_encode($response);
         exit();
@@ -121,19 +136,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($orcr) {
         $stmt->send_long_data(array_search($orcrContent, $params), $orcrContent);
     }
+    if ($cor) {
+        $stmt->send_long_data(array_search($corContent, $params), $corContent);
+    }
 
     if ($stmt->execute()) {
         $response['success'] = true;
         $response['message'] = 'User updated successfully.';
     } else {
-        $response['success'] = false;
         $response['message'] = 'Error updating user: ' . $stmt->error;
     }
 
     $stmt->close();
     $conn->close();
 } else {
-    $response['success'] = false;
     $response['message'] = 'Invalid request method.';
 }
 

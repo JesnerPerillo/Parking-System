@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Retrieve other fields
+    $employeeId = $_POST['employeeId'] ?? '';
     $name = $_POST['fullname'] ?? '';
     $email = $_POST['email'] ?? '';
     $position = $_POST['position'] ?? '';
@@ -39,6 +40,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $params = [];
     $types = '';
 
+    if (!empty($employeeId)) {
+        $updateFields[] = '`Employee Id` = ?';
+        $params[] = $employeeId;
+        $types .= 's';
+    }
     if (!empty($name)) {
         $updateFields[] = 'Name = ?';
         $params[] = $name;

@@ -19,6 +19,7 @@ export default function StudentSignup() {
     password: '',
     license: null,
     orcr: null,
+    cor: null,
   });
 
   const handleChange = (e) => {
@@ -65,9 +66,9 @@ export default function StudentSignup() {
   
   return (
     <div className="bg-blue-700 min-h-screen flex flex-col items-center">
-      <div className="relevant form xl:w-2/3 mt-10 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-white">
+      <div className="relevant form xl:w-2/3 mt-3 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full ">
       <div className="header relative flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
-      <div className="w-96 h-96 bg-blue-900 rounded-full absolute left-0"></div>
+      <div className="w-96 h-96 bg-blue-700 rounded-full absolute left-0"></div>
           <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />
       </div>
         <form onSubmit={handleSubmit} encType="multipart/form-data" className="flex flex-col gap-3 float:right h-auto max-w-lg p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 sm:max-w-full sm:p-5">
@@ -150,6 +151,10 @@ export default function StudentSignup() {
           <div>
             <label for="formFile" class="form-label">ORCR</label>
             <input name="orcr" class="form-control" type="file" id="formFile" onChange={handleFileChange}/>
+          </div>
+          <div>
+            <label for="formFile" class="form-label">COR(Certificate of Registration)</label>
+            <input name="cor" class="form-control" type="file" id="formFile" onChange={handleFileChange}/>
           </div>
           <button className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5">
             Submit

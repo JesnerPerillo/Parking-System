@@ -7,6 +7,7 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Extract form data
+    $employeeId = $_POST['employeeId'];
     $fullname = $_POST["fullname"] ?? '';
     $emailAddress = $_POST["email"] ?? '';
     $position = $_POST["position"] ?? '';
@@ -50,18 +51,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Check for duplicate entries using prepared statements
-    $stmt = mysqli_prepare($conn, "SELECT * FROM facultystaff WHERE Name = ? OR Email = ?");
-    mysqli_stmt_bind_param($stmt, "ss", $fullname, $emailAddress);
+    $stmt = mysqli_prepare($conn, "SELECT * FROM facultystaff WHERE `Employee Id` = ? OR Name = ?");
+    mysqli_stmt_bind_param($stmt, "ss", $employeeId, $fullname);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_store_result($stmt);
 
     if (mysqli_stmt_num_rows($stmt) > 0) {
-        echo json_encode(array('status' => 'error', 'message' => 'Name or Email has already been taken!'));
+        echo json_encode(array('status' => 'error', 'message' => 'Employee Id or Name has already been taken!'));
         exit;
     }
 
     // Prepare SQL statement to insert data into database
-    $query = "INSERT INTO facultystaff (Name, Email, Position, Building, Vehicle, `Plate Number`, Password, License, ORCR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO facultystaff (`Employee Id`, Name, Email, Position, Building, Vehicle, `Plate Number`, Password, License, ORCR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($conn, $query);
     if (!$stmt) {
         echo json_encode(array('status' => 'error', 'message' => 'Prepared statement failed: ' . mysqli_error($conn)));
@@ -69,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Bind parameters and execute the statement
-    mysqli_stmt_bind_param($stmt, 'sssssssss', $fullname, $emailAddress, $position, $building, $vehicleType, $plateNumber, $hashedPassword, $licenseContent, $orcrContent);
+    mysqli_stmt_bind_param($stmt, 'ssssssssss', $employeeId, $fullname, $emailAddress, $position, $building, $vehicleType, $plateNumber, $hashedPassword, $licenseContent, $orcrContent);
     mysqli_stmt_send_long_data($stmt, 7, $licenseContent); // Bind MEDIUMBLOB data for License
     mysqli_stmt_send_long_data($stmt, 8, $orcrContent); // Bind MEDIUMBLOB data for ORCR
 

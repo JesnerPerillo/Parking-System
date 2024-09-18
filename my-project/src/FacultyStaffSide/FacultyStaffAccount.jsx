@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { BsCreditCard2Front } from "react-icons/bs";
 import { BsTaxiFront } from "react-icons/bs";
-import { BsExclamationDiamond } from "react-icons/bs";
+import { BsExclamationTriangle } from "react-icons/bs";
 import { BsFillPersonVcardFill } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { BsQuestionSquare } from "react-icons/bs";
@@ -13,9 +13,6 @@ import { BsPersonFillGear } from "react-icons/bs";
 import QRCode from "qrcode.react";
 import Logo from '../Pictures/urs.png';
 import GSO from '../Pictures/gsoo.png'
-
-
-
 
 export default function FacultyStaffAccount() {
   const [userData, setUserData] = useState({});
@@ -31,6 +28,7 @@ export default function FacultyStaffAccount() {
   const [slot, setSlot] = useState([]);
   const canvasRef = useRef(null);
   const [formData, setFormData] = useState({
+    employeeId: '',
     fullname: '',
     email: '',
     position: '',
@@ -58,12 +56,12 @@ export default function FacultyStaffAccount() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const form = new FormData();
     for (const key in formData) {
       form.append(key, formData[key]);
     }
-
+  
     try {
       const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/facultyedituser.php', form, {
         withCredentials: true,
@@ -71,23 +69,25 @@ export default function FacultyStaffAccount() {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+    
       if (response.data.success) {
-        // Update user data state
+        // Update the user data with the returned data from the backend
         setUserData((prev) => ({
           ...prev,
-          ...formData,
-          password: '', // Don't show the password in user data
+          ...response.data.userData, // Use the updated user data from the backend
+          password: '', // Don't include the password in the UI state
         }));
+        
         alert('Account updated successfully');
+        setIsEditModalOpen(false); // Close the modal after success
       } else {
-        alert('Error updating account: ' + response.data.message);
+        alert('Error updating account: ' + (response.data.message || 'Unknown error'));
       }
     } catch (error) {
       console.error('Error updating account:', error);
       alert('Error updating account. Please try again.');
-    }
-  };
+    }    
+  };  
 
 
   const handleOpenModal = (src) => {
@@ -105,26 +105,20 @@ export default function FacultyStaffAccount() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/facultyfetchdata.php', {
-          withCredentials: true
-        });
-
+    axios.get('https://seagreen-wallaby-986472.hostingersite.com/facultyfetchdata.php', { withCredentials: true })
+      .then(response => {
+        console.log('Fetched user data:', response.data); // Log the response
         if (response.data.success) {
           setUserData(response.data.data);
         } else {
-          setError(response.data.message || 'No data found for the logged-in user.');
+          console.log(response.data.message);
         }
-      } catch (error) {
-        setError('Error fetching data: ' + error.message);
-        console.error('Error fetching data: ', error);
-      }
-    };
-
-    fetchData();
+      })
+      .catch(error => {
+        console.log('Error fetching user data:', error);
+      });
   }, []);
-
+  
   useEffect(() => {
     const fetchImage = async (type) => {
       try {
@@ -142,7 +136,7 @@ export default function FacultyStaffAccount() {
         console.error(`Error fetching ${type} image:`, error);
       }
     };
-
+  
     fetchImage('License');
     fetchImage('ORCR');
   }, []);
@@ -264,10 +258,10 @@ const handleDownloadQRCode = () => {
 
   return(
     <>
-      <div className="relative w-full h-screen bg-blue-900 flex">
+      <div className="relative w-full h-screen bg-blue-700 flex">
         {/* Navigation button */}
         <button
-          className="lg:hidden bg-white text-blue-900 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-10"
+          className="lg:hidden bg-white text-blue-700 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-10"
           onClick={toggleNav}
         >
           {isNavOpen ? '✕' : '☰'}
@@ -275,27 +269,27 @@ const handleDownloadQRCode = () => {
 
         {/* Navigation menu */}
         <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
-        <div className="border-b-2 border-blue-900 w-full h-24 text-blue-900 flex flex-col items-center justify-center mt-10 text-xl tracking-wider">
+        <div className="border-b-2 border-blue-700 w-full h-24 text-blue-700 flex flex-col items-center justify-center mt-10 text-xl tracking-wider">
             <h1 className="text-bold text-3xl tracking-widest lg:text-xl xl:text-2xl 2xl:text-4xl">PARKING SYSTEM</h1>
           </div>
           <div className="flex w-full flex-col justify-evenly h-2/4 relative">
-            <Link to="/facultystaffdashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/facultystaffdashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/facultystaffparkingslot" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
+            <Link to="/facultystaffparkingslot" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
               <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <Link to="/facultystaffaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 bg-blue-900 lg:pl-3">
+            <Link to="/facultystaffaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 bg-blue-700 lg:pl-3">
               <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Account</span>
               </li>
             </Link>
-            <Link to="/facultystaffabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/facultystaffabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsQuestionSquare /> <span className="ml-5">About</span>
               </li>
             </Link>
@@ -342,6 +336,9 @@ const handleDownloadQRCode = () => {
                 {userData.Name}
               </p>
               <p className="text-sm sm:text-base mb-2">
+                Employee Id: {userData['Employee Id']}
+              </p>
+              <p className="text-sm sm:text-base mb-2">
                 Email: {userData.Email}
               </p>
               <p className="text-sm sm:text-base mb-2">
@@ -361,45 +358,7 @@ const handleDownloadQRCode = () => {
                   Parking Slot: {s.slot_number}
                 </p>
               ))}
-              <div className="mt-5 flex flex-col">
-                <div className="mb-4">
-                  <b>License:</b>
-                  <br />
-                  {licenseSrc ? (
-                    <div className="flex items-center">
-                      <img
-                        src={licenseSrc}
-                        alt="License"
-                        className="w-60 h-auto"
-                      />
-                      <button
-                        onClick={() => handleOpenModal(licenseSrc)}
-                        className="ml-2 text-blue-500 hover:text-blue-700"
-                      >
-                        <BsEyeFill className="w-6 h-6" />
-                      </button>
-                    </div>
-                  ) : (
-                    'No image available'
-                  )}
-                </div>
-                <div className="mb-4">
-                  <b>ORCR:</b>
-                  <br />
-                  {orcrSrc ? (
-                    <div className="flex items-center">
-                      <img src={orcrSrc} alt="ORCR" className="w-60 h-auto" />
-                      <button
-                        onClick={() => handleOpenModal(orcrSrc)}
-                        className="ml-2 text-blue-500 hover:text-blue-700"
-                      >
-                        <BsEyeFill className="w-6 h-6" />
-                      </button>
-                    </div>
-                  ) : (
-                    'No image available'
-                  )}
-                </div>
+            <div>
                 
               {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -430,14 +389,18 @@ const handleDownloadQRCode = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
                   <label className="relative w-full">
+                    <input name="employeeId" value={formData.employeeId}  onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder="" required disabled/>
+                    <span className="text-red-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">{userData[`Employee Id`]} <BsExclamationTriangle className="absolute left-20 top-1/2 transform -translate-y-1/2 text-gray-500" /></span>
+                  </label>
+                  <label className="relative w-full">
                     <input name="fullname" value={formData.fullname} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
                     <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">FullName</span>
                   </label>
-                  <label className="relative w-full">
-                    <input name="email" value={formData.email}  onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="email" placeholder=" " required />
-                    <span className="text-gray-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Email</span>
-                  </label>
                 </div>
+                <label className="relative">
+                  <input name="email" value={formData.email} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="email" placeholder=" " required />
+                  <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Email</span>
+                </label>
                 <label className="relative">
                   <input name="position" value={formData.position} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
                   <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Position</span>
@@ -479,6 +442,46 @@ const handleDownloadQRCode = () => {
               )}
               </div>
             </ul>
+            <div className="w-1/3 flex flex-col">
+                <div className="mb-4">
+                  <b>License:</b>
+                  <br />
+                  {licenseSrc ? (
+                    <div className="flex items-center">
+                      <img
+                        src={licenseSrc}
+                        alt="License"
+                        className="w-60 h-auto"
+                      />
+                      <button
+                        onClick={() => handleOpenModal(licenseSrc)}
+                        className="ml-2 text-blue-500 hover:text-blue-700"
+                      >
+                        <BsEyeFill className="w-6 h-6" />
+                      </button>
+                    </div>
+                  ) : (
+                    'No image available'
+                  )}
+                </div>
+                <div className="mb-4">
+                  <b>ORCR:</b>
+                  <br />
+                  {orcrSrc ? (
+                    <div className="flex items-center">
+                      <img src={orcrSrc} alt="ORCR" className="w-60 h-auto" />
+                      <button
+                        onClick={() => handleOpenModal(orcrSrc)}
+                        className="ml-2 text-blue-500 hover:text-blue-700"
+                      >
+                        <BsEyeFill className="w-6 h-6" />
+                      </button>
+                    </div>
+                  ) : (
+                    'No image available'
+                  )}
+                </div>
+              </div>
           </div>
         </div>
       )}

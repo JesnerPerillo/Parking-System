@@ -13,11 +13,11 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    if (isset($_SESSION['fullname'])) {
-        $fullname = $_SESSION['fullname'];
-        $sql = "SELECT License, ORCR FROM facultystaff WHERE Name = ?";
+    if (isset($_SESSION['employeeId'])) {
+        $employeeId = $_SESSION['employeeId'];
+        $sql = "SELECT License, ORCR FROM facultystaff WHERE `Employee Id` = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $fullname);
+        $stmt->bind_param("s", $employeeId);
         $stmt->execute();
         $stmt->store_result();
 

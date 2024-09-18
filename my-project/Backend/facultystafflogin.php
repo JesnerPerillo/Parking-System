@@ -13,37 +13,32 @@
   if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents("php://input"), true);
 
-    if (isset($data["fullname"]) && isset($data["email"]) && isset($data["password"])) {
+    if (isset($data["employeeId"]) && isset($data["fullname"]) && isset($data["password"])) {
+      $employeeId = $data["employeeId"];
       $fullname = $data["fullname"];
-      $email = $data["email"];
       $password = $data["password"];
 
-      // Updated regex to allow letters, hyphens, periods, and spaces
-      if (!preg_match('/^[a-zA-Z\s\-.]+$/', $fullname) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $response['success'] = false;
-        $response['message'] = 'Invalid input data';
-        echo json_encode($response);
-        exit;
-      }
-
       try {
-        $stmt = $conn->prepare("SELECT * FROM facultystaff WHERE Name = ?");
-        $stmt->bind_param("s", $fullname);
+        $stmt = $conn->prepare("SELECT * FROM facultystaff WHERE `Employee Id` = ?");
+        $stmt->bind_param("s", $employeeId);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
           $row = $result->fetch_assoc();
 
-          if ($email == $row["Email"] && password_verify($password, $row["Password"])) {
+          if ($employeeId == $row['Employee Id'] && $fullname == $row["Name"] && password_verify($password, $row["Password"])) {
             if (!isset($_SESSION)) session_start();
             $_SESSION["login"] = true;
-            $_SESSION["fullname"] = $row["Name"];
+            $_SESSION["employeeId"] = $row['Employee Id'];
 
             $response['success'] = true;
-          } elseif ($email != $row["Email"]) {
+          } elseif ($employeeId != $row['Employee Id']) {
             $response['success'] = false;
-            $response['message'] = 'Email does not match our records.';
+            $response['message'] = 'Employee Id does not match our records.';
+          } elseif ($fullname != $row["Name"]) {
+            $response['success'] = false;
+            $response['message'] = 'Name does not match our records.';
           } else {
             $response['success'] = false;
             $response['message'] = 'Incorrect password.';
