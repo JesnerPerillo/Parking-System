@@ -12,14 +12,15 @@ export default function StudentMotorcyclePDF() {
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchstudentsdata.php', {
+        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/studentfetchvehiclecounts.php', {
           withCredentials: true,
         });
-
+  
         if (response.data.success) {
           setStudents(response.data.students);
-
+  
           if (response.data.vehicleCounts) {
+            console.log('Vehicle counts from API:', response.data.vehicleCounts); // Log API response for debugging
             const vehicleCounts = {};
             for (const [vehicle, count] of Object.entries(response.data.vehicleCounts)) {
               vehicleCounts[vehicle] = Number(count);
@@ -33,9 +34,10 @@ export default function StudentMotorcyclePDF() {
         console.error('Error fetching student data:', error);
       }
     };
-
+  
     fetchStudentData();
   }, []);
+  
 
   // Prepare the data for the bar chart
   const chartData = {
@@ -43,7 +45,11 @@ export default function StudentMotorcyclePDF() {
     datasets: [
       {
         label: 'Number of Students',
-        data: Object.values(vehicleCounts), // Corresponding counts
+        data: [
+          vehicleCounts['Motorcycle'] || 0,
+          vehicleCounts['Tricycle'] || 0,
+          vehicleCounts['Fourwheeler'] || 0,
+        ],// Corresponding counts
         backgroundColor: [
           'rgba(222, 210, 0, 0.8)',  // Yellow for Motorcycle
           'rgba(54, 162, 235, 0.8)',  // Blue for Tricycle
