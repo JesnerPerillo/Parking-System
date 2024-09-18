@@ -124,7 +124,7 @@ export default function FacultyStaffLogin() {
       <div className="flex flex-col items-center justify-center">
         <p className="text-center text-base text-gray-400 sm:text-sm">
             Don't have an account?{' '}
-            <Link to="/studentsignup" className="text-cyan-500 hover:underline ml-1">
+            <Link to="/facultystaffsignup" className="text-cyan-500 hover:underline ml-1">
                 Signup
             </Link>
         </p>
