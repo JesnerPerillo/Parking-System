@@ -424,8 +424,8 @@ const onScanSuccess = async (slotType, slotNumber) => {
     setSelectedSpot(parseInt(slotNumber, 10));
 
     const fetchUrl = selectedUserType === 'faculty'
-      ? 'http://localhost/website/my-project/Backend/fetchfacultydata.php'
-      : 'http://localhost/website/my-project/Backend/fetchstudentsdata.php';
+      ? 'https://seagreen-wallaby-986472.hostingersite.com/fetchfacultydata.php'
+      : 'https://seagreen-wallaby-986472.hostingersite.com/fetchstudentsdata.php';
 
     const response = await axios.get(fetchUrl, { withCredentials: true });
     console.log('Response:', response.data);
