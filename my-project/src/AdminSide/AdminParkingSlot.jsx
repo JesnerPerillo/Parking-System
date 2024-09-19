@@ -1022,6 +1022,7 @@ useEffect(() => {
             ) : (
               <div>
                 <p><strong>Name:</strong> {popupData.Name || 'N/A'}</p>
+                <p><strong>Employee Id:</strong> {popupData['Employee Id'] || 'N/A'}</p>
                 <p><strong>Email:</strong> {popupData.Email || 'N/A'}</p>
                 <p><strong>Position:</strong> {popupData.Position || 'N/A'}</p>
                 <p><strong>Building:</strong> {popupData.Building || 'N/A'}</p>
