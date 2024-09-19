@@ -495,7 +495,7 @@ export default function StudentAccount() {
                           <img
                             src={licenseSrc}
                             alt="License"
-                            className="w-24 h-auto"
+                            className="w-40 h-auto"
                           />
                           <button
                             onClick={() => handleOpenModal(licenseSrc)}
@@ -513,7 +513,7 @@ export default function StudentAccount() {
                       <br />
                       {orcrSrc ? (
                         <div className="flex items-center">
-                          <img src={orcrSrc} alt="ORCR" className="w-24 h-auto" />
+                          <img src={orcrSrc} alt="ORCR" className="w-40 h-auto" />
                           <button
                             onClick={() => handleOpenModal(orcrSrc)}
                             className="ml-2 text-blue-500 hover:text-blue-700"
@@ -530,7 +530,7 @@ export default function StudentAccount() {
                       <br />
                       {corSrc ? (
                         <div className="flex items-center">
-                          <img src={corSrc} alt="COR" className="w-24 h-auto" />
+                          <img src={corSrc} alt="COR" className="w-40 h-auto" />
                           <button
                             onClick={() => handleOpenModal(corSrc)}
                             className="ml-2 text-blue-500 hover:text-blue-700"
