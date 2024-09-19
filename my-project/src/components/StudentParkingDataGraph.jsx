@@ -6,26 +6,38 @@ import { Chart as ChartJS, BarElement, Tooltip, Legend, CategoryScale, LinearSca
 ChartJS.register(BarElement, Tooltip, Legend, CategoryScale, LinearScale);
 
 export default function StudentMotorcyclePDF() {
+  const [students, setStudents] = useState([]);
   const [vehicleCounts, setVehicleCounts] = useState({});
 
   useEffect(() => {
-    const fetchVehicleData = async () => {
+    const fetchStudentData = async () => {
       try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/studentfetchvehiclecounts.php', {
+        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchstudentsdata.php', {
           withCredentials: true,
         });
-
+  
         if (response.data.success) {
-          console.log('Vehicle counts from API:', response.data.vehicleCounts); // Log API response for debugging
-          setVehicleCounts(response.data.vehicleCounts);
+          setStudents(response.data.students);
+  
+          if (response.data.vehicleCounts) {
+            console.log('Vehicle counts from API:', response.data.vehicleCounts); // Log API response for debugging
+            const vehicleCounts = {};
+            for (const [vehicle, count] of Object.entries(response.data.vehicleCounts)) {
+              vehicleCounts[vehicle] = Number(count);
+            }
+            setVehicleCounts(vehicleCounts);
+          } else {
+            setVehicleCounts({});
+          }
         }
       } catch (error) {
-        console.error('Error fetching vehicle data:', error);
+        console.error('Error fetching student data:', error);
       }
     };
-
-    fetchVehicleData();
+  
+    fetchStudentData();
   }, []);
+  
 
   // Prepare the data for the bar chart
   const chartData = {
@@ -37,7 +49,7 @@ export default function StudentMotorcyclePDF() {
           vehicleCounts['Motorcycle'] || 0,
           vehicleCounts['Tricycle'] || 0,
           vehicleCounts['Fourwheeler'] || 0,
-        ], // Corresponding counts
+        ],// Corresponding counts
         backgroundColor: [
           'rgba(222, 210, 0, 0.8)',  // Yellow for Motorcycle
           'rgba(54, 162, 235, 0.8)',  // Blue for Tricycle
