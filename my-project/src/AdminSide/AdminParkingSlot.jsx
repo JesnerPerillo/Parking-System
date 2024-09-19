@@ -1033,7 +1033,7 @@ useEffect(() => {
                 <p><strong>Time Out:</strong> {popupData['Time Out'] ? formatAMPM(popupData['Time Out']) : 'N/A'}</p>
               </div>
             )}
-            <div className="w-full flex md:flex-row justify-around mt-4">
+            <div className="w-full h-auto flex flex-col justify-between sm:w-full flex md:flex-row justify-around mt-4">
               {licenseSrc ? (
                 <div className="flex flex-col items-center">
                   <p>License</p>
