@@ -86,7 +86,7 @@ export default function StudentMotorcyclePDF() {
   return (
     <>
       <div className="relative w-full h-full flex flex-col items-center">
-        <span className="text-4xl mt-10">{totalStudents}/335</span>
+        <span className="text-4xl mt-10">{totalStudents}/580</span>
         <button className="w-full flex justify-center items-center h-1/4 bg-red-600 rounded text-white absolute bottom-0 mb-1" onClick={generatePDF}>Download File <FaFilePdf /></button>
       </div>
     </>
