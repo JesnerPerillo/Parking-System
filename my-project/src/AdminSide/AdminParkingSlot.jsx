@@ -22,6 +22,7 @@ export default function AdminParkingSlot() {
   const [selectedVehicle, setSelectedVehicle] = useState('motorcycle');
   const [licenseSrc, setLicenseSrc] = useState(null);
   const [orcrSrc, setOrcrSrc] = useState(null);
+  const [corSrc, setCorSrc] = useState(null);
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImageSrc, setModalImageSrc] = useState('');
@@ -208,6 +209,7 @@ export default function AdminParkingSlot() {
             setPopupData(userData);
             setLicenseSrc(userData.License ? `data:image/jpeg;base64,${userData.License}` : null);
             setOrcrSrc(userData.ORCR ? `data:image/jpeg;base64,${userData.ORCR}` : null);
+            setCorSrc(userData.COR ? `data:image/jpeg;base64,${userData.COR}` : null);
           } else {
             alert('No user data found for this slot.');
           }
@@ -438,6 +440,7 @@ const onScanSuccess = async (slotType, slotNumber) => {
         setPopupData(userData);
         setLicenseSrc(userData.License ? `data:image/jpeg;base64,${userData.License}` : null);
         setOrcrSrc(userData.ORCR ? `data:image/jpeg;base64,${userData.ORCR}` : null);
+        setCorSrc(userData.COR ? `data:image/jpeg;base64,${userData.COR}` : null);
       } else {
         alert('No user data found for this slot.');
       }
@@ -1060,6 +1063,21 @@ useEffect(() => {
                   </div>
                 </div>
               ) : <p className="text-center">No ORCR image available</p>}
+              {corSrc ? (
+                <div className="flex flex-col items-center">
+                  <p>COR</p>
+                  <div className="flex items-center">
+                    <img src={corSrc} alt="COR" className="w-60 h-40 md:w-40 md:h-32" />
+                    <button
+                      onClick={() => handleOpenModal(corSrc)}
+                      className="ml-2 text-blue-500 hover:text-blue-700"
+                      aria-label="View COR"
+                    >
+                      <BsEyeFill className="w-8 h-6 md:w-10 md:h-7"/>
+                    </button>
+                  </div>
+                </div>
+              ) : <p className="text-center">No COR image available</p>}
             </div>
             <div className="w-full flex flex-col md:flex-row items-center justify-evenly mt-16">
               <button
