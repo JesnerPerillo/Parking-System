@@ -209,7 +209,11 @@ export default function AdminParkingSlot() {
             setPopupData(userData);
             setLicenseSrc(userData.License ? `data:image/jpeg;base64,${userData.License}` : null);
             setOrcrSrc(userData.ORCR ? `data:image/jpeg;base64,${userData.ORCR}` : null);
-            setCorSrc(userData.COR ? `data:image/jpeg;base64,${userData.COR}` : null);
+            if (selectedUserType === 'students') {
+              setCorSrc(userData.COR ? `data:image/jpeg;base64,${userData.COR}` : null);
+            } else {
+              setCorSrc(null);
+            }
           } else {
             alert('No user data found for this slot.');
           }
@@ -440,7 +444,11 @@ const onScanSuccess = async (slotType, slotNumber) => {
         setPopupData(userData);
         setLicenseSrc(userData.License ? `data:image/jpeg;base64,${userData.License}` : null);
         setOrcrSrc(userData.ORCR ? `data:image/jpeg;base64,${userData.ORCR}` : null);
-        setCorSrc(userData.COR ? `data:image/jpeg;base64,${userData.COR}` : null);
+        if (selectedUserType === 'students') {
+          setCorSrc(userData.COR ? `data:image/jpeg;base64,${userData.COR}` : null);
+        } else {
+          setCorSrc(null);
+        }
       } else {
         alert('No user data found for this slot.');
       }
