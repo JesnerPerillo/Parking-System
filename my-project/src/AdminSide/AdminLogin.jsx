@@ -94,6 +94,7 @@ export default function StudentLogin() {
         setError(data.message);
         if (attempts + 1 >= MAX_ATTEMPTS) {
           setIsLockedOut(true);
+          alert(data.message);
         }
       }
     } catch (error) {
