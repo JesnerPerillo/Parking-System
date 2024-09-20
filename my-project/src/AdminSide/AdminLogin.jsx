@@ -11,7 +11,7 @@ export default function StudentLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [attempts, setAttempts] = useState(0);
-  const [isLockedOut, setIsLockedOut] = useState(false); // Track lockout state
+  const [isLockedOut, setIsLockedOut] = useState(false);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const MAX_ATTEMPTS = 5;
@@ -21,9 +21,51 @@ export default function StudentLogin() {
     setShowPassword(!showPassword);
   }
 
+  useEffect(() => {
+    // Retrieve attempts and lockout state from localStorage
+    const storedAttempts = localStorage.getItem('loginAttempts');
+    const storedLockout = localStorage.getItem('isLockedOut');
+
+    if (storedAttempts) {
+      setAttempts(Number(storedAttempts));
+    }
+
+    if (storedLockout) {
+      setIsLockedOut(JSON.parse(storedLockout));
+    }
+
+    // Check if lockout duration has expired
+    const lockoutExpiry = localStorage.getItem('lockoutExpiry');
+    if (lockoutExpiry && Date.now() > Number(lockoutExpiry)) {
+      setIsLockedOut(false);
+      setAttempts(0);
+      localStorage.removeItem('loginAttempts');
+      localStorage.removeItem('isLockedOut');
+      localStorage.removeItem('lockoutExpiry');
+    }
+  }, []);
+
+  useEffect(() => {
+    // Update localStorage whenever attempts or lockout state changes
+    localStorage.setItem('loginAttempts', attempts);
+    localStorage.setItem('isLockedOut', JSON.stringify(isLockedOut));
+
+    if (isLockedOut) {
+      const expiry = Date.now() + LOCKOUT_DURATION;
+      localStorage.setItem('lockoutExpiry', expiry);
+      setTimeout(() => {
+        setIsLockedOut(false);
+        setAttempts(0);
+        localStorage.removeItem('loginAttempts');
+        localStorage.removeItem('isLockedOut');
+        localStorage.removeItem('lockoutExpiry');
+      }, LOCKOUT_DURATION);
+    }
+  }, [attempts, isLockedOut]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (isLockedOut) {
       setError('Too many login attempts. Please try again later.');
       return;
@@ -52,10 +94,6 @@ export default function StudentLogin() {
         setError(data.message);
         if (attempts + 1 >= MAX_ATTEMPTS) {
           setIsLockedOut(true);
-          setTimeout(() => {
-            setIsLockedOut(false);
-            setAttempts(0); // Reset attempts after lockout duration
-          }, LOCKOUT_DURATION);
         }
       }
     } catch (error) {
@@ -63,10 +101,6 @@ export default function StudentLogin() {
       setAttempts(prev => prev + 1);
       if (attempts + 1 >= MAX_ATTEMPTS) {
         setIsLockedOut(true);
-        setTimeout(() => {
-          setIsLockedOut(false);
-          setAttempts(0);
-        }, LOCKOUT_DURATION);
       }
       alert('An unexpected error occurred.');
     }
