@@ -15,6 +15,7 @@ import { BsQuestionSquare } from "react-icons/bs";
 import QRCode from "qrcode.react";
 import Logo from '../Pictures/urs.png';
 import GSO from '../Pictures/gsoo.png'
+import { IoEyeOff, IoEye  } from "react-icons/io5";
 
 export default function StudentAccount() {
   const [userData, setUserData] = useState({});
@@ -30,6 +31,7 @@ export default function StudentAccount() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [slot, setSlot] = useState([]);
   const canvasRef = useRef(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     studentNumber: '',
     fullname: '',
@@ -41,6 +43,10 @@ export default function StudentAccount() {
     orcr: null,
     cor: null,
   });
+
+  const togglePassword = () => {
+    setShowPassword(!showPassword);
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -400,7 +406,7 @@ export default function StudentAccount() {
                           <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
                             <label className="relative w-full">
                               <input name="studentNumber" value={formData.studentNumber}  onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder="" required disabled/>
-                              <span className="text-red-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Student Number: {userData[`Student Number`]} <BsExclamationTriangle className="absolute left-48 top-1/2 transform -translate-y-1/2 text-gray-500" /></span>
+                              <span className="text-red-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Student Number: {userData[`Student Number`]} <BsExclamationTriangle className="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-500" /></span>
                             </label>
                             <label className="relative w-full">
                               <input name="fullname" value={formData.fullname} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
@@ -449,8 +455,13 @@ export default function StudentAccount() {
                           <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
                           </div>
                           <label className="relative">
-                            <input name="password" value={formData.password} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="password" placeholder=" " required />
+                            <input name="password" value={formData.password} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type={showPassword ? 'text' : 'password'} placeholder=" " required />
                             <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Password</span>
+                            <button
+                              onClick={togglePassword}
+                              className="absolute right-5 top-4">
+                              {showPassword ? <IoEyeOff className="w-6 h-6"/> : <IoEye className="w-6 h-6"/>}
+                            </button>
                           </label>
                           <div>
                             <label for="formFile" class="form-label">License</label>
