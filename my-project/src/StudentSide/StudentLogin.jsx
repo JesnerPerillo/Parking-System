@@ -47,7 +47,10 @@ export default function StudentLogin() {
             const data = await response.json();
 
             if (data.success) {
-                navigate('/studentdashboard');
+                setTimeout(() => {
+                    setIsLoading(false);
+                    navigate('/studentdashboard');
+                }, 3000);
             } else {
                 setError(data.message || 'Login failed. Please try again.');
             }
@@ -152,8 +155,16 @@ export default function StudentLogin() {
                     <button
                         type="submit"
                         className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5"
+                        disabled={isLoading}
                     >
-                        Submit
+                        {isLoading ? (
+                            <span className="flex justify-center items-center">
+                                <ImSpinner2 className="animate-spin w-5 h-5 mr-2" />
+                                Logging in...
+                            </span>
+                        ) : (
+                            'Submit'
+                        )}
                     </button>
                     {error && <p className="text-red-500 text-sm">{error}</p>}
                     <div className="flex flex-col items-center justify-center">
