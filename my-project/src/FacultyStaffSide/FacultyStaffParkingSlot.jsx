@@ -20,13 +20,11 @@ export default function FacultyStaffParkingSlot() {
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [occupiedSpots, setOccupiedSpots] = useState({
     motorcycle: [],
-    tricycle: [],
     fourwheeler: []
   });
 
   const categories = {
     motorcycle: { count: 110, color: 'bg-green-500 text-white' },
-    tricycle: { count: 15, color: 'bg-green-500 text-white' },
     fourwheeler: { count: 25, color: 'bg-green-500 text-white' }
   };
 
@@ -69,7 +67,6 @@ export default function FacultyStaffParkingSlot() {
         if (response.data.status === 'success') {
           setOccupiedSpots(response.data.data || {
             motorcycle: [],
-            tricycle: [],
             fourwheeler: []
           });
           console.log("Occupied slots fetched: ", response.data.data);
@@ -222,10 +219,10 @@ export default function FacultyStaffParkingSlot() {
 
   return(
     <>
-      <div className="relative w-full h-screen bg-blue-700 flex">
+      <div className="relative w-full h-screen bg-blue-900 flex">
         {/* Navigation button */}
         <button
-          className="lg:hidden bg-white text-blue-700 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-10"
+          className="lg:hidden bg-white text-blue-900 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-10"
           onClick={toggleNav}
         >
           {isNavOpen ? '✕' : '☰'}
@@ -233,33 +230,33 @@ export default function FacultyStaffParkingSlot() {
 
         {/* Navigation menu */}
         <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
-          <div className="border-b-2 border-blue-700 w-full h-24 text-blue-700 flex flex-col items-center justify-center mt-10 text-xl tracking-wider">
-              <h1 className="text-bold text-3xl tracking-widest lg:text-xl xl:text-2xl 2xl:text-4xl">PARKING SYSTEM</h1>
+        <div className="border-b-2 border-blue-900 w-full h-24 text-blue-900 flex flex-col items-center justify-center mt-10 text-xl tracking-wider">
+              <h1 className="text-bold text-3xl tracking-widest">PARKING SYSTEM</h1>
             </div>
             <div className="flex w-full flex-col justify-evenly h-2/4 relative">
-            <Link to="/facultystaffdashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/facultystaffdashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/facultystaffparkingslot" className="group no-underline h-16 flex items-center pl-8 bg-blue-700 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+            <Link to="/facultystaffparkingslot" className="group no-underline h-16 flex items-center pl-8 bg-blue-900 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white  border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
               <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <Link to="/facultystaffaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/facultystaffaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Account</span>
               </li>
             </Link>
-            <Link to="/facultystaffabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/facultystaffabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-900 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-900 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsQuestionSquare /> <span className="ml-5">About</span>
               </li>
             </Link>
           </div>
-          <button className="w-full bg-blue-900 h-14 text-red-600 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center" onClick={handleLogout}>
-            <span className="hover:text-white hover:bg-red-600 flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut className="rotate-180 mr-2"/>Logout</span>
+          <button className="w-3/4 h-14 rounded-xl text-red-600 border border-red-500 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center hover:bg-red-600" onClick={handleLogout}>
+            <span className="hover:text-white hover:bg-red-600 rounded-xl flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut className="rotate-180"/>Logout</span>
           </button>
         </nav>
 
@@ -280,7 +277,6 @@ export default function FacultyStaffParkingSlot() {
                 className="p-2 border border-gray-300 rounded"
               >
                 <option value="motorcycle">Motorcycle</option>
-                <option value="tricycle">Tricycle</option>
                 <option value="fourwheeler">Four Wheeler</option>
               </select>
               {selectedVehicle === 'motorcycle' && (
