@@ -91,10 +91,9 @@ export default function StudentLogin() {
         navigate('/admindashboard');
       } else {
         setAttempts(prev => prev + 1);
-        setError(data.message);
+        alert(setError(data.message));
         if (attempts + 1 >= MAX_ATTEMPTS) {
           setIsLockedOut(true);
-          alert(data.message);
         }
       }
     } catch (error) {
