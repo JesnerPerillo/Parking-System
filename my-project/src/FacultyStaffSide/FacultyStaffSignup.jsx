@@ -5,9 +5,11 @@ import URSlogo from '.././Pictures/urs.png';
 import GSOlogo from '.././Pictures/gsoo.png';
 import '.././App.css'
 import axios from 'axios';
+import { IoEyeOff, IoEye  } from "react-icons/io5";
 
 export default function FacultyStaffSignup(){
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     employeeId: '',
     fullname: '',
@@ -20,6 +22,10 @@ export default function FacultyStaffSignup(){
     license: null,
     orcr: null,
   });
+
+  const togglePassword = () => {
+    setShowPassword(!showPassword);
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -126,8 +132,13 @@ export default function FacultyStaffSignup(){
             </label>
           </div>
           <label className="relative">
-            <input name="password" value={formData.password} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="password" placeholder=" " required />
+            <input name="password" value={formData.password} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type={showPassword ? 'text' : 'password'} placeholder=" " required />
             <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Password</span>
+            <button
+              onClick={togglePassword}
+              className="absolute right-5 top-4">
+              {showPassword ? <IoEyeOff className="w-6 h-6"/> : <IoEye className="w-6 h-6"/>}
+            </button>
           </label>
           <div>
             <label for="formFile" class="form-label">License</label>
