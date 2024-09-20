@@ -6,6 +6,7 @@ import GSOlogo from '../Pictures/gsoo.png';
 import '../App.css';
 import SideImg from '../Pictures/sideimg.png';
 import { IoEyeOff, IoEye  } from "react-icons/io5";
+import { ImSpinner2 } from 'react-icons/im';
 
 export default function StudentLogin() {
     const [studentNumber, setStudentNumber] = useState('');
@@ -17,6 +18,7 @@ export default function StudentLogin() {
     const [message, setMessage] = useState('');
     const [isVisible, setIsVisible] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const togglePassword = () => {
         setShowPassword(!showPassword);
@@ -32,6 +34,8 @@ export default function StudentLogin() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
+        
         try {
             const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/studentlogin.php', {
                 method: 'POST',
@@ -50,7 +54,9 @@ export default function StudentLogin() {
         } catch (error) {
             console.error('Error:', error);
             setError('An unexpected error occurred.');
-        }
+        } finally {
+            setIsLoading(false); // Set loading state to false after the request is completed
+          }
     };
 
     const handleSubmitForgetPassword = async (e) => {
