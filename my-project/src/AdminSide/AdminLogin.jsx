@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import URSlogo from '../Pictures/urs.png';
 import GSOlogo from '../Pictures/gsoo.png';
 import '../App.css';
@@ -22,7 +22,6 @@ export default function StudentLogin() {
   }
 
   useEffect(() => {
-    // Retrieve attempts and lockout state from localStorage
     const storedAttempts = localStorage.getItem('loginAttempts');
     const storedLockout = localStorage.getItem('isLockedOut');
 
@@ -34,7 +33,6 @@ export default function StudentLogin() {
       setIsLockedOut(JSON.parse(storedLockout));
     }
 
-    // Check if lockout duration has expired
     const lockoutExpiry = localStorage.getItem('lockoutExpiry');
     if (lockoutExpiry && Date.now() > Number(lockoutExpiry)) {
       setIsLockedOut(false);
@@ -46,7 +44,6 @@ export default function StudentLogin() {
   }, []);
 
   useEffect(() => {
-    // Update localStorage whenever attempts or lockout state changes
     localStorage.setItem('loginAttempts', attempts);
     localStorage.setItem('isLockedOut', JSON.stringify(isLockedOut));
 
@@ -67,7 +64,11 @@ export default function StudentLogin() {
     e.preventDefault();
 
     if (isLockedOut) {
-      setError('Too many login attempts. Please try again later.');
+      const lockoutExpiry = localStorage.getItem('lockoutExpiry');
+      const remainingTime = Math.max(0, Number(lockoutExpiry) - Date.now());
+      const minutes = Math.floor((remainingTime / 1000 / 60) % 60);
+      const seconds = Math.floor((remainingTime / 1000) % 60);
+      alert(`Too many login attempts. Please try again in ${minutes} minutes and ${seconds} seconds.`);
       return;
     }
 
@@ -90,16 +91,18 @@ export default function StudentLogin() {
       if (data.success) {
         navigate('/admindashboard');
       } else {
-        setAttempts(prev => prev + 1);
-        alert(setError(data.message));
-        if (attempts + 1 >= MAX_ATTEMPTS) {
+        const newAttempts = attempts + 1;
+        setAttempts(newAttempts);
+        setError(data.message);
+        if (newAttempts >= MAX_ATTEMPTS) {
           setIsLockedOut(true);
         }
       }
     } catch (error) {
       console.error('Fetch error:', error);
-      setAttempts(prev => prev + 1);
-      if (attempts + 1 >= MAX_ATTEMPTS) {
+      const newAttempts = attempts + 1;
+      setAttempts(newAttempts);
+      if (newAttempts >= MAX_ATTEMPTS) {
         setIsLockedOut(true);
       }
       alert('An unexpected error occurred.');
@@ -107,8 +110,8 @@ export default function StudentLogin() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-700 w-full to-teal-700 min-h-screen flex flex-col items-center">
-      <div className="form xl:w-2/4 mt-28 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-blue-900">
+    <div className="bg-blue-700 min-h-screen flex flex-col items-center">
+      <div className="form xl:w-2/4 mt-28 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full">
         <div className="header flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
           <div className="gso-logo flex items-center justify-center w-full md:w-1/3">
             <img src={GSOlogo} alt="GSOLogo" className="w-24 h-24 md:w-36 md:h-36" />
