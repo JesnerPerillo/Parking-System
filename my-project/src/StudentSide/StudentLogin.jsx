@@ -138,7 +138,7 @@ export default function StudentLogin() {
                         </span>
                         <button
                             onClick={togglePassword}
-                            className="absolute right-5 top-5">
+                            className="absolute right-5 top-4">
                             {showPassword ? <IoEyeOff className="w-6 h-6"/> : <IoEye className="w-6 h-6"/>}
                         </button>
                     </label>

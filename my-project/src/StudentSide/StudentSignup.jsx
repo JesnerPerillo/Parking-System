@@ -151,7 +151,7 @@ export default function StudentSignup() {
             <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Password</span>
             <button
               onClick={togglePassword}
-              className="absolute right-5 top-5">
+              className="absolute right-5 top-4">
               {showPassword ? <IoEyeOff className="w-6 h-6"/> : <IoEye className="w-6 h-6"/>}
             </button>
           </label>
