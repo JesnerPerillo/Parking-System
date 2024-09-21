@@ -209,7 +209,7 @@ export default function AdminParkingSlot() {
             setPopupData(userData);
             setLicenseSrc(userData.License ? `data:image/jpeg;base64,${userData.License}` : null);
             setOrcrSrc(userData.ORCR ? `data:image/jpeg;base64,${userData.ORCR}` : null);
-            if (selectedUserType === 'students') {
+            if (selectedUserType === 'student') {
               setCorSrc(userData.COR ? `data:image/jpeg;base64,${userData.COR}` : null);
             } else {
               setCorSrc(null);
@@ -444,7 +444,7 @@ const onScanSuccess = async (slotType, slotNumber) => {
         setPopupData(userData);
         setLicenseSrc(userData.License ? `data:image/jpeg;base64,${userData.License}` : null);
         setOrcrSrc(userData.ORCR ? `data:image/jpeg;base64,${userData.ORCR}` : null);
-        if (selectedUserType === 'students') {
+        if (selectedUserType === 'student') {
           setCorSrc(userData.COR ? `data:image/jpeg;base64,${userData.COR}` : null);
         } else {
           setCorSrc(null);
