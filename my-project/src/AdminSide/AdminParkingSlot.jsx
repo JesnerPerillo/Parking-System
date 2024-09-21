@@ -918,7 +918,7 @@ useEffect(() => {
                     )}
                   </div>
                   {/* Logs Table */}
-                  <div className="overflow-scroll w-full drop-shadow-xl h-4/5 mt-4">
+                  <div className="overflow-auto w-full drop-shadow-xl h-4/5 mt-4">
                     <table className="min-w-full table-auto border-collapse border border-gray-200">
                       <thead>
                         <tr className="bg-gray-100">
@@ -1102,7 +1102,7 @@ useEffect(() => {
             ) : (
               <p className="text-center">No ORCR image available</p>
             )}
-            {corSrc ? (
+            {selectedUserType === 'student' ? <>{corSrc ? (
               <div className="flex flex-col items-center">
                 <p>COR</p>
                 <div className="relative w-60 h-40 md:w-40 md:h-32 group">
@@ -1128,7 +1128,7 @@ useEffect(() => {
               </div>
             ) : (
               <p className="text-center">No COR image available</p>
-            )}
+            )}</> : ''}
             </div>
             <div className="w-full flex flex-col md:flex-row items-center justify-evenly mt-16">
               <button
