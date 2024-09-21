@@ -115,6 +115,7 @@ export default function StudentLogin() {
         <div className="header flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
           <div className="gso-logo flex items-center justify-center w-full md:w-1/3">
             <img src={GSOlogo} alt="GSOLogo" className="w-24 h-24 md:w-36 md:h-36" />
+            <img src={URSlogo} alt="URS Logo" className="w-20 h-24 md:w-28 md:h-32" />
           </div>
           <div className="gso-title flex items-center justify-center w-full md:w-1/3 text-center md:text-left">
             <h1 className="text-white font-bold text-2xl md:text-3xl lg:text-5xl">
@@ -122,9 +123,6 @@ export default function StudentLogin() {
               <span className="text-4xl md:text-6xl tracking-wider">S</span>ervices{' '}
               <span className="text-4xl md:text-6xl tracking-wider">O</span>ffice
             </h1>
-          </div>
-          <div className="urs-logo flex items-center justify-center w-full md:w-1/3">
-            <img src={URSlogo} alt="URS Logo" className="w-20 h-24 md:w-28 md:h-32" />
           </div>
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 float:right w-2/4 p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 max-sm:w-full sm:p-5">
