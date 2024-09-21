@@ -67,7 +67,8 @@ export default function AdminParkingSlot() {
     course: '',
     password: '',
     license: null,
-    orcr: null
+    orcr: null,
+    cor: null,
   });
 
   const handleChange = (e) => {
@@ -1258,6 +1259,10 @@ useEffect(() => {
             <div>
               <label for="formFile" class="form-label">ORCR</label>
               <input name="orcr" class="form-control" type="file" id="formFile" onChange={handleFileChange}/>
+            </div>
+            <div>
+              <label for="formFile" class="form-label">COR</label>
+              <input name="cor" class="form-control" type="file" id="formFile" onChange={handleFileChange}/>
             </div>
             <div className="flex justify-end justify-between">
               <button
