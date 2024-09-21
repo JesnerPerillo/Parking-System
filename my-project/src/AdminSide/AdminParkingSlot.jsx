@@ -859,15 +859,6 @@ useEffect(() => {
 
                   {/* Sorting Buttons */}
                   <div className="mt-4 flex space-x-4">
-                    <select
-                      value={selectedUserType}
-                      onChange={(e) => setSelectedUserType(e.target.value)}
-                      className="p-2 w-full md:w-40 rounded text-blue-900 font-semibold"
-                    >
-                      <option value="">All Users</option>
-                      <option value="student">Student</option>
-                      <option value="faculty">Faculty</option>
-                    </select>
                     <input
                       onChange={(e) => setSearchTerm(e.target.value)}
                       value={searchTerm}
