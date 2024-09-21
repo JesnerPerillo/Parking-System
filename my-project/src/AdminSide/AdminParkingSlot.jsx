@@ -690,37 +690,39 @@ useEffect(() => {
     });
   };
 
-  // Filter logs by user type and then sort
+  
+  const [popupVisible, setIsPopupVisible] = useState(false);
+  const [selectedSelection, setSelectedSelection] = useState('');
+
+  const formatTime = (time) => {
+    return time ? new Date(time).toLocaleTimeString().toLowerCase() : '';
+  };
+  
+  const formatDate = (date) => {
+    return date ? new Date(date).toLocaleDateString().toLowerCase() : '';
+  };
+  
   const filteredLogs = (logs) => {
+    const term = searchTerm.toLowerCase();
+  
     return logs.filter(log => {
-      const term = searchTerm.toLowerCase();
+      const matches = [
+        log.Name?.toLowerCase().includes(term),
+        log.Position?.toLowerCase().includes(term),
+        log['Student Number']?.toLowerCase().includes(term),
+        log.user_type?.toLowerCase().includes(term),
+        formatTime(log['Time In']).includes(term),
+        formatDate(log.created_at).includes(term),
+        formatDate(log['Time Stamp']).includes(term),
+      ];
   
-      // Ensure that all properties are defined before using them
-      const nameMatch = log.Name ? log.Name.toLowerCase().includes(term) : false;
-      const positionMatch = log.Position ? log.Position.toLowerCase().includes(term) : false;
-      const studentNumberMatch = log['Student Number'] ? log['Student Number'].toLowerCase().includes(term) : false;
-      const userTypeMatch = log.user_type ? log.user_type.toLowerCase().includes(term) : false;
+      // Debugging: Log the match results for each log
+      console.log('Log:', log, 'Matches:', matches);
   
-      // Debugging logs for date formatting
-      console.log('Time In:', log['Time In'], 'Formatted Time In:', new Date(log['Time In']).toLocaleTimeString());
-      const timeInMatch = log['Time In'] ? new Date(log['Time In']).toLocaleTimeString().toLowerCase().includes(term) : false;
-  
-      console.log('Created At:', log.created_at, 'Formatted Created At:', new Date(log.created_at).toLocaleDateString());
-      const createdAtMatch = log.created_at ? new Date(log.created_at).toLocaleDateString().toLowerCase().includes(term) : false;
-  
-      console.log('Time Stamp:', log['Time Stamp'], 'Formatted Time Stamp:', formatDateTime(log['Time Stamp']));
-      const timeStampMatch = log['Time Stamp'] ? formatDateTime(log['Time Stamp']).toLowerCase().includes(term) : false;
-  
-      return nameMatch || positionMatch || studentNumberMatch || userTypeMatch || timeInMatch || createdAtMatch || timeStampMatch;
+      return matches.some(Boolean); // Returns true if any match is found
     });
   };
   
-  
-  
-  
-
-  const [popupVisible, setIsPopupVisible] = useState(false);
-  const [selectedSelection, setSelectedSelection] = useState('');
 
   const handleDeleteLogs = async (selection) => {
     const isConfirmed = window.confirm('Are you sure you want to delete these logs?');
