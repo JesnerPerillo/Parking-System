@@ -131,7 +131,7 @@ export default function StudentLogin() {
             <span className="absolute left-0 h-4 w-4 rounded-full bg-cyan-500 animate-pulse"></span>
           </p>
           <div className="w-full h-full p-0 m-0 flex align-center justify-center mt-4 max-md:scale-75 max-sm:scale-75">
-            <img src={AdminLogo} className="w-32 h-32 scale-150" />
+            <img src={AdminLogo} className="w-32 h-32 scale-125" />
           </div>
           <p className="text-base text-gray-400 sm:text-sm">Login your Account.</p>
           <label className="relative">
