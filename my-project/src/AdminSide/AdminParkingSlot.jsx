@@ -918,7 +918,7 @@ useEffect(() => {
                     )}
                   </div>
                   {/* Logs Table */}
-                  <div className="overflow-auto w-full drop-shadow-xl h-4/5 mt-4">
+                  <div className="overflow-scroll w-full drop-shadow-xl h-4/5 mt-4">
                     <table className="min-w-full table-auto border-collapse border border-gray-200">
                       <thead>
                         <tr className="bg-gray-100">
