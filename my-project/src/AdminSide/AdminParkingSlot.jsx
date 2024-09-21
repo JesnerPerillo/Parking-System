@@ -1042,52 +1042,88 @@ useEffect(() => {
                 <p><strong>Time Out:</strong> {popupData['Time Out'] ? formatAMPM(popupData['Time Out']) : 'N/A'}</p>
               </div>
             )}
-            <div className="w-full h-auto flex flex-col justify-between sm:w-full flex md:flex-row justify-around mt-4">
-              {licenseSrc ? (
-                <div className="flex flex-col items-center">
-                  <p>License</p>
-                  <div className="flex items-center">
-                    <img src={licenseSrc} alt="License" className="w-60 h-40 md:w-40 md:h-32" />
-                    <button
-                      onClick={() => handleOpenModal(licenseSrc)}
-                      className="ml-2 text-blue-500 hover:text-blue-700"
-                      aria-label="View License"
-                    >
-                      <BsEyeFill className="w-8 h-6 md:w-10 md:h-7"/>
-                    </button>
-                  </div>
+            <div className="w-full flex flex-col md:flex-row justify-around mt-4">
+            {licenseSrc ? (
+              <div className="flex flex-col items-center">
+                <p>License</p>
+                <div className="relative w-60 h-40 md:w-40 md:h-32 group">
+                  {/* Dark background overlay on hover */}
+                  <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
+
+                  {/* Image */}
+                  <img
+                    src={licenseSrc}
+                    alt="License"
+                    className="w-full h-full object-cover z-0"
+                  />
+
+                  {/* Eye icon in the center */}
+                  <button
+                    onClick={() => handleOpenModal(licenseSrc)}
+                    className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
+                    aria-label="View License"
+                  >
+                    <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
+                  </button>
                 </div>
-              ) : <p className="text-center">No License image available</p>}
+              </div>
+            ) : (
+              <p className="text-center">No License image available</p>
+            )}
               {orcrSrc ? (
-                <div className="flex flex-col items-center">
-                  <p>ORCR</p>
-                  <div className="flex items-center">
-                    <img src={orcrSrc} alt="ORCR" className="w-60 h-40 md:w-40 md:h-32" />
-                    <button
-                      onClick={() => handleOpenModal(orcrSrc)}
-                      className="ml-2 text-blue-500 hover:text-blue-700"
-                      aria-label="View ORCR"
-                    >
-                      <BsEyeFill className="w-8 h-6 md:w-10 md:h-7"/>
-                    </button>
-                  </div>
+              <div className="flex flex-col items-center">
+                <p>ORCR</p>
+                <div className="relative w-60 h-40 md:w-40 md:h-32 group">
+                  {/* Dark background overlay on hover */}
+                  <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
+
+                  {/* Image */}
+                  <img
+                    src={orcrSrc}
+                    alt="ORCR"
+                    className="w-full h-full object-cover z-0"
+                  />
+
+                  {/* Eye icon in the center */}
+                  <button
+                    onClick={() => handleOpenModal(orcrSrc)}
+                    className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
+                    aria-label="View ORCR"
+                  >
+                    <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
+                  </button>
                 </div>
-              ) : <p className="text-center">No ORCR image available</p>}
-              {corSrc ? (
-                <div className="flex flex-col items-center">
-                  <p>COR</p>
-                  <div className="flex items-center">
-                    <img src={corSrc} alt="COR" className="w-60 h-40 md:w-40 md:h-32" />
-                    <button
-                      onClick={() => handleOpenModal(corSrc)}
-                      className="ml-2 text-blue-500 hover:text-blue-700"
-                      aria-label="View COR"
-                    >
-                      <BsEyeFill className="w-8 h-6 md:w-10 md:h-7"/>
-                    </button>
-                  </div>
+              </div>
+            ) : (
+              <p className="text-center">No ORCR image available</p>
+            )}
+            {corSrc ? (
+              <div className="flex flex-col items-center">
+                <p>COR</p>
+                <div className="relative w-60 h-40 md:w-40 md:h-32 group">
+                  {/* Dark background overlay on hover */}
+                  <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
+
+                  {/* Image */}
+                  <img
+                    src={corSrc}
+                    alt="COR"
+                    className="w-full h-full object-cover z-0"
+                  />
+
+                  {/* Eye icon in the center */}
+                  <button
+                    onClick={() => handleOpenModal(corSrc)}
+                    className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
+                    aria-label="View COR"
+                  >
+                    <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
+                  </button>
                 </div>
-              ) : <p className="text-center">No COR image available</p>}
+              </div>
+            ) : (
+              <p className="text-center">No COR image available</p>
+            )}
             </div>
             <div className="w-full flex flex-col md:flex-row items-center justify-evenly mt-16">
               <button
@@ -1103,10 +1139,9 @@ useEffect(() => {
                 Time Out <MdTimerOff className="ml-3"/>
               </button>
             </div>
-      
             {isModalOpen && (
               <div className="fixed w-full h-full inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="relative bg-white p-1 rounded-lg shadow-lg flex justify-center w-full h-auto">
+                <div className="relative bg-white p-1 rounded-lg shadow-lg flex justify-center w-full h-auto sm:w-2/4 h-auto">
                   <button
                     onClick={handleCloseModal}
                     className="absolute top-0 right-0 mt-2 mr-2 text-gray-500 hover:text-gray-700"
