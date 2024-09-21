@@ -365,30 +365,35 @@ export default function AdminParkingSlot() {
   };
   
 
-const formatDateTime = (timestamp) => {
-  if (!timestamp) return 'NA'; // Handle undefined or null timestamp
-
-  const date = new Date(timestamp);
-
-  // Array of month names
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
-
-  // Extract date components
-  const day = date.getDate();
-  const month = months[date.getMonth()];
-  const year = date.getFullYear();
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  const hours12 = hours % 12 || 12;
-  const minutesFormatted = minutes < 10 ? '0' + minutes : minutes;
-
-  // Format date and time
-  return `${month} ${day}, ${year} ${hours12}:${minutesFormatted} ${ampm}`;
-};
+  const formatDateTime = (timestamp) => {
+    if (!timestamp) return 'NA'; // Handle undefined or null timestamp
+  
+    const date = new Date(timestamp);
+  
+    // Manually adjust to UTC+8
+    const utcOffset = 8 * 60 * 60 * 1000; // UTC+8 in milliseconds
+    const localDate = new Date(date.getTime() + utcOffset);
+  
+    // Array of month names
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+  
+    // Extract date components
+    const day = localDate.getDate();
+    const month = months[localDate.getMonth()];
+    const year = localDate.getFullYear();
+    const hours = localDate.getHours();
+    const minutes = localDate.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const hours12 = hours % 12 || 12;
+    const minutesFormatted = minutes < 10 ? '0' + minutes : minutes;
+  
+    // Format date and time
+    return `${month} ${day}, ${year} ${hours12}:${minutesFormatted} ${ampm}`;
+  };
+  
 
 
 // Function to handle Time In for both students and faculty
