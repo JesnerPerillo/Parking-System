@@ -1165,7 +1165,7 @@ useEffect(() => {
             </div>
             {isModalOpen && (
               <div className="fixed w-full h-full inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="relative bg-white p-1 rounded-lg shadow-lg flex justify-center w-full h-4/5 sm:w-2/4 h-4/5">
+                <div className="relative bg-white p-1 rounded-lg shadow-lg flex justify-center w-full h-auto sm:w-2/4 h-4/5">
                   <button
                     onClick={handleCloseModal}
                     className="absolute top-0 right-0 mt-2 mr-2 text-gray-500 hover:text-gray-700"
@@ -1215,7 +1215,7 @@ useEffect(() => {
       </div>
       
       )}
-      {isEditModalOpen && (
+      {isEditModalOpen && selectedUserType === 'student' (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30 max-sm:w-full">
         <div className="bg-opacity-50 p-2 rounded-lg max-sm:h-full max-sm:w-full overflow-auto">
           {selectedUserType === 'student' ? (<form onSubmit={(e) => handleSubmit(e, 'student')} encType="multipart/form-data" className="flex flex-col w-full gap-3 float:right h-auto max-w-3xl p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 max-sm:w-full sm:p-5">
