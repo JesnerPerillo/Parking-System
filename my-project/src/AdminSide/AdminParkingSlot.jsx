@@ -62,35 +62,54 @@ export default function AdminParkingSlot() {
   };
 
   const [formData, setFormData] = useState({
-    studentNumber: '',
-    employeeId: '',
-    fullname: '',
-    email: '',
-    position: '',
-    building: '',
-    yearsection: '',
-    plateNumber: '',
-    course: '',
-    password: '',
-    license: null,
-    orcr: null,
-    cor: null,
+    student: {
+      studentNumber: '',
+      fullname: '',
+      email: '',
+      yearsection: '',
+      course: '',
+      vehicleType: '',
+      plateNumber: '',
+      password: '',
+      license: null,
+      orcr: null,
+      cor: null,
+    },
+    faculty: {
+      employeeId: '',
+      fullname: '',
+      email: '',
+      position: '',
+      building: '',
+      vehicleType: '',
+      plateNumber: '',
+      password: '',
+      license: null,
+      orcr: null,
+    },
   });
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData((prevData) => ({
+      ...prevData,
+      [selectedUserType]: {
+        ...prevData[selectedUserType],
+        [name]: value,
+      },
+    }));
   };
-
+  
+  
   const handleFileChange = (e) => {
     const { name, files } = e.target;
-    setFormData({
-      ...formData,
-      [name]: files[0],
-    });
+    setFormData((prevData) => ({
+      ...prevData,
+      [selectedUserType]: {
+        ...prevData[selectedUserType],
+        [name]: files[0], // Handling file inputs
+      },
+    }));
   };
 
   const handleSubmit = async (e, type) => {
@@ -1162,12 +1181,21 @@ useEffect(() => {
             )}
           </div>
           <div className="w-full flex flex-col justify-between mt-5 sm:flex-row gap-2">
-            <button
+            {selectedUserType === "student" ? <button
               className="mt-2 flex justify-center items-center md:mt-4 w-full md:w-1/3 p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-              onClick={() => setIsEditModalOpen(true)}
+              onClick={() => {setIsEditModalOpen(true);
+                setSelectedUserType('faculty');
+              }}
             >
               Edit <FaUserEdit className="ml-3"/>
-            </button>
+            </button> : <button
+              className="mt-2 flex justify-center items-center md:mt-4 w-full md:w-1/3 p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+              onClick={() => {setIsEditModalOpen(true);
+                setSelectedUserType('faculty');
+              }}
+            >
+              Edit <FaUserEdit className="ml-3"/>
+            </button>}
             {selectedUserType === 'student' ? 
               <button className="mt-2 flex justify-center items-center md:mt-4 w-full md:w-1/3 p-2 bg-red-500 text-white rounded hover:bg-red-700" onClick={() => handleDelete('student')}>
                 Delete Student <MdDeleteForever className="ml-3"/>
