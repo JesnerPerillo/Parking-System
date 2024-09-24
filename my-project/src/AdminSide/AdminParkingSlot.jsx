@@ -156,7 +156,7 @@ export default function AdminParkingSlot() {
             setIsEditModalOpen(false);
             setPopupData(false);
         } else {
-            alert('Error updating account: ' + response.data.message);
+            alert('Error: ' + response.data.message);
         }
     } catch (error) {
         console.error('Error updating account:', error);
