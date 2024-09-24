@@ -1222,7 +1222,7 @@ useEffect(() => {
       {isEditModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30 max-sm:w-full">
         <div className="bg-opacity-50 p-2 rounded-lg max-sm:h-full max-sm:w-full overflow-auto">
-          {selectedUserType === 'student' ? (<form onSubmit={handleSubmit} encType="multipart/form-data" className="flex flex-col w-full gap-3 float:right h-auto max-w-3xl p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 max-sm:w-full sm:p-5">
+          {selectedUserType === 'student' ? (<form onSubmit={(e) => handleSubmit(e, 'student')} encType="multipart/form-data" className="flex flex-col w-full gap-3 float:right h-auto max-w-3xl p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 max-sm:w-full sm:p-5">
               <p className="text-3xl font-semibold tracking-tight relative flex items-center justify-center text-cyan-500 sm:text-2xl max-sm:text-base">
               <BsPersonFillGear className="mr-5 w-10"/> Edit Account
               </p>
@@ -1322,7 +1322,7 @@ useEffect(() => {
             </div>
           </form>) : (<div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
               <div className="bg-gray-900 bg-opacity-90 rounded-lg max-w-3xl w-full max-sm:w-full overflow-auto">
-                <form onSubmit={handleSubmit} encType="multipart/form-data" className="flex p-3 flex-col w-full gap-3 h-auto bg-gray-900 text-white border border-gray-700 rounded-lg">
+                <form onSubmit={(e) => handleSubmit(e, 'faculty')} encType="multipart/form-data" className="flex p-3 flex-col w-full gap-3 h-auto bg-gray-900 text-white border border-gray-700 rounded-lg">
                 <p className="text-3xl font-semibold tracking-tight relative flex items-center justify-center text-cyan-500 sm:text-2xl max-sm:text-base">
                   <BsPersonFillGear className="mr-5 w-10"/> Edit Account
                 </p>
