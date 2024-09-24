@@ -1187,7 +1187,7 @@ useEffect(() => {
             )}
           </div>
           <div className="w-full flex flex-col justify-between mt-5 sm:flex-row gap-2">
-            {selectedUserType === "student" ? <button
+            {selectedUserType === 'student' ? <button
               className="mt-2 flex justify-center items-center md:mt-4 w-full md:w-1/3 p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
               onClick={() => {setIsEditModalOpen(true);
               }}
