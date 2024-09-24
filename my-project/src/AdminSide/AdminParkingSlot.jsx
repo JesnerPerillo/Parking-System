@@ -111,52 +111,58 @@ export default function AdminParkingSlot() {
       },
     }));
   };
+  
+
 
   const handleSubmit = async (e, type) => {
     e.preventDefault();
-    
+
     const form = new FormData();
-    for (const key in formData[selectedUserType]) {
-      form.append(key, formData[selectedUserType][key]);
-    }    
-  
+    const currentFormData = formData[type]; // Get the form data for the selected type
+
+    // Append fields from the specific user type
+    for (const key in currentFormData) {
+        form.append(key, currentFormData[key]);
+    }
+
     // Add ID to the form data
     form.append('id', popupData.id);
-  
+
     // Determine the URL based on the type (student or faculty/staff)
     const url = type === 'student'
-      ? 'https://seagreen-wallaby-986472.hostingersite.com/admineditstudent.php'
-      : 'https://seagreen-wallaby-986472.hostingersite.com/admineditfaculty.php';
-  
-    console.log('Form data being sent:', form);
-  
+        ? 'https://seagreen-wallaby-986472.hostingersite.com/admineditstudent.php'
+        : 'https://seagreen-wallaby-986472.hostingersite.com/admineditfaculty.php';
+
+    // Log the form data being sent
+    console.log('Form data being sent:', Array.from(form.entries())); // Convert FormData to a readable array
+
     try {
-      const response = await axios.post(url, form, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-  
-      console.log('Response data:', response.data);
-  
-      if (response.data.success) {
-        setPopupData((prev) => ({
-          ...prev,
-          ...formData,
-          password: '', // Don't show the password in user data
-        }));
-        alert('Account updated successfully');
-        setIsEditModalOpen(false);
-        setPopupData(false);
-      } else {
-        alert('Error updating account: ' + response.data.message);
-      }
+        const response = await axios.post(url, form, {
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        console.log('Response data:', response.data);
+
+        if (response.data.success) {
+            setPopupData((prev) => ({
+                ...prev,
+                ...currentFormData,
+                password: '', // Don't show the password in user data
+            }));
+            alert('Account updated successfully');
+            setIsEditModalOpen(false);
+            setPopupData(false);
+        } else {
+            alert('Error updating account: ' + response.data.message);
+        }
     } catch (error) {
-      console.error('Error updating account:', error);
-      alert('Error updating account. Please try again.');
+        console.error('Error updating account:', error);
+        alert('Error updating account. Please try again.');
     }
-  };
+};
   
 
   const handleOpenModal = (src) => {
@@ -1165,7 +1171,7 @@ useEffect(() => {
             </div>
             {isModalOpen && (
               <div className="fixed w-full h-full inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="relative bg-white p-1 rounded-lg shadow-lg flex justify-center w-full h-4/5 sm:w-2/4 h-4/5">
+                <div className="relative bg-white p-1 rounded-lg shadow-lg flex justify-center w-full h-auto sm:w-2/4 h-4/5">
                   <button
                     onClick={handleCloseModal}
                     className="absolute top-0 right-0 mt-2 mr-2 text-gray-500 hover:text-gray-700"
@@ -1184,14 +1190,12 @@ useEffect(() => {
             {selectedUserType === "student" ? <button
               className="mt-2 flex justify-center items-center md:mt-4 w-full md:w-1/3 p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
               onClick={() => {setIsEditModalOpen(true);
-                setSelectedUserType('student');
               }}
             >
               Edit <FaUserEdit className="ml-3"/>
             </button> : <button
               className="mt-2 flex justify-center items-center md:mt-4 w-full md:w-1/3 p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
               onClick={() => {setIsEditModalOpen(true);
-                setSelectedUserType('faculty');
               }}
             >
               Edit <FaUserEdit className="ml-3"/>
