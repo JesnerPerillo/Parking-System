@@ -18,6 +18,7 @@ import GSO from '../Pictures/gsoo.png';
 import { IoEyeOff, IoEye } from "react-icons/io5";
 
 export default function AdminParkingSlot() {
+  const [userData, setUserData] = useState('');
   const [error, setError] = useState('');
   const [selectedUserType, setSelectedUserType] = useState('student');
   const [selectedVehicle, setSelectedVehicle] = useState('motorcycle');
@@ -686,42 +687,6 @@ useEffect(() => {
       console.error('Error fetching logs:', error);
     }
   };
-
-  const sortLogs = (logs) => {
-    return logs.sort((a, b) => {
-      // Default sorting by created_at if no search term
-      if (!searchTerm) {
-        return new Date(b.created_at) - new Date(a.created_at);
-      }
-
-      // Sorting logic based on search term and user type
-      if (searchTerm) {
-        // Compare based on search term and fields
-        const term = searchTerm.toLowerCase();
-        const aMatches = 
-          a.Name.toLowerCase().includes(term) ||
-          a.Email.toLowerCase().includes(term) ||
-          a['Student Number']?.toLowerCase().includes(term) ||
-          a.user_type?.toLowerCase().includes(term) ||
-          new Date(a['Time In']).toLocaleTimeString().toLowerCase().includes(term) ||
-          new Date(a.created_at).toLocaleDateString().toLowerCase().includes(term);
-
-        const bMatches = 
-          b.Name.toLowerCase().includes(term) ||
-          b.Email.toLowerCase().includes(term) ||
-          b['Student Number']?.toLowerCase().includes(term) ||
-          b.user_type?.toLowerCase().includes(term) ||
-          new Date(b['Time In']).toLocaleTimeString().toLowerCase().includes(term) ||
-          new Date(b.created_at).toLocaleDateString().toLowerCase().includes(term);
-
-        if (aMatches && !bMatches) return -1;
-        if (!aMatches && bMatches) return 1;
-      }
-
-      return 0; // No sorting if neither a nor b matches the term
-    });
-  };
-
   
   const [popupVisible, setIsPopupVisible] = useState(false);
   const [selectedSelection, setSelectedSelection] = useState('');
@@ -789,6 +754,29 @@ useEffect(() => {
       alert('Error deleting logs: ' + error.message);
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/adminfetchdata.php', {
+          withCredentials: true,
+        });
+
+        if (response.data.success) {
+          setUserData(response.data.data);
+        } else {
+          setError(response.data.message || 'No data found for the logged-in user.');
+          navigate('/');
+        }
+      } catch (error) {
+        setError('Error fetching data: ' + error.message);
+        console.error('Error fetching data: ', error);
+        navigate('/');
+      }
+    };
+
+    fetchData();
+  }, []);
 
 
   return (

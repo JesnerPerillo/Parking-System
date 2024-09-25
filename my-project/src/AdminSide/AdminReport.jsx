@@ -94,10 +94,12 @@ export default function AdminReport() {
           // Handle admin data if needed
         } else {
           setError(response.data.message || 'No data found for the admin.');
+          navigate('/');
         }
       } catch (error) {
         setError('Error fetching admin data: ' + error.message);
         console.error('Error fetching admin data: ', error);
+        navigate('/');
       }
     };
 
