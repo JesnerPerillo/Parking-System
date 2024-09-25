@@ -33,35 +33,35 @@ export default function StudentLogin() {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-        
-        try {
-            const response = await fetch('http://localhost/website/my-project/Backend/studentlogin.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ studentNumber, fullname, password }),
-                credentials: 'include', // Include cookies in the request
-            });
+    e.preventDefault();
+    setIsLoading(true);
     
-            const data = await response.json();
-    
-            if (data.success) {
-                // Wait a brief moment before navigating to give time for the spinner to show
-                setTimeout(() => {
-                    navigate('/studentdashboard');
-                }, 300); // Adjust the delay if necessary
-            } else {
-                setError(data.message || 'Login failed. Please try again.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            setError('An unexpected error occurred.');
-        } finally {
-            setIsLoading(false); // Set loading state to false after the request is completed
+    try {
+        const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/studentlogin.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ studentNumber, fullname, password }),
+            credentials: 'include', // Include cookies in the request
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Wait a brief moment before navigating to give time for the spinner to show
+            setTimeout(() => {
+                navigate('/studentdashboard');
+            }, 300); // Adjust the delay if necessary
+        } else {
+            setError(data.message || 'Login failed. Please try again.');
         }
-    };
-    
+    } catch (error) {
+        console.error('Error:', error);
+        setError('An unexpected error occurred.');
+    } finally {
+        setIsLoading(false); // Set loading state to false after the request is completed
+    }
+};
+
 
     const handleSubmitForgetPassword = async (e) => {
         e.preventDefault();
