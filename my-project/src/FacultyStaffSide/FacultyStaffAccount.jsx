@@ -370,7 +370,7 @@ const handleDownloadQRCode = () => {
                 
               {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                  <div className="relative bg-white p-4 rounded-lg shadow-lg flex justify-center w-11/12 sm:w-3/4 h-1/3 sm:h-3/4">
+                  <div className="relative bg-white p-1 rounded-lg shadow-lg flex justify-center w-full h-auto sm:w-3/4 h-3/4">
                     <button onClick={handleCloseModal} className="absolute top-0 right-0 mt-2 mr-2 text-gray-500 hover:text-gray-700">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -461,17 +461,24 @@ const handleDownloadQRCode = () => {
                   <b>License:</b>
                   <br />
                   {licenseSrc ? (
-                    <div className="flex items-center">
+                    <div className="relative w-60 h-40 md:w-40 md:h-32 group">
+                      {/* Dark background overlay on hover */}
+                      <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
+    
+                      {/* Image */}
                       <img
                         src={licenseSrc}
                         alt="License"
-                        className="w-60 h-auto"
+                        className="w-full h-full object-cover z-0"
                       />
+    
+                      {/* Eye icon in the center */}
                       <button
                         onClick={() => handleOpenModal(licenseSrc)}
-                        className="ml-2 text-blue-500 hover:text-blue-700"
+                        className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
+                        aria-label="View License"
                       >
-                        <BsEyeFill className="w-6 h-6" />
+                        <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
                       </button>
                     </div>
                   ) : (
@@ -482,15 +489,26 @@ const handleDownloadQRCode = () => {
                   <b>ORCR:</b>
                   <br />
                   {orcrSrc ? (
-                    <div className="flex items-center">
-                      <img src={orcrSrc} alt="ORCR" className="w-60 h-auto" />
-                      <button
-                        onClick={() => handleOpenModal(orcrSrc)}
-                        className="ml-2 text-blue-500 hover:text-blue-700"
-                      >
-                        <BsEyeFill className="w-6 h-6" />
-                      </button>
-                    </div>
+                    <div className="relative w-60 h-40 md:w-40 md:h-32 group">
+                    {/* Dark background overlay on hover */}
+                    <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
+  
+                    {/* Image */}
+                    <img
+                      src={orcrSrc}
+                      alt="ORCR"
+                      className="w-full h-full object-cover z-0"
+                    />
+  
+                    {/* Eye icon in the center */}
+                    <button
+                      onClick={() => handleOpenModal(orcrSrc)}
+                      className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
+                      aria-label="View ORCR"
+                    >
+                      <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
+                    </button>
+                  </div>
                   ) : (
                     'No image available'
                   )}
