@@ -499,63 +499,90 @@ export default function StudentAccount() {
                     )}
                   </div>
                 </ul>
-                <div className="w-2/3 h-full">
-                  <div className="mt-5 flex flex-col">
-                    <div className="mb-4">
-                      <b>License:</b>
-                      <br />
-                      {licenseSrc ? (
-                        <div className="flex items-center">
-                          <img
-                            src={licenseSrc}
-                            alt="License"
-                            className="w-40 h-auto"
-                          />
-                          <button
-                            onClick={() => handleOpenModal(licenseSrc)}
-                            className="ml-2 text-blue-500 hover:text-blue-700"
-                          >
-                            <BsEyeFill className="w-6 h-6" />
-                          </button>
-                        </div>
-                      ) : (
-                        'No image available'
-                      )}
+                <div className="w-full flex flex-col items-center justify-center sm:w-1/3">
+                  <div className="mb-4">
+                    <b>License:</b>
+                    <br />
+                    {licenseSrc ? (
+                      <div className="relative w-72 h-40 md:w-40 md:h-32 group">
+                        {/* Dark background overlay on hover */}
+                        <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
+      
+                        {/* Image */}
+                        <img
+                          src={licenseSrc}
+                          alt="License"
+                          className="w-full h-full object-cover z-0"
+                        />
+      
+                        {/* Eye icon in the center */}
+                        <button
+                          onClick={() => handleOpenModal(licenseSrc)}
+                          className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
+                          aria-label="View License"
+                        >
+                          <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
+                        </button>
+                      </div>
+                    ) : (
+                      'No image available'
+                    )}
+                  </div>
+                  <div className="mb-4">
+                    <b>ORCR:</b>
+                    <br />
+                    {orcrSrc ? (
+                      <div className="relative w-72 h-40 md:w-40 md:h-32 group">
+                      {/* Dark background overlay on hover */}
+                      <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
+    
+                      {/* Image */}
+                      <img
+                        src={orcrSrc}
+                        alt="ORCR"
+                        className="w-full h-full object-cover z-0"
+                      />
+    
+                      {/* Eye icon in the center */}
+                      <button
+                        onClick={() => handleOpenModal(orcrSrc)}
+                        className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
+                        aria-label="View ORCR"
+                      >
+                        <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
+                      </button>
                     </div>
-                    <div className="mb-4">
-                      <b>ORCR:</b>
-                      <br />
-                      {orcrSrc ? (
-                        <div className="flex items-center">
-                          <img src={orcrSrc} alt="ORCR" className="w-40 h-auto" />
-                          <button
-                            onClick={() => handleOpenModal(orcrSrc)}
-                            className="ml-2 text-blue-500 hover:text-blue-700"
-                          >
-                            <BsEyeFill className="w-6 h-6" />
-                          </button>
-                        </div>
-                      ) : (
-                        'No image available'
-                      )}
+                    ) : (
+                      'No image available'
+                    )}
+                  </div>
+                  <div className="mb-4">
+                    <b>COR:</b>
+                    <br />
+                    {corSrc ? (
+                      <div className="relative w-72 h-40 md:w-40 md:h-32 group">
+                      {/* Dark background overlay on hover */}
+                      <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
+    
+                      {/* Image */}
+                      <img
+                        src={corSrc}
+                        alt="COR"
+                        className="w-full h-full object-cover z-0"
+                      />
+    
+                      {/* Eye icon in the center */}
+                      <button
+                        onClick={() => handleOpenModal(corSrc)}
+                        className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
+                        aria-label="View COR"
+                      >
+                        <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
+                      </button>
                     </div>
-                    <div className="mb-4">
-                      <b>COR:</b>
-                      <br />
-                      {corSrc ? (
-                        <div className="flex items-center">
-                          <img src={corSrc} alt="COR" className="w-40 h-auto" />
-                          <button
-                            onClick={() => handleOpenModal(corSrc)}
-                            className="ml-2 text-blue-500 hover:text-blue-700"
-                          >
-                            <BsEyeFill className="w-6 h-6" />
-                          </button>
-                        </div>
-                      ) : (
-                        'No image available'
-                      )}
-                    </div>
+                    ) : (
+                      'No image available'
+                    )}
                   </div>
                 </div>
               </div>
