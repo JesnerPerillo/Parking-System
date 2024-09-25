@@ -32,17 +32,19 @@ export default function StudentAbout() {
 
   useEffect(() => {
     // Fetch user data
-    axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', { withCredentials: true })
+    axios.get('https://seagreen-wallaby-986472.hostingersite.com/facultyfetchdata.php', { withCredentials: true })
       .then(response => {
         console.log('Fetched user data:', response.data); // Log the response
         if (response.data.success) {
           setUserData(response.data.data);
         } else {
           console.log(response.data.message);
+          navigate('/');
         }
       })
       .catch(error => {
         console.log('Error fetching user data:', error);
+        navigate('/');
       });
 
     // Fetch admin data
