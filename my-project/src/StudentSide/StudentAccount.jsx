@@ -499,7 +499,7 @@ export default function StudentAccount() {
                     )}
                   </div>
                 </ul>
-                <div className="w-full h-auto flex flex-col items-center justify-center sm:w-1/3">
+                <div className="w-full h-full overflow-auto flex flex-col items-center justify-center sm:w-1/3">
                   <div className="mb-4">
                     <b>License:</b>
                     <br />
