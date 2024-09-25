@@ -456,7 +456,7 @@ const handleDownloadQRCode = () => {
               )}
               </div>
             </ul>
-            <div className="w-1/3 flex flex-col">
+            <div className="w-full sm:w-1/3 flex flex-col">
                 <div className="mb-4">
                   <b>License:</b>
                   <br />
