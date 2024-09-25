@@ -461,7 +461,7 @@ const handleDownloadQRCode = () => {
                   <b>License:</b>
                   <br />
                   {licenseSrc ? (
-                    <div className="relative w-60 h-40 md:w-40 md:h-32 group">
+                    <div className="relative w-72 h-40 md:w-40 md:h-32 group">
                       {/* Dark background overlay on hover */}
                       <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
     
@@ -489,7 +489,7 @@ const handleDownloadQRCode = () => {
                   <b>ORCR:</b>
                   <br />
                   {orcrSrc ? (
-                    <div className="relative w-60 h-40 md:w-40 md:h-32 group">
+                    <div className="relative w-72 h-40 md:w-40 md:h-32 group">
                     {/* Dark background overlay on hover */}
                     <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
   
