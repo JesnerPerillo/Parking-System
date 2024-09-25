@@ -79,9 +79,11 @@ export default function StudentDashboard() {
               // Handle user data (e.g., save to state)
           } else {
               console.log('Error fetching user data:', data.message);
+              navigate('/');
           }
       } catch (error) {
           console.error('Error:', error);
+          navigate('/');
       }
   };
   

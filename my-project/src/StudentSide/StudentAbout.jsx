@@ -34,6 +34,33 @@ export default function StudentAbout() {
     setIsNavOpen(!isNavOpen);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+          const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', {
+              method: 'GET',
+              credentials: 'include', // Include cookies in the request
+          });
+  
+          const data = await response.json();
+  
+          if (data.success) {
+              console.log('User Data:', data.data);
+              // Handle user data (e.g., save to state)
+          } else {
+              console.log('Error fetching user data:', data.message);
+              navigate('/');
+          }
+      } catch (error) {
+          console.error('Error:', error);
+          navigate('/');
+      }
+  };
+  
+
+    fetchData();
+}, []);
+
   const handleLogout = async () => {
     try {
       console.log('Attempting to log out...');

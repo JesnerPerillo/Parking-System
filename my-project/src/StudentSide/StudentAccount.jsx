@@ -119,10 +119,12 @@ export default function StudentAccount() {
           setUserData(response.data.data);
         } else {
           console.log(response.data.message);
+          navigate('/');
         }
       })
       .catch(error => {
         console.log('Error fetching user data:', error);
+        navigate('/');
       });
   }, []);
   

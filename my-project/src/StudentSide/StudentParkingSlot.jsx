@@ -52,10 +52,12 @@ export default function StudentParkingSlots() {
           console.log('Vehicle Type:', vehicleType);
         } else {
           setError(response.data.message || 'No data found for the logged-in user.');
+          navigate('/');
         }
       } catch (error) {
         setError('Error fetching data: ' + error.message);
         console.error('Error fetching data:', error);
+        navigate('/');
       }
     };
 
