@@ -37,20 +37,20 @@ export default function StudentLogin() {
         setIsLoading(true);
         
         try {
-            const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/studentlogin.php', {
+            const response = await fetch('http://localhost/website/my-project/Backend/studentlogin.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ studentNumber, fullname, password }),
                 credentials: 'include', // Include cookies in the request
             });
-
+    
             const data = await response.json();
-
+    
             if (data.success) {
+                // Wait a brief moment before navigating to give time for the spinner to show
                 setTimeout(() => {
-                    setIsLoading(false);
                     navigate('/studentdashboard');
-                }, 3000);
+                }, 300); // Adjust the delay if necessary
             } else {
                 setError(data.message || 'Login failed. Please try again.');
             }
@@ -59,8 +59,9 @@ export default function StudentLogin() {
             setError('An unexpected error occurred.');
         } finally {
             setIsLoading(false); // Set loading state to false after the request is completed
-          }
+        }
     };
+    
 
     const handleSubmitForgetPassword = async (e) => {
         e.preventDefault();
