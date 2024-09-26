@@ -156,17 +156,21 @@ export default function StudentSignup() {
               {showPassword ? <IoEyeOff className="w-6 h-6"/> : <IoEye className="w-6 h-6"/>}
             </button>
           </label>
-          <div>
-            <label for="formFile" class="form-label">License</label>
-            <input name="license" class="form-control" type="file" id="formFile" onChange={handleFileChange}/>
-          </div>
-          <div>
-            <label for="formFile" class="form-label">ORCR</label>
-            <input name="orcr" class="form-control" type="file" id="formFile" onChange={handleFileChange}/>
-          </div>
-          <div>
-            <label for="formFile" class="form-label">COR(Certificate of Registration)</label>
-            <input name="cor" class="form-control" type="file" id="formFile" onChange={handleFileChange}/>
+          <p className="mt-2 text-gray-400">Upload the requirements as an image only.<span className="text-red-500">*</span></p>
+          <div class="flex flex-col lg:flex-row lg:space-x-4 space-y-4 lg:space-y-0">
+            <div class="w-full lg:w-1/3">
+              <label for="formFileLicense" class="form-label block text-sm font-medium text-gray-700">License</label>
+              <input name="license" class="form-control block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" type="file" id="formFileLicense" onChange={handleFileChange}/>
+            </div>
+            <div class="w-full lg:w-1/3">
+              <label for="formFileOrcr" class="form-label block text-sm font-medium text-gray-700">ORCR<span className="text-[7px]">(Original Receipt/Certificate of Registration)</span></label>
+              <input name="orcr" class="form-control block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" type="file" id="formFileOrcr" onChange={handleFileChange}/>
+            </div>
+
+            <div class="w-full lg:w-1/3">
+              <label for="formFileCor" class="form-label block text-sm font-medium text-gray-700">COR<span className="text-xs">(Certificate of Registration)</span></label>
+              <input name="cor" class="form-control block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" type="file" id="formFileCor" onChange={handleFileChange}/>
+            </div>
           </div>
           <button className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5">
             Submit
