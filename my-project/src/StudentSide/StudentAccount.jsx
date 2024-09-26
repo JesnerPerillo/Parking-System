@@ -499,22 +499,22 @@ export default function StudentAccount() {
                     )}
                   </div>
                 </ul>
-                <div className="w-full h-full overflow-auto flex flex-col items-center justify-center sm:w-1/3">
-                  <div className="mb-4">
+                <div className="w-full h-full p-2 flex flex-col items-center justify-start overflow-y-auto sm:w-1/3">
+                  <div className="mb-4 w-full">
                     <b>License:</b>
                     <br />
                     {licenseSrc ? (
-                      <div className="relative w-72 h-40 md:w-40 md:h-32 group">
+                      <div className="relative w-full h-40 md:w-40 md:h-32 group">
                         {/* Dark background overlay on hover */}
                         <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
-      
+
                         {/* Image */}
                         <img
                           src={licenseSrc}
                           alt="License"
                           className="w-full h-full object-cover z-0"
                         />
-      
+
                         {/* Eye icon in the center */}
                         <button
                           onClick={() => handleOpenModal(licenseSrc)}
@@ -528,58 +528,60 @@ export default function StudentAccount() {
                       'No image available'
                     )}
                   </div>
-                  <div className="mb-4">
+
+                  <div className="mb-4 w-full">
                     <b>ORCR:</b>
                     <br />
                     {orcrSrc ? (
-                      <div className="relative w-72 h-40 md:w-40 md:h-32 group">
-                      {/* Dark background overlay on hover */}
-                      <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
-    
-                      {/* Image */}
-                      <img
-                        src={orcrSrc}
-                        alt="ORCR"
-                        className="w-full h-full object-cover z-0"
-                      />
-    
-                      {/* Eye icon in the center */}
-                      <button
-                        onClick={() => handleOpenModal(orcrSrc)}
-                        className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
-                        aria-label="View ORCR"
-                      >
-                        <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
-                      </button>
-                    </div>
+                      <div className="relative w-full h-40 md:w-40 md:h-32 group">
+                        {/* Dark background overlay on hover */}
+                        <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
+
+                        {/* Image */}
+                        <img
+                          src={orcrSrc}
+                          alt="ORCR"
+                          className="w-full h-full object-cover z-0"
+                        />
+
+                        {/* Eye icon in the center */}
+                        <button
+                          onClick={() => handleOpenModal(orcrSrc)}
+                          className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
+                          aria-label="View ORCR"
+                        >
+                          <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
+                        </button>
+                      </div>
                     ) : (
                       'No image available'
                     )}
                   </div>
-                  <div className="mb-4">
+
+                  <div className="mb-4 w-full">
                     <b>COR:</b>
                     <br />
                     {corSrc ? (
-                      <div className="relative w-72 h-40 md:w-40 md:h-32 group">
-                      {/* Dark background overlay on hover */}
-                      <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
-    
-                      {/* Image */}
-                      <img
-                        src={corSrc}
-                        alt="COR"
-                        className="w-full h-full object-cover z-0"
-                      />
-    
-                      {/* Eye icon in the center */}
-                      <button
-                        onClick={() => handleOpenModal(corSrc)}
-                        className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
-                        aria-label="View COR"
-                      >
-                        <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
-                      </button>
-                    </div>
+                      <div className="relative w-full h-40 md:w-40 md:h-32 group">
+                        {/* Dark background overlay on hover */}
+                        <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
+
+                        {/* Image */}
+                        <img
+                          src={corSrc}
+                          alt="COR"
+                          className="w-full h-full object-cover z-0"
+                        />
+
+                        {/* Eye icon in the center */}
+                        <button
+                          onClick={() => handleOpenModal(corSrc)}
+                          className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
+                          aria-label="View COR"
+                        >
+                          <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
+                        </button>
+                      </div>
                     ) : (
                       'No image available'
                     )}
