@@ -100,9 +100,10 @@ export default function StudentAbout() {
 
         {/* Navigation menu */}
         <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
-          <div className="border-b-2 border-blue-700 w-full h-24 text-blue-700 flex flex-col items-center justify-center mt-10 text-xl tracking-wider">
-            <h1 className="text-bold text-3xl sm:text-2xl md:text-4xl lg:text-2xl xl:text-4xl tracking-widest">PARKING SYSTEM</h1>
-          </div>
+        <div className="border-b-2 border-blue-700 w-full h-44 text-blue-700 flex flex-col items-center justify-between text-xl tracking-wider">
+              <img src={URSLogo} className="w-20 h-26" />
+              <h1 className="text-bold text-4xl tracking-widest">PARKING SYSTEM</h1>
+            </div>
           <div className="flex flex-col justify-evenly w-full h-2/4 relative">
             <Link to="/studentdashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
