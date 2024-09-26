@@ -6,6 +6,7 @@ import GSOlogo from '.././Pictures/gsoo.png';
 import '.././App.css'
 import axios from 'axios';
 import { IoEyeOff, IoEye  } from "react-icons/io5";
+import SideImg from '../Pictures/sideimg.png';
 
 export default function FacultyStaffSignup(){
   const navigate = useNavigate();
@@ -77,9 +78,6 @@ export default function FacultyStaffSignup(){
       <div className="form xl:w-2/3 mt-16 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-blue-900">
       <div className="header flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
         <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />
-        <div className="urs-logo flex items-center justify-center w-full md:w-1/3">
-          <img src={URSlogo} alt="URS Logo" className="w-20 h-24 md:w-28 md:h-32" />
-        </div>
       </div>
         <form onSubmit={handleSubmit} className="flex flex-col w-2/4 gap-3 float:right h-auto max-w-3xl p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 max-sm:w-full sm:p-5">
             <p className="text-3xl font-semibold tracking-tight relative flex items-center pl-7 text-cyan-500 sm:text-2xl">
