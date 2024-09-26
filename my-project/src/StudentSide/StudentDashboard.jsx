@@ -136,7 +136,7 @@ export default function StudentDashboard() {
             
           {isNavOpen ? '' : <div className="w-full h-screen">
             <div className="w-full h-20 flex justify-end items-end border-b-2">
-              <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
+              <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Dashboard</p>
             </div>
 
             {/*Container for Motorcycle,Tricycle, Four Wheeler*/}
