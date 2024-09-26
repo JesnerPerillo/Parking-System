@@ -33,6 +33,8 @@ export default function FacultyStaffLogin() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
+        
         try {
             const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/facultystafflogin.php', {
                 method: 'POST',
