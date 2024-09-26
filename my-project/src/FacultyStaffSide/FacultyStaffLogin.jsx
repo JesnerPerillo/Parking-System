@@ -88,7 +88,7 @@ export default function FacultyStaffLogin() {
   
 
   return (
-    <div className="bg-gradient-to-r from-blue-700 w-full to-teal-700 min-h-screen flex flex-col items-center">
+    <div className="bg-blue-700 min-h-screen flex flex-col items-center justify-center">
       <div className="form xl:w-2/4 mt-28 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-blue-900">
         <div className="header flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
           <div className="gso-logo flex items-center justify-center w-full md:w-1/3">

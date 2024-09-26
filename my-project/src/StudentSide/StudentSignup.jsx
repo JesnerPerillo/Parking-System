@@ -71,7 +71,7 @@ export default function StudentSignup() {
 
   
   return (
-    <div className="bg-blue-700 min-h-screen flex flex-col items-center">
+    <div className="bg-blue-700 min-h-screen flex flex-col items-center justify-center">
       <div className="relevant form xl:w-2/3 mt-3 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full ">
       <div className="header relative flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
           <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />

@@ -74,8 +74,8 @@ export default function FacultyStaffSignup(){
   
   return(
     <>
-      <div className="bg-blue-700 min-h-screen flex flex-col items-center">
-      <div className="form xl:w-2/3 mt-16 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-blue-900">
+      <div className="bg-blue-700 min-h-screen flex flex-col items-center justify-center">
+      <div className="form xl:w-2/3 mt-16 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-blue-700">
       <div className="header flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
         <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />
       </div>

@@ -33,35 +33,35 @@ export default function StudentLogin() {
     };
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+        e.preventDefault();
+        setIsLoading(true);
+        
+        try {
+            const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/studentlogin.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ studentNumber, fullname, password }),
+                credentials: 'include', // Include cookies in the request
+            });
     
-    try {
-        const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/studentlogin.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ studentNumber, fullname, password }),
-            credentials: 'include', // Include cookies in the request
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            // Wait a brief moment before navigating to give time for the spinner to show
-            setTimeout(() => {
-                navigate('/studentdashboard');
-            }, 300); // Adjust the delay if necessary
-        } else {
-            setError(data.message || 'Login failed. Please try again.');
+            const data = await response.json();
+    
+            if (data.success) {
+                // Wait a brief moment before navigating to give time for the spinner to show
+                setTimeout(() => {
+                    navigate('/studentdashboard');
+                }, 300); // Adjust the delay if necessary
+            } else {
+                setError(data.message || 'Login failed. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            setError('An unexpected error occurred.');
+        } finally {
+            setIsLoading(false); // Set loading state to false after the request is completed
         }
-    } catch (error) {
-        console.error('Error:', error);
-        setError('An unexpected error occurred.');
-    } finally {
-        setIsLoading(false); // Set loading state to false after the request is completed
-    }
-};
-
+    };
+    
 
     const handleSubmitForgetPassword = async (e) => {
         e.preventDefault();
@@ -90,11 +90,18 @@ export default function StudentLogin() {
             setMessage('An error occurred. Please try again later.');
         }
     };
-    
-
 
     return (
-        <div className="bg-blue-700 min-h-screen flex flex-col items-center">
+        <div className="bg-blue-700 min-h-screen flex flex-col items-center justify-center">
+            {/* Modal for Loading Spinner */}
+            {isLoading && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white p-6 rounded-lg flex items-center justify-center">
+                        <ImSpinner2 className="animate-spin w-10 h-10 text-blue-500" />
+                    </div>
+                </div>
+            )}
+
             <div className="relative form xl:w-2/4 mt-28 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full">
                 <div className="header flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
                     <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />
@@ -158,14 +165,7 @@ export default function StudentLogin() {
                         className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5"
                         disabled={isLoading}
                     >
-                        {isLoading ? (
-                            <span className="flex justify-center items-center">
-                                <ImSpinner2 className="animate-spin w-5 h-5 mr-2" />
-                                Logging in...
-                            </span>
-                        ) : (
-                            'Submit'
-                        )}
+                        Submit
                     </button>
                     {error && <p className="text-red-500 text-sm">{error}</p>}
                     <div className="flex flex-col items-center justify-center">
