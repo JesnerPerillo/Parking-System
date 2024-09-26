@@ -73,11 +73,11 @@ export default function FacultyStaffSignup(){
   
   return(
     <>
-      <div className="bg-gradient-to-r from-blue-700 w-full to-teal-700 min-h-screen flex flex-col items-center">
-      <div className="form xl:w-2/3 mt-16 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-blue-900">
-      <div className="header relative flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
-          <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />
-      </div>
+      <div className="bg-blue-700 min-h-screen flex flex-col items-center">
+      <div className="relevant form xl:w-2/3 mt-3 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full ">
+        <div className="header relative flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
+            <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />
+        </div>
         <form onSubmit={handleSubmit} className="flex flex-col w-2/4 gap-3 float:right h-auto max-w-3xl p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 max-sm:w-full sm:p-5">
             <p className="text-3xl font-semibold tracking-tight relative flex items-center pl-7 text-cyan-500 sm:text-2xl">
             Register (Faculty and Staff)
