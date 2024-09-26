@@ -5,6 +5,7 @@ import GSOlogo from '.././Pictures/gsoo.png';
 import '.././App.css'
 import { IoEyeOff, IoEye  } from "react-icons/io5";
 import SideImg from '../Pictures/sideimg.png';
+import { ImSpinner2 } from 'react-icons/im';
 
 export default function FacultyStaffLogin() {
     const [fullname, setFullname] = useState('');
@@ -16,6 +17,7 @@ export default function FacultyStaffLogin() {
     const [message, setMessage] = useState('');
     const [isVisible, setIsVisible] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const togglePassword = () => {
       setShowPassword(!showPassword);
@@ -49,13 +51,17 @@ export default function FacultyStaffLogin() {
 
             if (data.success) {
                 // Store user data in session storage or state if needed
-                navigate('/facultystaffdashboard');
+                setTimeout(() => {
+                  navigate('/facultystaffdashboard');
+              }, 300);
             } else {
                 setError(data.message);
             }
         } catch (error) {
             console.error('Error:', error);
             setError('An unexpected error occurred.');
+        } finally {
+          setIsLoading(false); // Set loading state to false after the request is completed
         }
     };
 
@@ -90,6 +96,14 @@ export default function FacultyStaffLogin() {
 
   return (
     <div className="bg-blue-700 min-h-screen flex flex-col items-center justify-center">
+      {/* Modal for Loading Spinner */}
+      {isLoading && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white p-6 rounded-lg flex items-center justify-center">
+                        <ImSpinner2 className="animate-spin w-10 h-10 text-blue-500" />
+                    </div>
+                </div>
+            )}
       <div className="form xl:w-2/4 mt-28 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-blue-700">
         <div className="header flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
           <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />
@@ -118,7 +132,7 @@ export default function FacultyStaffLogin() {
           {showPassword ? <IoEyeOff className="w-6 h-6"/> : <IoEye className="w-6 h-6"/>}
         </button>
       </label>
-      <button className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5">
+      <button type="submit" className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5" disabled={isLoading}>
         Submit
       </button>
       {error && <p className="text-red-500 text-sm">{error}</p>}
