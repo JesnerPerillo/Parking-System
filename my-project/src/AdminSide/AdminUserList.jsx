@@ -375,12 +375,9 @@ const confirmDelete = () => {
   axios
   .post(
     `https://seagreen-wallaby-986472.hostingersite.com/deletepending.php`,
-    JSON.stringify({ id: userIdToDelete, type: selectedType }), // Ensure the body is stringified
-    {
-      withCredentials: true,
-      headers: { 'Content-Type': 'application/json' }, // Set the content type to JSON
-    }
-  )
+    { id: userIdToDelete, type: selectedType }, // Include user type
+      { withCredentials: true }
+    )
   .then((response) => {
     if (response.data.success) {
       setPendingUsers((prev) => prev.filter((user) => user.id !== userIdToDelete));
