@@ -373,27 +373,30 @@ const handleDeletePending = (userId) => {
 // Confirm deletion
 const confirmDelete = () => {
   axios
-    .post(
-      `https://seagreen-wallaby-986472.hostingersite.com/deletepending.php`, 
-      { id: userIdToDelete, type: selectedType }, // Include user type
-      { withCredentials: true }
-    )
-    .then((response) => {
-      if (response.data.success) {
-        setPendingUsers((prev) => prev.filter((user) => user.id !== userIdToDelete));
-        setPopupMessage("User deleted.");
-      } else {
-        setPopupMessage(response.data.message || "Failed to delete user.");
-      }
-      setIsPopupVisible(true);
-      setModalVisible(false); // Close the modal after confirming
-    })
-    .catch((error) => {
-      console.error("Error deleting user:", error);
-      setPopupMessage("Error deleting user. Please try again.");
-      setIsPopupVisible(true);
-      setModalVisible(false); // Close the modal on error
-    });
+  .post(
+    `https://seagreen-wallaby-986472.hostingersite.com/deletepending.php`,
+    JSON.stringify({ id: userIdToDelete, type: selectedType }), // Ensure the body is stringified
+    {
+      withCredentials: true,
+      headers: { 'Content-Type': 'application/json' }, // Set the content type to JSON
+    }
+  )
+  .then((response) => {
+    if (response.data.success) {
+      setPendingUsers((prev) => prev.filter((user) => user.id !== userIdToDelete));
+      setPopupMessage("User deleted.");
+    } else {
+      setPopupMessage(response.data.message || "Failed to delete user.");
+    }
+    setIsPopupVisible(true);
+    setModalVisible(false); // Close the modal after confirming
+  })
+  .catch((error) => {
+    console.error("Error deleting user:", error);
+    setPopupMessage("Error deleting user. Please try again.");
+    setIsPopupVisible(true);
+    setModalVisible(false); // Close the modal on error
+  });
 };
 
 
