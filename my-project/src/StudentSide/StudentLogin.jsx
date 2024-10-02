@@ -19,6 +19,7 @@ export default function StudentLogin() {
     const [isVisible, setIsVisible] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [approvalMessage, setApprovalMessage] = useState('');
 
     const togglePassword = () => {
         setShowPassword(!showPassword);
@@ -52,7 +53,11 @@ export default function StudentLogin() {
                     navigate('/studentdashboard');
                 }, 300); // Adjust the delay if necessary
             } else {
-                setError(data.message || 'Login failed. Please try again.');
+                if (data.message.includes('not approved')) {
+                    setApprovalMessage(data.message); // Set the approval message
+                } else {
+                    setError(data.message || 'Login failed. Please try again.');
+                }
             }
         } catch (error) {
             console.error('Error:', error);
@@ -208,6 +213,18 @@ export default function StudentLogin() {
                 </form>
                 </div>
                 )}
+
+            {approvalMessage && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
+                    <div className="bg-white p-6 rounded shadow-md">
+                        <h2 className="text-xl font-bold">Notice</h2>
+                        <p>{approvalMessage}</p>
+                        <button onClick={() => setApprovalMessage('')} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
             </div>
         </div>
     );

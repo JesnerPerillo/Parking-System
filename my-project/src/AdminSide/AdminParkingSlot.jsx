@@ -16,6 +16,7 @@ import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import GSO from '../Pictures/gsoo.png';
 import { IoEyeOff, IoEye } from "react-icons/io5";
+import { FaUsers } from "react-icons/fa";
 
 export default function AdminParkingSlot() {
   const [userData, setUserData] = useState('');
@@ -816,6 +817,11 @@ useEffect(() => {
             <Link to="/adminaccount" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
               <BsQuestionSquare /> <span className="ml-5">Account</span>
+              </li>
+            </Link>
+            <Link to="/adminuserlist" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+              <FaUsers /> <span className="ml-5">User List</span>
               </li>
             </Link>
         </div>

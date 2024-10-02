@@ -10,6 +10,7 @@ import { IoEyeOff, IoEye  } from "react-icons/io5";
 export default function StudentSignup() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [approvalMessage, setApprovalMessage] = useState(false);
   const [formData, setFormData] = useState({
     studentNumber: '',
     fullname: '',
@@ -58,10 +59,8 @@ export default function StudentSignup() {
         },
       });
 
-      alert(response.data.message);
-
       if (response.data.status === 'success') {
-        navigate('/studentlogin');
+        setApprovalMessage(response.data.message);
       }
     } catch (error) {
       console.error(error);
@@ -180,6 +179,22 @@ export default function StudentSignup() {
           </p>
         </form>
       </div>
+      {approvalMessage && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
+            <div className="bg-white p-6 rounded shadow-md">
+                <h2 className="text-xl font-bold">Notice</h2>
+                <p>{approvalMessage}</p>
+                <button 
+                    onClick={() => {
+                        setApprovalMessage(''); // Clear the message
+                        navigate('/studentlogin'); // Redirect to the login page
+                    }} 
+                    className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">
+                    Okay
+                </button>
+            </div>
+        </div>
+      )}
     </div>
   );
 }

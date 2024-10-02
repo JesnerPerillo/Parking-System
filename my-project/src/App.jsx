@@ -16,6 +16,7 @@ import AdminDashboard from '././AdminSide/AdminDashboard.jsx'
 import AdminReport from '././AdminSide/AdminReport.jsx'
 import AdminParkingSlot from '././AdminSide/AdminParkingSlot.jsx';
 import AdminAccount from '././AdminSide/AdminAccount.jsx';
+import AdminUserList from '././AdminSide/AdminUserList.jsx';
 import './../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
@@ -45,6 +46,7 @@ export default function App(){
             <Route path="/adminparkingslot" element={<AdminParkingSlot />} />
             <Route path="/adminreport" element={<AdminReport />} />
             <Route path="/adminaccount" element={<AdminAccount />} />
+            <Route path="/adminuserlist" element={<AdminUserList />} />
         </Routes>
       </Router>
     </>
