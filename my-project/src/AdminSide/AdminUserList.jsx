@@ -30,6 +30,9 @@ export default function AdminUserList() {
   const [selectedType, setSelectedType] = useState('student');
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
+  const [popupMessageDelete, setPopupMessageDelete] = useState('');
   const [formData, setFormData] = useState({
     student: {
       studentNumber: '',
@@ -103,6 +106,29 @@ export default function AdminUserList() {
     }));
   };
 
+  useEffect(() => {
+    const fetchAdminData = async () => {
+      try {
+        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/adminfetchdata.php', {
+          withCredentials: true,
+        });
+  
+        if (response.data.success) {
+          // Handle admin data if needed
+        } else {
+          setError(response.data.message || 'No data found for the admin.');
+          navigate('/');
+        }
+      } catch (error) {
+        setError('Error fetching admin data: ' + error.message);
+        console.error('Error fetching admin data: ', error);
+        navigate('/');
+      }
+    };
+  
+    fetchAdminData();
+  }, []);
+
   const handleSubmit = async (e, type) => {
     e.preventDefault();
 
@@ -163,30 +189,6 @@ export default function AdminUserList() {
         alert('Error updating account. Please try again.');
     }
 };
-
-
-useEffect(() => {
-  const fetchAdminData = async () => {
-    try {
-      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/adminfetchdata.php', {
-        withCredentials: true,
-      });
-
-      if (response.data.success) {
-        // Handle admin data if needed
-      } else {
-        setError(response.data.message || 'No data found for the admin.');
-        navigate('/');
-      }
-    } catch (error) {
-      setError('Error fetching admin data: ' + error.message);
-      console.error('Error fetching admin data: ', error);
-      navigate('/');
-    }
-  };
-
-  fetchAdminData();
-}, []);
 
   const handleLogout = async () => {
     try {
@@ -349,7 +351,7 @@ useEffect(() => {
 // Approve user
 const handleApprove = (userId) => {
   axios
-    .post(`https://seagreen-wallaby-986472.hostingersite.com/handleapproveincorrect.php`, { id: userId, action: 'approve'},
+    .post(`https://seagreen-wallaby-986472.hostingersite.com/handleapprove.php`, { id: userId, action: 'approve'},
       { withCredentials: true }
     )
     .then((response) => {
@@ -362,28 +364,35 @@ const handleApprove = (userId) => {
     });
 };
 
-const handleIncorrect = (userId, incorrectFields) => {
-  axios
-    .post(`https://seagreen-wallaby-986472.hostingersite.com/handleapproveincorrect.php`, { id: userId, action: 'incorrect', incorrectFields })
-    .then((response) => {
-      setPopupMessage("User marked as incorrect and email sent.");
-      setIsPopupVisible(true);
-    })
-    .catch((error) => {
-      console.error("Error marking user as incorrect:", error);
-    });
+const handleDeletePending = (userId) => {
+  // Show the confirmation modal
+  setUserIdToDelete(userId);
+  setModalVisible(true);
 };
 
-const handleDeletePending = (userId) => {
+// Confirm deletion
+const confirmDelete = () => {
   axios
-    .post(`https://seagreen-wallaby-986472.hostingersite.com/deletepending.php`, { id: userId })
+    .post(
+      `https://seagreen-wallaby-986472.hostingersite.com/deletepending.php`, 
+      { id: userIdToDelete, type: selectedType }, // Include user type
+      { withCredentials: true }
+    )
     .then((response) => {
-      setPendingUsers((prev) => prev.filter((user) => user.id !== userId));
-      setPopupMessage("User deleted.");
+      if (response.data.success) {
+        setPendingUsers((prev) => prev.filter((user) => user.id !== userIdToDelete));
+        setPopupMessage("User deleted.");
+      } else {
+        setPopupMessage(response.data.message || "Failed to delete user.");
+      }
       setIsPopupVisible(true);
+      setModalVisible(false); // Close the modal after confirming
     })
     .catch((error) => {
       console.error("Error deleting user:", error);
+      setPopupMessage("Error deleting user. Please try again.");
+      setIsPopupVisible(true);
+      setModalVisible(false); // Close the modal on error
     });
 };
 
@@ -1029,6 +1038,44 @@ const Popup = ({ message, onClose }) => (
               onClose={() => setIsPopupVisible(false)}
             />
           )}
+
+      {isModalVisible && (
+        <div className="fixed z-40 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-lg font-semibold mb-4">Confirmation</h2>
+            <p>Are you sure you want to delete this user?</p>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={() => setModalVisible(false)}
+                className="mr-2 px-4 py-2 bg-gray-300 rounded"
+              >
+                No
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-500 text-white rounded"
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Popup Message */}
+      {isPopupVisible && (
+        <div className="fixed z-40 top-0 left-0 right-0 mt-4 flex justify-center">
+          <div className="bg-white p-4 rounded-lg shadow-lg">
+            <p>{popupMessage}</p>
+            <button
+              onClick={() => setIsPopupVisible(false)}
+              className="mt-2 px-4 py-2 bg-gray-300 rounded"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
         </div>
       </div>
       </div>
