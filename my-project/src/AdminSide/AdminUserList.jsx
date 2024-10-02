@@ -129,8 +129,8 @@ export default function AdminUserList() {
 
     // Determine the URL based on the type (student or faculty/staff)
     const url = type === 'student'
-        ? 'http://localhost/websiteOrg/my-project/Backend/admineditstudent.php'
-        : 'http://localhost/websiteOrg/my-project/Backend/admineditfaculty.php';
+        ? 'https://seagreen-wallaby-986472.hostingersite.com/admineditstudent.php'
+        : 'https://seagreen-wallaby-986472.hostingersite.com/admineditfaculty.php';
 
     // Log the form data being sent
     console.log('Form data being sent:', Array.from(form.entries())); // Convert FormData to a readable array
@@ -168,7 +168,7 @@ export default function AdminUserList() {
 useEffect(() => {
   const fetchAdminData = async () => {
     try {
-      const response = await axios.get('http://localhost/websiteOrg/my-project/Backend/adminfetchdata.php', {
+      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/adminfetchdata.php', {
         withCredentials: true,
       });
 
@@ -190,7 +190,7 @@ useEffect(() => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.get('http://localhost/websiteOrg/my-project/Backend/logout.php', {
+      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -209,8 +209,8 @@ useEffect(() => {
         try {
             let apiUrl =
                 selectedUserType === 'student'
-                    ? 'http://localhost/websiteOrg/my-project/Backend/fetchstudentsdata.php'
-                    : 'http://localhost/websiteOrg/my-project/Backend/fetchfacultydata.php';
+                    ? 'https://seagreen-wallaby-986472.hostingersite.com/fetchstudentsdata.php'
+                    : 'https://seagreen-wallaby-986472.hostingersite.com/fetchfacultydata.php';
 
             const response = await axios.get(apiUrl, { withCredentials: true });
 
@@ -239,8 +239,8 @@ useEffect(() => {
             try {
                 let apiUrl =
                     selectedUserType === 'student'
-                        ? `http://localhost/websiteOrg/my-project/Backend/fetchstudentdata.php?id=${userId}` // Example endpoint
-                        : `http://localhost/websiteOrg/my-project/Backend/fetchfacultydata.php?id=${userId}`; // Example endpoint
+                        ? `https://seagreen-wallaby-986472.hostingersite.com/fetchstudentdata.php?id=${userId}` // Example endpoint
+                        : `https://seagreen-wallaby-986472.hostingersite.com/fetchfacultydata.php?id=${userId}`; // Example endpoint
 
                 const response = await axios.get(apiUrl, { withCredentials: true });
 
@@ -272,7 +272,7 @@ const handleDelete = async (userId, userType) => {
   if (!isConfirmed) return;
 
   try {
-      const response = await axios.post('http://localhost/websiteOrg/my-project/Backend/delete.php', 
+      const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/delete.php', 
           { id: userId, userType },
           { 
               withCredentials: true,
@@ -296,7 +296,7 @@ useEffect(() => {
     console.log('Fetching pending users for type:', selectedType);
     try {
       // Fetch data for pending users based on the selected type (student or faculty)
-      let apiUrl = `http://localhost/websiteOrg/my-project/Backend/fetchpendinguser.php`;
+      let apiUrl = `https://seagreen-wallaby-986472.hostingersite.com/fetchpendinguser.php`;
       const response = await axios.get(apiUrl, { withCredentials: true });
 
       // Log the entire response object for debugging
@@ -349,7 +349,7 @@ useEffect(() => {
 // Approve user
 const handleApprove = (userId) => {
   axios
-    .post(`http://localhost/websiteOrg/my-project/Backend/handleapproveincorrect.php`, { id: userId, action: 'approve'},
+    .post(`https://seagreen-wallaby-986472.hostingersite.com/handleapproveincorrect.php`, { id: userId, action: 'approve'},
       { withCredentials: true }
     )
     .then((response) => {
@@ -364,7 +364,7 @@ const handleApprove = (userId) => {
 
 const handleIncorrect = (userId, incorrectFields) => {
   axios
-    .post(`http://localhost/websiteOrg/my-project/Backend/handleapproveincorrect.php`, { id: userId, action: 'incorrect', incorrectFields })
+    .post(`https://seagreen-wallaby-986472.hostingersite.com/handleapproveincorrect.php`, { id: userId, action: 'incorrect', incorrectFields })
     .then((response) => {
       setPopupMessage("User marked as incorrect and email sent.");
       setIsPopupVisible(true);
@@ -376,7 +376,7 @@ const handleIncorrect = (userId, incorrectFields) => {
 
 const handleDeletePending = (userId) => {
   axios
-    .post(`http://localhost/websiteOrg/my-project/Backend/deletepending.php`, { id: userId })
+    .post(`https://seagreen-wallaby-986472.hostingersite.com/deletepending.php`, { id: userId })
     .then((response) => {
       setPendingUsers((prev) => prev.filter((user) => user.id !== userId));
       setPopupMessage("User deleted.");
