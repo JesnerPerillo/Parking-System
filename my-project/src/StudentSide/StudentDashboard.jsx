@@ -80,11 +80,9 @@ export default function StudentDashboard() {
               setUserData(data.data);
           } else {
               console.log('Error fetching user data:', data.message);
-              navigate('/');
           }
       } catch (error) {
           console.error('Error:', error);
-          navigate('/');
       }
   };
   
