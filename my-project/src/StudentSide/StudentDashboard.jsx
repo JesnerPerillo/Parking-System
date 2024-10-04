@@ -77,9 +77,10 @@ export default function StudentDashboard() {
   
           if (data.success) {
               console.log('User Data:', data.data);
+              setUserData(data.data);
           } else {
               console.log('Error fetching user data:', data.message);
-              
+              navigate('/');
           }
       } catch (error) {
           console.error('Error:', error);
@@ -103,34 +104,34 @@ export default function StudentDashboard() {
         </button>
 
           {/* Navigation menu */}
-          <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
-            <div className="border-b-2 border-blue-700 w-full h-44 text-blue-700 flex flex-col items-center justify-between text-xl tracking-wider">
+          <nav className={`bg-white rounded-r-2xl drop-shadow-2xl absolute inset-y-0 left-0 transform xl:w-1/5 lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
+            <div className=" w-full h-44 text-blue-700 flex flex-col items-center justify-between text-xl tracking-wider">
                 <img src={URSLogo} className="w-20 h-26" />
-                <h1 className="text-bold text-4xl tracking-widest">PARKING SYSTEM</h1>
+                <h1 className="text-2xl tracking-widest lg:text-sm xl:text-2xl">PARKING SYSTEM</h1>
               </div>
             <div className="flex w-full flex-col justify-evenly h-2/4 relative">
-            <Link to="/studentdashboard" className="group no-underline h-16 flex items-center pl-8 bg-blue-700 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/studentdashboard" className="group no-underline h-14 flex items-center pl-8 bg-blue-700 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white border-l-2 border-white pl-5 text-lg text-white tracking-widest flex items-center w-full lg:text-sm xl:text-lg ml-5">
               <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/studentparkingslot" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
+            <Link to="/studentparkingslot" className="group no-underline h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-base xl:text-lg ml-5">
               <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <Link to="/studentaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/studentaccount" className="group no-underline w-full h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-lg xl:text-lg ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Account</span>
               </li>
             </Link>
-            <Link to="/studentabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/studentabout" className="group no-underline h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-lg ml-5">
               <BsQuestionSquare /> <span className="ml-5">About</span>
               </li>
             </Link>
           </div>
-          <button className="w-full bg-blue-900 h-14 text-red-600 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center" onClick={handleLogout}>
+          <button className="w-full bg-blue-900 h-14 text-red-600 font-semibold tracking-widest text-lg bg-white flex items-center justify-center" onClick={handleLogout}>
             <span className="hover:text-white hover:bg-red-600 flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut className="rotate-180 mr-2"/>Logout</span>
           </button>
           </nav>
