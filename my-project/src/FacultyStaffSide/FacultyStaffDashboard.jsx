@@ -72,7 +72,7 @@ export default function FacultyStaffDashboard() {
         });
 
         if (response.data.success) {
-          setUserData(response.data.data); // Assuming `data` contains the user information
+          setUserData(response.data.data); 
         } else {
           setError(response.data.message || 'No data found for the logged-in user.');
           navigate('/');
