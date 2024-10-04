@@ -31,7 +31,7 @@ export default function StudentAbout() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [message, setMessage] = useState('');
+  const [logoutMessage, setLogoutMessage] = useState(false);
   const [ref1, inView1] = useInView({ triggerOnce: true });
   const [ref2, inView2] = useInView({ triggerOnce: true });
   const [ref3, inView3] = useInView({ triggerOnce: true });
@@ -132,7 +132,7 @@ export default function StudentAbout() {
               </li>
             </Link>
           </div>
-          <button className="w-full h-14 text-red-600 font-semibold tracking-widest text-lg flex items-center justify-center" onClick={handleLogout}>
+          <button className="w-full h-14 text-red-600 font-semibold tracking-widest text-lg flex items-center justify-center" onClick={() => setLogoutMessage(true)}>
             <span className="hover:text-white hover:bg-red-600 flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut className="rotate-180 mr-2"/>Logout</span>
           </button>
           </nav>
@@ -285,6 +285,23 @@ export default function StudentAbout() {
         </motion.div>
       </motion.div>
     </div>
+
+        {logoutMessage && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white text-center rounded-lg shadow-lg p-5">
+            <h2 className="text-lg font-semibold mb-4">Confirm Logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setLogoutMessage(false)}>
+                Cancel
+              </button>
+              <button className="px-4 py-2 bg-red-600 text-white rounded" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+        )}
       </div>
     </>
   )
