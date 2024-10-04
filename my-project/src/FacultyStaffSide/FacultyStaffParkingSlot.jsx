@@ -15,7 +15,7 @@ export default function FacultyStaffParkingSlot() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const [isNavOpen, setIsNavOpen] = useState(false);
-
+  const [logoutMessage, setLogoutMessage] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState(null); // Initially null
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [occupiedSpots, setOccupiedSpots] = useState({
@@ -257,7 +257,7 @@ export default function FacultyStaffParkingSlot() {
               </li>
             </Link>
           </div>
-          <button className="w-3/4 h-14 rounded-xl text-red-600 border border-red-500 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center hover:bg-red-600" onClick={handleLogout}>
+          <button className="w-3/4 h-14 rounded-xl text-red-600 border border-red-500 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center hover:bg-red-600" onClick={() => setLogoutMessage(true)}>
             <span className="hover:text-white hover:bg-red-600 rounded-xl flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut className="rotate-180"/>Logout</span>
           </button>
         </nav>
@@ -319,6 +319,23 @@ export default function FacultyStaffParkingSlot() {
                 </div>
               ) : null
             )}
+
+        {logoutMessage && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white text-center rounded-lg shadow-lg p-5">
+            <h2 className="text-lg font-semibold mb-4">Confirm Logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setLogoutMessage(false)}>
+                Cancel
+              </button>
+              <button className="px-4 py-2 bg-red-600 text-white rounded" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+        )}
           </div>
         </div>
       </div>

@@ -29,6 +29,7 @@ export default function FacultyStaffAccount() {
   const [slot, setSlot] = useState([]);
   const canvasRef = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [logoutMessage, setLogoutMessage] = useState(false);
   const [formData, setFormData] = useState({
     employeeId: '',
     fullname: '',
@@ -302,7 +303,7 @@ const handleDownloadQRCode = () => {
               </li>
             </Link>
           </div>
-          <button className="w-full bg-blue-900 h-14 text-red-600 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center" onClick={handleLogout}>
+          <button className="w-full bg-blue-900 h-14 text-red-600 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center" onClick={() => setLogoutMessage(true)}>
             <span className="hover:text-white hover:bg-red-600 flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut className="rotate-180 mr-2"/>Logout</span>
           </button>
         </nav>
@@ -517,6 +518,23 @@ const handleDownloadQRCode = () => {
           </div>
         </div>
       )}
+
+        {logoutMessage && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white text-center rounded-lg shadow-lg p-5">
+            <h2 className="text-lg font-semibold mb-4">Confirm Logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setLogoutMessage(false)}>
+                Cancel
+              </button>
+              <button className="px-4 py-2 bg-red-600 text-white rounded" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+        )}
       </div>
       </div>
     </>
