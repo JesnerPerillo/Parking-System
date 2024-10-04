@@ -3,15 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { BsExclamationTriangle } from "react-icons/bs";
-import { BsCreditCard2Front } from "react-icons/bs";
-import { BsTaxiFront } from "react-icons/bs";
-import { BsExclamationDiamond } from "react-icons/bs";
-import { BsFillPersonVcardFill } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
-import { BsEyeFill } from "react-icons/bs";
-import { BsPersonFillGear } from "react-icons/bs";
-import { BsQuestionSquare } from "react-icons/bs";
+import { BsQuestionSquare, BsPersonFillGear, BsEyeFill, BsFillPersonVcardFill, BsExclamationTriangle, BsCreditCard2Front, BsTaxiFront } from "react-icons/bs";
 import QRCode from "qrcode.react";
 import URSLogo from '../Pictures/urs.png';
 import GSO from '../Pictures/gsoo.png'

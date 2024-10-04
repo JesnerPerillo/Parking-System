@@ -3,9 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { BsCreditCard2Front, BsQuestionSquare, BsExclamation } from "react-icons/bs";
-import { BsTaxiFront } from "react-icons/bs";
-import { BsFillPersonVcardFill, BsFillSignNoParkingFill  } from "react-icons/bs";
+import { BsFillPersonVcardFill, BsFillSignNoParkingFill, BsTaxiFront, BsCreditCard2Front, BsQuestionSquare, BsExclamation  } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { FaRegCircleCheck} from "react-icons/fa6";
 import URSLogo from '../Pictures/urs.png';

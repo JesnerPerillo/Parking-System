@@ -4,14 +4,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { BsExclamationTriangle } from "react-icons/bs";
 import { BsCreditCard2Front } from "react-icons/bs";
 import { BsTaxiFront } from "react-icons/bs";
-import { BsExclamationDiamond } from "react-icons/bs";
 import { BsFillPersonVcardFill } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
-import { BsEyeFill } from "react-icons/bs";
-import { BsPersonFillGear } from "react-icons/bs";
 import { BsQuestionSquare } from "react-icons/bs";
 import AboutUS from '../Pictures/aboutimg.png';
 import GSOLogo from '../Pictures/gsoo.png';
