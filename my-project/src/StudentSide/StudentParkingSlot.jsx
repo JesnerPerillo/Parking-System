@@ -3,12 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { BsCreditCard2Front, BsQuestionSquare } from "react-icons/bs";
+import { BsCreditCard2Front, BsQuestionSquare, BsExclamation } from "react-icons/bs";
 import { BsTaxiFront } from "react-icons/bs";
-import { BsExclamationDiamond } from "react-icons/bs";
-import { BsFillPersonVcardFill } from "react-icons/bs";
+import { BsFillPersonVcardFill, BsFillSignNoParkingFill  } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
+import { FaRegCircleCheck} from "react-icons/fa6";
 import URSLogo from '../Pictures/urs.png';
+import sample from '../Pictures/aboutparking.jpg';
 
 export default function StudentParkingSlots() {
   const [userData, setUserData] = useState({});
@@ -16,9 +17,14 @@ export default function StudentParkingSlots() {
   const navigate = useNavigate();
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [qrCode, setQrCode] = useState(null);
-
+  const [popupImage, setPopupImage] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectedSpot, setSelectedSpot] = useState(null);
+  const [alreadySelectSpot, setAlreadySelectSpot] = useState(false);
+  const [occupiedSlot, setOccupiedSlot] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [otherVehicle, setOtherVehicle] = useState(false);
+  const [slotSuccess, setSlotSuccess] = useState(false);
   const [occupiedSpots, setOccupiedSpots] = useState({
     motorcycle: [],
     tricycle: [],
@@ -94,7 +100,7 @@ export default function StudentParkingSlots() {
 
   const handleSpotSelection = (spotNumber) => {
     if (selectedVehicle !== userData.Vehicle.toLowerCase()) {
-      alert(`Warning: Your registered vehicle type is ${userData.Vehicle}. Please select a parking slot matching your vehicle type.`);
+      setOtherVehicle(true);
       return; // Prevent selecting the spot if vehicle type doesn't match
     }
     setSelectedSpot(spotNumber);
@@ -116,10 +122,12 @@ export default function StudentParkingSlots() {
       return; // Prevent submission if vehicle type doesn't match
     }
   
-    const confirmed = window.confirm(`Are you sure you want to select Parking Spot No.${selectedSpot}?`);
-    if (!confirmed) {
-      return;
-    }
+    // Show the confirmation modal
+    setShowConfirmationModal(true);
+  };
+  
+  const handleConfirm = async () => {
+    setShowConfirmationModal(false); // Hide the modal
   
     try {
       const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/selectparkingslot.php', {
@@ -129,7 +137,7 @@ export default function StudentParkingSlots() {
       });
   
       if (response.data.status === 'success') {
-        alert('Parking slot selected successfully');
+        setSlotSuccess(true);
         // Update local state
         setUserData(prevData => ({
           ...prevData,
@@ -146,13 +154,17 @@ export default function StudentParkingSlots() {
           slotNumber: selectedSpot
         }));
       } else {
-        alert('Error selecting parking slot: ' + response.data.message);
+        setAlreadySelectSpot(true);
       }
     } catch (error) {
       console.error('Error selecting parking slot:', error);
       alert('Error selecting parking slot: ' + error.message);
     }
   };
+  
+  const handleCancel = () => {
+    setShowConfirmationModal(false); // Hide the modal on cancel
+  };  
   
 
   const renderSpots = (count, color, vehicleType) => {
@@ -196,7 +208,7 @@ export default function StudentParkingSlots() {
             if (!isOccupied && !isCurrentUserSpot) {
               handleSpotSelection(spotNumber);
             } else if (isOccupied) {
-              alert('This parking spot is already occupied.');
+              setOccupiedSlot(true);
             }
           }}
         >
@@ -225,6 +237,34 @@ export default function StudentParkingSlots() {
       console.error('Error logging out: ', error);
     }
   };
+
+  const ConfirmationModal = ({ onConfirm, onCancel, selectedSpot }) => (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+        <h2 className="text-xl font-bold mb-4">
+          Confirm Selection
+        </h2>
+        <p>
+          Are you sure you want to select Parking Spot No.{selectedSpot}?
+        </p>
+        <div className="mt-4 flex justify-end space-x-4">
+          <button
+            onClick={onCancel}
+            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+  
   
 
   return (
@@ -239,42 +279,42 @@ export default function StudentParkingSlots() {
         </button>
 
         {/* Navigation menu */}
-        <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
-        <div className="border-b-2 border-blue-700 w-full h-44 text-blue-700 flex flex-col items-center justify-between text-xl tracking-wider">
-              <img src={URSLogo} className="w-20 h-26" />
-              <h1 className="text-bold text-4xl tracking-widest">PARKING SYSTEM</h1>
-            </div>
-          <div className="flex flex-col justify-evenly w-full h-2/4 relative">
-          <Link to="/studentdashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+        <nav className={`bg-white rounded-r-2xl drop-shadow-2xl absolute inset-y-0 left-0 transform xl:w-1/5 lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
+            <div className=" w-full h-44 text-blue-700 flex flex-col items-center justify-between text-xl tracking-wider">
+                <img src={URSLogo} className="w-20 h-26" />
+                <h1 className="text-2xl tracking-widest lg:text-sm xl:text-2xl">PARKING SYSTEM</h1>
+              </div>
+            <div className="flex w-full flex-col justify-evenly h-2/4 relative">
+            <Link to="/studentdashboard" className="group no-underline h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white  text-lg text-blue-700 tracking-widest flex items-center w-full lg:text-sm xl:text-lg ml-5">
               <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/studentparkingslot" className="group no-underline h-16 flex items-center pl-8 bg-blue-700 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
+            <Link to="/studentparkingslot" className="group no-underline h-14 flex items-center pl-8 bg-blue-700 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-base xl:text-lg ml-4">
               <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <Link to="/studentaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/studentaccount" className="group no-underline w-full h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-lg xl:text-lg ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Account</span>
               </li>
             </Link>
-            <Link to="/studentabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/studentabout" className="group no-underline h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-lg ml-5">
               <BsQuestionSquare /> <span className="ml-5">About</span>
               </li>
             </Link>
           </div>
-          <button className="w-full bg-blue-900 h-14 text-red-600 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center" onClick={handleLogout}>
+          <button className="w-full bg-blue-900 h-14 text-red-600 font-semibold tracking-widest text-lg bg-white flex items-center justify-center" onClick={handleLogout}>
             <span className="hover:text-white hover:bg-red-600 flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut className="rotate-180 mr-2"/>Logout</span>
           </button>
-        </nav>
+          </nav>
 
         {/* Main Content */}
         <div className="w-full h-screen">
           <div className="w-full h-20 flex justify-end items-end border-b-2">
-            <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
+            <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slot</p>
           </div>
           <div className="container bg-blue-900 mx-auto p-4 h-4/5 overflow-auto mt-20 border-2 rounded max-sm:w-9/10">
             <div className="mb-4">
@@ -292,14 +332,14 @@ export default function StudentParkingSlots() {
                 <option value="fourwheeler">Four Wheeler</option>
               </select>
             </div>
-
+            <button onClick={() => setPopupImage(true)} className="p-2 bg-yellow-500 rounded text-white">Vicinity Map</button>
             {Object.entries(categories).map(([category, { count, color }]) =>
               selectedVehicle === category ? (
                 <div key={category} className="mb-8">
                   <h2 className="text-xl font-bold mb-4 text-white">
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                     {selectedSpot !== null && (
-                      <div className="mt-4">
+                      <div className="bottom-10 absolute right-2 sm:right-40 top-60">
                         <button
                           onClick={handleSubmit}
                           className="p-2 bg-blue-500 text-white rounded"
@@ -316,7 +356,71 @@ export default function StudentParkingSlots() {
               ) : null
             )}
           </div>
+          {popupImage && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
+              <div className="relative bg-white rounded-lg w-full h-auto sm:w-4/5 sm:h-4/5 rounded">
+                <button onClick={() => setPopupImage(false)} className="absolute right-5 top-2 text-white">X</button>
+                <img src={sample} alt="Vicinity Map" className="rounded w-full h-full"/>
+              </div>
+            </div>
+          )}
         </div>
+
+        {alreadySelectSpot && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
+            <div className="bg-white h-60 flex flex-col justify-around p-6 rounded-lg shadow-lg">
+              <div className="w-full flex justify-center">
+                <BsFillSignNoParkingFill className="w-12 h-12 text-red-600"/>
+              </div>
+              <p>You already have a selected parking slot.</p>
+              <button onClick={() => setAlreadySelectSpot(false)}>Close</button>
+            </div>
+          </div>
+        )}
+
+        {occupiedSlot && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
+          <div className="bg-white h-60 flex flex-col justify-around p-6 rounded-lg shadow-lg">
+            <div className="w-full flex justify-center">
+              <BsFillSignNoParkingFill className="w-12 h-12 text-red-600"/>
+            </div>
+            <p>This parking slot is already occupied.</p>
+            <button onClick={() => setOccupiedSlot(false)}>Close</button>
+          </div>
+        </div>
+        )}
+
+        {showConfirmationModal && (
+          <ConfirmationModal
+            onConfirm={handleConfirm}
+            onCancel={handleCancel}
+            selectedSpot={selectedSpot}
+          />
+        )}
+
+        {otherVehicle && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
+          <div className="bg-white h-60 flex flex-col justify-around p-6 rounded-lg shadow-lg">
+            <div className="w-full flex justify-center">
+              <BsExclamation className="w-10 h-10 text-red-600"/>
+            </div>
+            <p>{`Your registered vehicle type is ${userData.Vehicle}. Please select a parking slot matching your vehicle type.`}</p>
+            <button onClick={() => setOtherVehicle(false)}>Close</button>
+          </div>
+          </div>
+        )}
+
+        {slotSuccess && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
+            <div className="bg-white h-60 flex flex-col justify-around p-6 rounded-lg shadow-lg">
+              <div className="w-full flex justify-center">
+                <FaRegCircleCheck className="w-10 h-10 text-green-500"/>
+              </div>
+              <p>Parking slot selected successfully.</p>
+              <button onClick={() => setSlotSuccess(false)}>Close</button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
