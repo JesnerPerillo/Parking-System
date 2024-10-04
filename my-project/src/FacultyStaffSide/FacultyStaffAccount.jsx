@@ -131,7 +131,7 @@ export default function FacultyStaffAccount() {
   useEffect(() => {
     const fetchImage = async (type) => {
       try {
-        const response = await axios.get(`hhttps://seagreen-wallaby-986472.hostingersite.com/facultyfetchimage.php?type=${type}`, {
+        const response = await axios.get(`https://seagreen-wallaby-986472.hostingersite.com/facultyfetchimage.php?type=${type}`, {
           responseType: 'blob',
           withCredentials: true
         });
