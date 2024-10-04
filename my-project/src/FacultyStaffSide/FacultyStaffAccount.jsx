@@ -11,7 +11,7 @@ import { BsQuestionSquare } from "react-icons/bs";
 import { BsEyeFill } from "react-icons/bs";
 import { BsPersonFillGear } from "react-icons/bs";
 import QRCode from "qrcode.react";
-import Logo from '../Pictures/urs.png';
+import URSLogo from '../Pictures/urs.png';
 import GSO from '../Pictures/gsoo.png'
 import { IoEyeOff, IoEye  } from "react-icons/io5";
 
@@ -131,7 +131,7 @@ export default function FacultyStaffAccount() {
   useEffect(() => {
     const fetchImage = async (type) => {
       try {
-        const response = await axios.get(`https://seagreen-wallaby-986472.hostingersite.com/facultyfetchimage.php?type=${type}`, {
+        const response = await axios.get(`hhttps://seagreen-wallaby-986472.hostingersite.com/facultyfetchimage.php?type=${type}`, {
           responseType: 'blob',
           withCredentials: true
         });
@@ -211,7 +211,7 @@ const handleDownloadQRCode = () => {
   context.fillRect(0, 0, canvas.width, canvas.height);
 
   const logoImg = new Image();
-  logoImg.src = Logo;
+  logoImg.src = URSLogo;
 
   logoImg.onload = () => {
     console.log('Logo loaded successfully');
@@ -277,36 +277,37 @@ const handleDownloadQRCode = () => {
         </button>
 
         {/* Navigation menu */}
-        <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
-        <div className="border-b-2 border-blue-700 w-full h-24 text-blue-700 flex flex-col items-center justify-center mt-10 text-xl tracking-wider">
-            <h1 className="text-bold text-3xl tracking-widest lg:text-xl xl:text-2xl 2xl:text-4xl">PARKING SYSTEM</h1>
-          </div>
-          <div className="flex w-full flex-col justify-evenly h-2/4 relative">
-            <Link to="/facultystaffdashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+        <nav className={`bg-white rounded-r-2xl drop-shadow-2xl absolute inset-y-0 left-0 transform xl:w-1/5 lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
+            <div className=" w-full h-44 text-blue-700 flex flex-col items-center justify-between text-xl tracking-wider">
+                <img src={URSLogo} className="w-20 h-26" />
+                <h1 className="text-2xl tracking-widest lg:text-sm xl:text-2xl">PARKING SYSTEM</h1>
+              </div>
+            <div className="flex w-full flex-col justify-evenly h-2/4 relative">
+            <Link to="/facultystaffdashboard" className="group no-underline h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-lg text-blue-700 tracking-widest flex items-center w-full lg:text-sm xl:text-lg ml-5">
               <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/facultystaffparkingslot" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
+            <Link to="/facultystaffparkingslot" className="group no-underline h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-base xl:text-lg ml-5">
               <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <Link to="/facultystaffaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 bg-blue-700 lg:pl-3">
-              <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/facultystaffaccount" className="group no-underline w-full h-14 flex items-center pl-8 bg-blue-700 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-lg xl:text-lg ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Account</span>
               </li>
             </Link>
-            <Link to="/facultystaffabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/facultystaffabout" className="group no-underline h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-lg ml-5">
               <BsQuestionSquare /> <span className="ml-5">About</span>
               </li>
             </Link>
           </div>
-          <button className="w-full bg-blue-900 h-14 text-red-600 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center" onClick={() => setLogoutMessage(true)}>
+          <button className="w-full bg-blue-900 h-14 text-red-600 font-semibold tracking-widest text-lg bg-white flex items-center justify-center" onClick={() => setLogoutMessage(true)}>
             <span className="hover:text-white hover:bg-red-600 flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut className="rotate-180 mr-2"/>Logout</span>
           </button>
-        </nav>
+          </nav>
 
         {/*Main Content */}
         <div className="w-full min-h-screen">
@@ -317,60 +318,111 @@ const handleDownloadQRCode = () => {
           </div>
 
           {!isNavOpen && (
-            <div className="w-full lg:w-11/12 bg-blue-900 flex flex-col items-center mt-10 justify-center h-full lg:h-3/4 relative rounded-xl mx-auto border">
-            <div className="h-32 w-full flex sm:flex-row justify-around items-center text-center">
-              <img src={Logo} alt="URS Logo" className="h-20 sm:h-28" />
-              <h1 className="text-white text-lg sm:text-xl lg:text-2xl">
-                FACULTY | STAFF ACCOUNT
-              </h1>
-              <img src={GSO} alt="GSO Logo" className="h-20 sm:h-28 w-20 sm:w-28" />
-            </div>
-            <div className="w-full mb-3 h-5/6 max-h-full bg-white rounded-xl overflow-auto flex flex-col sm:flex-row justify-between items-center p-4">
-            <div
-              ref={canvasRef}
-              className="w-full sm:w-1/5 bg-gray-200 h-full flex flex-col justify-center items-center mb-4 sm:mb-0"
-            >
-              <div className="mt-5">
-                <QRCode value={qrValue} size={200} includeMargin={true} />
+            <>
+            <div className="w-full h-auto flex justify-center mt-5">
+              <div className="w-5/6 h-[78rem] max-h-full bg-white rounded-xl flex flex-col justify-start sm:h-[35rem] sm:flex-col sm:justify-between items-center p-4">
+              <div className="flex w-full flex-col sm:flex-row">
+                <div
+                  ref={canvasRef}
+                  className="w-full bg-white shadow-2xl m-2 rounded sm:w-40 h-32 flex flex-col justify-center items-center"
+                >
+                  <div className="">
+                    <QRCode value={qrValue} size={100} includeMargin={true} />
+                  </div>
+                </div>
+                <div className="flex h-full flex-col justify-around">
+                  <button
+                      onClick={handleDownloadQRCode}
+                      className="bg-gray-500 text-white p-2 rounded"
+                    >
+                      Download QR Code
+                    </button>
+                  <button
+                    onClick={() => setIsEditModalOpen(true)}
+                    className="bg-blue-500 w-full hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Edit Account
+                  </button>
+                </div>
               </div>
-              <button
-                onClick={handleDownloadQRCode}
-                className="mt-5 mb-3 bg-gray-500 text-white p-2 rounded"
-              >
-                Download QR Code
-              </button>
-            </div>
-            <ul className="w-full sm:w-4/5 flex flex-col justify-between text-sm">
-              <p className="mb-0 mt-4 sm:mt-0 text-4xl sm:text-6xl font-bold">
-                {userData.Name}
-              </p>
-              <p className="text-sm sm:text-base mb-2">
-                Employee Id: {userData['Employee Id']}
-              </p>
-              <p className="text-sm sm:text-base mb-2">
-                Email: {userData.Email}
-              </p>
-              <p className="text-sm sm:text-base mb-2">
-                Position: {userData.Position}
-              </p>
-              <p className="text-sm sm:text-base mb-2">
-                Building: {userData.Building}
-              </p>
-              <p className="text-sm sm:text-base mb-2">
-                Vehicle: {userData.Vehicle}
-              </p>
-              <p className="text-sm sm:text-base">
-                Plate Number: {userData['Plate Number']}
-              </p>
-              {slot.map((s) => (
-                <p key={s.slot_id} className="text-sm sm:text-base">
-                  Parking Slot: {s.slot_number}
-                </p>
-              ))}
-            <div>
+              <div className="w-full flex p-2 h-auto overflow-auto flex-col sm:w-full sm:flex-row justify-between h-full text-sm">
+                <div className="w-full p-3 rounded bg-white drop-shadow-lg sm:w-2/5 ">
+                  <p className="mb-4 mt-5 text-2xl sm:text-3xl font-bold">
+                    {userData.Name}
+                  </p>
+                  <p className="mb-2 border-t-2 w-full border-gray-200 sm:w-2/3">Employee Id Number: {userData['Employee Id']}</p>
+                  <p className="mb-2">Email: {userData.Email}</p>
+                  <p className="mb-2">Position: {userData.Position}</p>
+                  <p className="mb-2">Building: {userData.Building}</p>
+                  <p className="mb-2">Vehicle: {userData.Vehicle}</p>
+                  <p className="mb-2">Plate Number: {userData['Plate Number']}</p>
+                  {slot.map((s) => (
+                    <p key={s.slot_id}>Parking Slot: {s.slot_number}</p>
+                  ))}
+                </div>
+                <div className="relative rounded bg-white p-2 drop-shadow-lg w-full h-full flex flex-col overflow-y-auto sm:w-1/2 sm:flex-row sm:items-end">
+                  <h4 className="absolute top-20">Documents</h4>
+                  <div className="mb-4 w-full sm:w-1/3">
+                    <b>License:</b>
+                    <br />
+                    {licenseSrc ? (
+                      <div className="relative w-full h-40 md:w-40 md:h-32 group">
+                        {/* Dark background overlay on hover */}
+                        <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
+
+                        {/* Image */}
+                        <img
+                          src={licenseSrc}
+                          alt="License"
+                          className="w-full h-full object-cover z-0"
+                        />
+
+                        {/* Eye icon in the center */}
+                        <button
+                          onClick={() => handleOpenModal(licenseSrc)}
+                          className="absolute inset-0 flex items-center justify-center text-white hover:text-blue-700 z-20"
+                          aria-label="View License"
+                        >
+                          <BsEyeFill className="w-6 h-6" />
+                        </button>
+                      </div>
+                    ) : (
+                      'No image available'
+                    )}
+                  </div>
+
+                  <div className="mb-4 w-full sm:w-1/3">
+                    <b>ORCR:</b>
+                    <br />
+                    {orcrSrc ? (
+                      <div className="relative w-full h-40 md:w-40 md:h-32 group">
+                        {/* Dark background overlay on hover */}
+                        <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
+
+                        {/* Image */}
+                        <img
+                          src={orcrSrc}
+                          alt="ORCR"
+                          className="w-full h-full object-cover z-0"
+                        />
+
+                        {/* Eye icon in the center */}
+                        <button
+                          onClick={() => handleOpenModal(orcrSrc)}
+                          className="absolute inset-0 flex items-center justify-center text-white hover:text-blue-700 z-20"
+                          aria-label="View ORCR"
+                        >
+                          <BsEyeFill className="w-6 h-6" />
+                        </button>
+                      </div>
+                    ) : (
+                      'No image available'
+                    )}
+                  </div>
+                </div>
                 
               {isModalOpen && (
-                <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
                   <div className="relative bg-white p-1 rounded-lg shadow-lg flex justify-center w-full h-auto sm:w-3/4 h-3/4">
                     <button onClick={handleCloseModal} className="absolute top-0 right-0 mt-2 mr-2 text-gray-500 hover:text-gray-700">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -381,13 +433,6 @@ const handleDownloadQRCode = () => {
                   </div>
                 </div>
               )}
-
-              <button
-                onClick={() => setIsEditModalOpen(true)}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 mb-3 w-full sm:w-44"
-              >
-                Edit Account
-              </button>
 
               {isEditModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-20 sm:">
@@ -456,68 +501,9 @@ const handleDownloadQRCode = () => {
               </div>
               )}
               </div>
-            </ul>
-            <div className="w-full flex flex-col items-center justify-center sm:w-1/3">
-                <div className="mb-4">
-                  <b>License:</b>
-                  <br />
-                  {licenseSrc ? (
-                    <div className="relative w-72 h-40 md:w-40 md:h-32 group">
-                      {/* Dark background overlay on hover */}
-                      <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
-    
-                      {/* Image */}
-                      <img
-                        src={licenseSrc}
-                        alt="License"
-                        className="w-full h-full object-cover z-0"
-                      />
-    
-                      {/* Eye icon in the center */}
-                      <button
-                        onClick={() => handleOpenModal(licenseSrc)}
-                        className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
-                        aria-label="View License"
-                      >
-                        <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
-                      </button>
-                    </div>
-                  ) : (
-                    'No image available'
-                  )}
-                </div>
-                <div className="mb-4">
-                  <b>ORCR:</b>
-                  <br />
-                  {orcrSrc ? (
-                    <div className="relative w-72 h-40 md:w-40 md:h-32 group">
-                    {/* Dark background overlay on hover */}
-                    <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
-  
-                    {/* Image */}
-                    <img
-                      src={orcrSrc}
-                      alt="ORCR"
-                      className="w-full h-full object-cover z-0"
-                    />
-  
-                    {/* Eye icon in the center */}
-                    <button
-                      onClick={() => handleOpenModal(orcrSrc)}
-                      className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
-                      aria-label="View ORCR"
-                    >
-                      <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
-                    </button>
-                  </div>
-                  ) : (
-                    'No image available'
-                  )}
-                </div>
-              </div>
+            </div>
           </div>
-        </div>
-      )}
+        </>)}
 
         {logoutMessage && (
           <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">

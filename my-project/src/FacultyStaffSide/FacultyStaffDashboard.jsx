@@ -15,6 +15,7 @@ import TricycleImage from "../components/tricycle.png";
 import Motorcycle from "../components/motor.png";
 import Tricycle from "../components/tricyclepic.png";
 import Car from "../components/car.png";
+import URSLogo from '../Pictures/urs.png';
 
 export default function FacultyStaffDashboard() {
   const [userData, setUserData] = useState({});
@@ -72,7 +73,7 @@ export default function FacultyStaffDashboard() {
         });
 
         if (response.data.success) {
-          setUserData(response.data.data); 
+          setUserData(response.data.data); // Assuming `data` contains the user information
         } else {
           setError(response.data.message || 'No data found for the logged-in user.');
           navigate('/');
@@ -99,33 +100,34 @@ export default function FacultyStaffDashboard() {
         </button>
 
           {/* Navigation menu */}
-          <nav className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
-            <div className="border-b-2 border-blue-700 w-full h-24 text-blue-700 flex flex-col items-center justify-center mt-10 text-xl tracking-wider">
-              <h1 className="text-bold text-3xl tracking-widest lg:text-xl xl:text-2xl 2xl:text-4xl">PARKING SYSTEM</h1>
-            </div>
+          <nav className={`bg-white rounded-r-2xl drop-shadow-2xl absolute inset-y-0 left-0 transform xl:w-1/5 lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
+            <div className=" w-full h-44 text-blue-700 flex flex-col items-center justify-between text-xl tracking-wider">
+                <img src={URSLogo} className="w-20 h-26" />
+                <h1 className="text-2xl tracking-widest lg:text-sm xl:text-2xl">PARKING SYSTEM</h1>
+              </div>
             <div className="flex w-full flex-col justify-evenly h-2/4 relative">
-            <Link to="/facultystaffdashboard" className="group no-underline h-16 flex items-center pl-8 bg-blue-700 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/facultystaffdashboard" className="group no-underline h-14 flex items-center pl-8 bg-blue-700 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white border-l-2 border-white pl-5 text-lg text-white tracking-widest flex items-center w-full lg:text-sm xl:text-lg ml-5">
               <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/facultystaffparkingslot" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
+            <Link to="/facultystaffparkingslot" className="group no-underline h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-base xl:text-lg ml-5">
               <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
-            <Link to="/facultystaffaccount" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/facultystaffaccount" className="group no-underline w-full h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-lg xl:text-lg ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Account</span>
               </li>
             </Link>
-            <Link to="/facultystaffabout" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/facultystaffabout" className="group no-underline h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-lg ml-5">
               <BsQuestionSquare /> <span className="ml-5">About</span>
               </li>
             </Link>
           </div>
-          <button className="w-full bg-blue-900 h-14 text-red-600 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center" onClick={() => setLogoutMessage(true)}>
+          <button className="w-full bg-blue-900 h-14 text-red-600 font-semibold tracking-widest text-lg bg-white flex items-center justify-center" onClick={() => setLogoutMessage(true)}>
             <span className="hover:text-white hover:bg-red-600 flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut className="rotate-180 mr-2"/>Logout</span>
           </button>
           </nav>
@@ -177,7 +179,7 @@ export default function FacultyStaffDashboard() {
                   </div>
                   <div className="w-full sm:w-2/4 flex justify-center mt-8 md:w-full">
                     <Link
-                      to="/studentparkingslot"
+                      to="/facultystaffparkingslot"
                       className="flex items-center no-underline text-base lg:w-3/4 sm:text-xl justify-center w-9/10 h-12 sm:h-14 p-2 rounded bg-gray-900 text-white"
                     >
                       Check Availability <BsArrowRight className="scale-125 sm:scale-150 ml-3" />
