@@ -49,7 +49,7 @@ export default function StudentLogin() {
     
             if (data.success) {
                 setTimeout(() => {
-                    navigate('/studentaccount');
+                    navigate('/studentdashboard');
                 }, 300); // Adjust the delay if necessary
             } else {
                 if (data.message.includes('not approved')) {

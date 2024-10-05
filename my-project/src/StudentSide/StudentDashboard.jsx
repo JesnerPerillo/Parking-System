@@ -80,7 +80,7 @@ export default function StudentDashboard() {
           // Handle the case where data fetch is unsuccessful
           setError(response.data.message || 'No data found for the logged-in user.');
           console.error('Error:', response.data.message || 'No data found.');
-          navigate('/'); // Navigate back to home or login
+          
         }
       } catch (error) {
         // Handle any errors that occurred during the request
@@ -88,7 +88,7 @@ export default function StudentDashboard() {
         console.error('Error fetching data:', error);
         
         // Optionally navigate to the home/login page on error
-        navigate('/');
+        
       }
     };
   
