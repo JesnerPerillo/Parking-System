@@ -48,9 +48,8 @@ export default function StudentLogin() {
             const data = await response.json();
     
             if (data.success) {
-                // Wait a brief moment before navigating to give time for the spinner to show
                 setTimeout(() => {
-                    navigate('/studentdashboard');
+                    navigate('/studentaccount');
                 }, 300); // Adjust the delay if necessary
             } else {
                 if (data.message.includes('not approved')) {
