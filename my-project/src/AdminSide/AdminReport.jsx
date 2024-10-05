@@ -31,7 +31,7 @@ export default function AdminReport() {
   const handleLogout = async () => {
     try {
       console.log('Attempting to log out...');
-      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
+      const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -51,7 +51,7 @@ export default function AdminReport() {
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchstudentsdata.php', {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/fetchstudentsdata.php', {
           withCredentials: true,
         });
 
@@ -85,7 +85,7 @@ export default function AdminReport() {
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/adminfetchdata.php', {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/adminfetchdata.php', {
           withCredentials: true,
         });
 

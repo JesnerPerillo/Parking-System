@@ -13,7 +13,7 @@ export default function FacultyTotalUsers() {
   useEffect(() => {
     const fetchFacultyData = async () => {
       try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchfacultydata.php', {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/fetchfacultydata.php', {
           withCredentials: true,
         });
 

@@ -13,8 +13,8 @@ export default function TotalUserData() {
     const fetchParkingData = async () => {
       try {
         const [facultyResponse, studentResponse] = await Promise.all([
-          axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchfacultydata.php', { withCredentials: true }),
-          axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchstudentsdata.php', { withCredentials: true }),
+          axios.get('https://skyblue-clam-769210.hostingersite.com/fetchfacultydata.php', { withCredentials: true }),
+          axios.get('https://skyblue-clam-769210.hostingersite.com/fetchstudentsdata.php', { withCredentials: true }),
         ]);
   
         console.log('Faculty Response:', facultyResponse.data);

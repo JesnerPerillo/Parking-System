@@ -132,8 +132,8 @@ export default function AdminParkingSlot() {
 
     // Determine the URL based on the type (student or faculty/staff)
     const url = type === 'student'
-        ? 'https://seagreen-wallaby-986472.hostingersite.com/admineditstudent.php'
-        : 'https://seagreen-wallaby-986472.hostingersite.com/admineditfaculty.php';
+        ? 'https://skyblue-clam-769210.hostingersite.com/admineditstudent.php'
+        : 'https://skyblue-clam-769210.hostingersite.com/admineditfaculty.php';
 
     // Log the form data being sent
     console.log('Form data being sent:', Array.from(form.entries())); // Convert FormData to a readable array
@@ -179,7 +179,7 @@ export default function AdminParkingSlot() {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
+      const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -197,8 +197,8 @@ export default function AdminParkingSlot() {
     const fetchOccupiedSlots = async () => {
       try {
         const url = selectedUserType === 'faculty'
-          ? 'https://seagreen-wallaby-986472.hostingersite.com/facultyfetchoccupiedslot.php'
-          : 'https://seagreen-wallaby-986472.hostingersite.com/fetchoccupiedslot.php';
+          ? 'https://skyblue-clam-769210.hostingersite.com/facultyfetchoccupiedslot.php'
+          : 'https://skyblue-clam-769210.hostingersite.com/fetchoccupiedslot.php';
 
         const response = await axios.get(url, {
           withCredentials: true
@@ -230,8 +230,8 @@ export default function AdminParkingSlot() {
     } else {
       try {
         const fetchUrl = selectedUserType === 'faculty'
-          ? 'https://seagreen-wallaby-986472.hostingersite.com/fetchfacultydata.php'
-          : 'https://seagreen-wallaby-986472.hostingersite.com/fetchstudentsdata.php';
+          ? 'https://skyblue-clam-769210.hostingersite.com/fetchfacultydata.php'
+          : 'https://skyblue-clam-769210.hostingersite.com/fetchstudentsdata.php';
     
         const response = await axios.get(fetchUrl, { withCredentials: true });
     
@@ -312,7 +312,7 @@ export default function AdminParkingSlot() {
       console.log('Sending request with:', { id: popupData.id });
       
       // Send POST request
-      const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/delete.php', 
+      const response = await axios.post('https://skyblue-clam-769210.hostingersite.com/delete.php', 
         { 
           id: popupData.id,
           userType: userType // Include userType to help PHP determine which table to use
@@ -339,7 +339,7 @@ export default function AdminParkingSlot() {
 
   const updateTime = async (userType, id, timeIn, timeOut) => {
     try {
-        const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/settime.php', {
+        const response = await fetch('https://skyblue-clam-769210.hostingersite.com/settime.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -365,7 +365,7 @@ export default function AdminParkingSlot() {
 
   const fetchLogs = async () => {
     try {
-      const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/logs.php', {
+      const response = await fetch('https://skyblue-clam-769210.hostingersite.com/logs.php', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -467,8 +467,8 @@ const onScanSuccess = async (slotType, slotNumber) => {
     setSelectedSpot(parseInt(slotNumber, 10));
 
     const fetchUrl = selectedUserType === 'faculty'
-      ? 'https://seagreen-wallaby-986472.hostingersite.com/fetchfacultydata.php'
-      : 'https://seagreen-wallaby-986472.hostingersite.com/fetchstudentsdata.php';
+      ? 'https://skyblue-clam-769210.hostingersite.com/fetchfacultydata.php'
+      : 'https://skyblue-clam-769210.hostingersite.com/fetchstudentsdata.php';
 
     const response = await axios.get(fetchUrl, { withCredentials: true });
     console.log('Response:', response.data);
@@ -634,7 +634,7 @@ useEffect(() => {
   const downloadLogsAsPDF = async () => {
     try {
       // Fetch logs from your server
-      const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/logs.php', {
+      const response = await fetch('https://skyblue-clam-769210.hostingersite.com/logs.php', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -733,7 +733,7 @@ useEffect(() => {
       console.log('Sending request with:', { selection });
 
       // Send POST request
-      const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/logsdelete.php',
+      const response = await axios.post('https://skyblue-clam-769210.hostingersite.com/logsdelete.php',
         { 
           selection // Include the selection criteria
         },
@@ -759,7 +759,7 @@ useEffect(() => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/adminfetchdata.php', {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/adminfetchdata.php', {
           withCredentials: true,
         });
 

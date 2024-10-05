@@ -73,7 +73,7 @@ export default function StudentLogin() {
     }
 
     try {
-      const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/adminlogin.php', {
+      const response = await fetch('https://skyblue-clam-769210.hostingersite.com/adminlogin.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

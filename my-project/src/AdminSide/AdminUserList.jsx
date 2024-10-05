@@ -109,7 +109,7 @@ export default function AdminUserList() {
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/adminfetchdata.php', {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/adminfetchdata.php', {
           withCredentials: true,
         });
   
@@ -155,8 +155,8 @@ export default function AdminUserList() {
 
     // Determine the URL based on the type (student or faculty/staff)
     const url = type === 'student'
-        ? 'https://seagreen-wallaby-986472.hostingersite.com/admineditstudent.php'
-        : 'https://seagreen-wallaby-986472.hostingersite.com/admineditfaculty.php';
+        ? 'https://skyblue-clam-769210.hostingersite.com/admineditstudent.php'
+        : 'https://skyblue-clam-769210.hostingersite.com/admineditfaculty.php';
 
     // Log the form data being sent
     console.log('Form data being sent:', Array.from(form.entries())); // Convert FormData to a readable array
@@ -192,7 +192,7 @@ export default function AdminUserList() {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
+      const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -211,8 +211,8 @@ export default function AdminUserList() {
         try {
             let apiUrl =
                 selectedUserType === 'student'
-                    ? 'https://seagreen-wallaby-986472.hostingersite.com/fetchstudentsdata.php'
-                    : 'https://seagreen-wallaby-986472.hostingersite.com/fetchfacultydata.php';
+                    ? 'https://skyblue-clam-769210.hostingersite.com/fetchstudentsdata.php'
+                    : 'https://skyblue-clam-769210.hostingersite.com/fetchfacultydata.php';
 
             const response = await axios.get(apiUrl, { withCredentials: true });
 
@@ -241,8 +241,8 @@ useEffect(() => {
             try {
                 let apiUrl =
                     selectedUserType === 'student'
-                        ? `https://seagreen-wallaby-986472.hostingersite.com/fetchstudentdata.php?id=${userId}` // Example endpoint
-                        : `https://seagreen-wallaby-986472.hostingersite.com/fetchfacultydata.php?id=${userId}`; // Example endpoint
+                        ? `https://skyblue-clam-769210.hostingersite.com/fetchstudentdata.php?id=${userId}` // Example endpoint
+                        : `https://skyblue-clam-769210.hostingersite.com/fetchfacultydata.php?id=${userId}`; // Example endpoint
 
                 const response = await axios.get(apiUrl, { withCredentials: true });
 
@@ -274,7 +274,7 @@ const handleDelete = async (userId, userType) => {
   if (!isConfirmed) return;
 
   try {
-      const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/delete.php', 
+      const response = await axios.post('https://skyblue-clam-769210.hostingersite.com/delete.php', 
           { id: userId, userType },
           { 
               withCredentials: true,
@@ -298,7 +298,7 @@ useEffect(() => {
     console.log('Fetching pending users for type:', selectedType);
     try {
       // Fetch data for pending users based on the selected type (student or faculty)
-      let apiUrl = `https://seagreen-wallaby-986472.hostingersite.com/fetchpendinguser.php`;
+      let apiUrl = `https://skyblue-clam-769210.hostingersite.com/fetchpendinguser.php`;
       const response = await axios.get(apiUrl, { withCredentials: true });
 
       // Log the entire response object for debugging
@@ -351,7 +351,7 @@ useEffect(() => {
 // Approve user
 const handleApprove = (userId) => {
   axios
-    .post(`https://seagreen-wallaby-986472.hostingersite.com/handleapprove.php`, { id: userId, action: 'approve'},
+    .post(`https://skyblue-clam-769210.hostingersite.com/handleapprove.php`, { id: userId, action: 'approve'},
       { withCredentials: true }
     )
     .then((response) => {
@@ -374,7 +374,7 @@ const handleDeletePending = (userId) => {
 const confirmDelete = () => {
   axios
     .post(
-      `https://seagreen-wallaby-986472.hostingersite.com/deletepending.php`, 
+      `https://skyblue-clam-769210.hostingersite.com/deletepending.php`, 
       { id: userIdToDelete, type: selectedType }, // Include user type
       { withCredentials: true }
     )

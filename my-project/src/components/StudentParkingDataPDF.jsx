@@ -13,7 +13,7 @@ export default function StudentMotorcyclePDF() {
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchstudentsdata.php', {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/fetchstudentsdata.php', {
           withCredentials: true,
         });
 
