@@ -68,32 +68,42 @@ export default function StudentDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Make sure the credentials (cookies) are sent with the request
         const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', {
           withCredentials: true
         });
-
+  
         if (response.data.success) {
           const user = response.data.data;
-          setUserData(user);
-
-          const vehicleType = user.Vehicle.toLowerCase();
-          setSelectedVehicle(vehicleType);
-
+          
+          // Assuming `user` has a Vehicle field that needs to be lowercased
+          const vehicleType = user?.Vehicle?.toLowerCase() || 'default'; // Fallback to 'default' or any safe value
+          
+          setUserData(user); // Set user data
+          setSelectedVehicle(vehicleType); // Set the vehicle type
+  
           console.log('User Data:', user);
           console.log('Vehicle Type:', vehicleType);
         } else {
+          // Handle the case where data fetch is unsuccessful
           setError(response.data.message || 'No data found for the logged-in user.');
-          navigate('/');
+          console.error('Error:', response.data.message || 'No data found.');
+          navigate('/'); // Navigate back to home or login
         }
       } catch (error) {
+        // Handle any errors that occurred during the request
         setError('Error fetching data: ' + error.message);
         console.error('Error fetching data:', error);
+        
+        // Optionally navigate to the home/login page on error
         navigate('/');
       }
     };
-
-    fetchData();
-  }, []);
+  
+    fetchData(); // Call the async function when the component mounts
+  
+    // Add `navigate` to the dependency array if it's coming from a hook (like useNavigate from React Router)
+  }, [navigate]); // Include dependencies like navigate or others if needed  
 
   return (
     <>
