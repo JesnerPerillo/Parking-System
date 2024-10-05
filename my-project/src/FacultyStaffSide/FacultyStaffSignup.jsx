@@ -55,7 +55,7 @@ export default function FacultyStaffSignup(){
       });
 
     try {
-      const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/facultystaffsignup.php', form, {
+      const response = await axios.post('https://skyblue-clam-769210.hostingersite.com/facultystaffsignup.php', form, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

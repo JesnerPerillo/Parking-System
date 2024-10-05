@@ -43,7 +43,7 @@ export default function StudentAbout() {
 
   useEffect(() => {
     // Fetch user data
-    axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', { withCredentials: true })
+    axios.get('https://skyblue-clam-769210.hostingersite.com/fetchdata.php', { withCredentials: true })
       .then(response => {
         console.log('Fetched user data:', response.data); // Log the response
         if (response.data.success) {
@@ -57,7 +57,7 @@ export default function StudentAbout() {
       });
 
     // Fetch admin data
-    axios.get('https://seagreen-wallaby-986472.hostingersite.com/adminfetchdata.php', { withCredentials: true })
+    axios.get('https://skyblue-clam-769210.hostingersite.com/adminfetchdata.php', { withCredentials: true })
       .then(response => {
         console.log('Fetched admin data:', response.data);
         if (response.data.success) {
@@ -78,7 +78,7 @@ export default function StudentAbout() {
   const handleLogout = async () => {
     try {
       console.log('Attempting to log out...');
-      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
+      const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -98,7 +98,7 @@ export default function StudentAbout() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/facultyfetchdata.php', {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/facultyfetchdata.php', {
           withCredentials: true
         });
 

@@ -70,7 +70,7 @@ export default function FacultyStaffAccount() {
     }
   
     try {
-      const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/facultyedituser.php', form, {
+      const response = await axios.post('https://skyblue-clam-769210.hostingersite.com/facultyedituser.php', form, {
         withCredentials: true,
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -112,7 +112,7 @@ export default function FacultyStaffAccount() {
   };
 
   useEffect(() => {
-    axios.get('https://seagreen-wallaby-986472.hostingersite.com/facultyfetchdata.php', { withCredentials: true })
+    axios.get('https://skyblue-clam-769210.hostingersite.com/facultyfetchdata.php', { withCredentials: true })
       .then(response => {
         console.log('Fetched user data:', response.data); // Log the response
         if (response.data.success) {
@@ -131,7 +131,7 @@ export default function FacultyStaffAccount() {
   useEffect(() => {
     const fetchImage = async (type) => {
       try {
-        const response = await axios.get(`https://seagreen-wallaby-986472.hostingersite.com/facultyfetchimage.php?type=${type}`, {
+        const response = await axios.get(`https://skyblue-clam-769210.hostingersite.com/facultyfetchimage.php?type=${type}`, {
           responseType: 'blob',
           withCredentials: true
         });
@@ -153,7 +153,7 @@ export default function FacultyStaffAccount() {
   const handleLogout = async () => {
     try {
       console.log('Attempting to log out...');
-      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
+      const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -173,7 +173,7 @@ export default function FacultyStaffAccount() {
   useEffect(() => {
     const fetchFacultyParkingSlots = async () => {
       try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchfacultyparkingslots.php', {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/fetchfacultyparkingslots.php', {
           withCredentials: true // Send cookies with the request if needed
         });
   

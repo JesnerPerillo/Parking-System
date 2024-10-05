@@ -48,7 +48,7 @@ export default function FacultyStaffDashboard() {
   const handleLogout = async () => {
     try {
       console.log('Attempting to log out...');
-      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
+      const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -68,7 +68,7 @@ export default function FacultyStaffDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/facultyfetchdata.php', {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/facultyfetchdata.php', {
           withCredentials: true
         });
 

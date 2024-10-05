@@ -37,7 +37,7 @@ export default function FacultyStaffLogin() {
         setIsLoading(true);
         
         try {
-            const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/facultystafflogin.php', {
+            const response = await fetch('https://skyblue-clam-769210.hostingersite.com/facultystafflogin.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ export default function FacultyStaffLogin() {
       }
 
       try {
-          const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/facultyforgetpassword.php', {
+          const response = await fetch('https://skyblue-clam-769210.hostingersite.com/facultyforgetpassword.php', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ email }),

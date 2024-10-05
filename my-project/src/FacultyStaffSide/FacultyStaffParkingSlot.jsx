@@ -44,7 +44,7 @@ export default function FacultyStaffParkingSlot() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/facultyfetchdata.php', {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/facultyfetchdata.php', {
           withCredentials: true
         });
 
@@ -71,7 +71,7 @@ export default function FacultyStaffParkingSlot() {
 
     const fetchOccupiedSlots = async () => {
       try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/facultyfetchoccupiedslot.php', {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/facultyfetchoccupiedslot.php', {
           withCredentials: true
         });
 
@@ -102,7 +102,7 @@ export default function FacultyStaffParkingSlot() {
   const handleLogout = async () => {
     try {
       console.log('Attempting to log out...');
-      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
+      const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -151,7 +151,7 @@ export default function FacultyStaffParkingSlot() {
     setShowConfirmationModal(false); // Hide the modal
   
     try {
-      const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/facultyselectparkingslot.php', {
+      const response = await axios.post('https://skyblue-clam-769210.hostingersite.com/facultyselectparkingslot.php', {
         slotType: selectedVehicle,
         slotNumber: selectedSpot,
         id: userData.id
