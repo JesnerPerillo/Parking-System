@@ -70,7 +70,7 @@ export default function StudentDashboard() {
       try {
           const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', {
               method: 'GET',
-              credentials: 'include', // Include cookies in the request
+              withCredentials: true, // Include cookies in the request
           });
   
           const data = await response.json();
