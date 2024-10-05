@@ -68,29 +68,32 @@ export default function StudentDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-          const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', {
-              method: 'GET',
-              withCredentials: true, // Include cookies in the request
-          });
-  
-          const data = await response.json();
-  
-          if (data.success) {
-              console.log('User Data:', data.data);
-              // Handle user data (e.g., save to state)
-          } else {
-              console.log('Error fetching user data:', data.message);
-              navigate('/');
-          }
-      } catch (error) {
-          console.error('Error:', error);
+        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', {
+          withCredentials: true
+        });
+
+        if (response.data.success) {
+          const user = response.data.data;
+          setUserData(user);
+
+          const vehicleType = user.Vehicle.toLowerCase();
+          setSelectedVehicle(vehicleType);
+
+          console.log('User Data:', user);
+          console.log('Vehicle Type:', vehicleType);
+        } else {
+          setError(response.data.message || 'No data found for the logged-in user.');
           navigate('/');
+        }
+      } catch (error) {
+        setError('Error fetching data: ' + error.message);
+        console.error('Error fetching data:', error);
+        navigate('/');
       }
-  };
-  
+    };
 
     fetchData();
-}, []);
+  }, []);
 
   return (
     <>
