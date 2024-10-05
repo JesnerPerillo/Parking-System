@@ -75,15 +75,7 @@ export default function StudentDashboard() {
   
         if (response.data.success) {
           const user = response.data.data;
-          
-          // Assuming `user` has a Vehicle field that needs to be lowercased
-          const vehicleType = user?.Vehicle?.toLowerCase() || 'default'; // Fallback to 'default' or any safe value
-          
           setUserData(user); // Set user data
-          setSelectedVehicle(vehicleType); // Set the vehicle type
-  
-          console.log('User Data:', user);
-          console.log('Vehicle Type:', vehicleType);
         } else {
           // Handle the case where data fetch is unsuccessful
           setError(response.data.message || 'No data found for the logged-in user.');
@@ -101,9 +93,7 @@ export default function StudentDashboard() {
     };
   
     fetchData(); // Call the async function when the component mounts
-  
-    // Add `navigate` to the dependency array if it's coming from a hook (like useNavigate from React Router)
-  }, [navigate]); // Include dependencies like navigate or others if needed  
+  }, []);
 
   return (
     <>
