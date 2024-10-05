@@ -53,7 +53,7 @@ export default function StudentSignup() {
     });
 
     try {
-      const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/studentsignup.php', form, {
+      const response = await axios.post('https://skyblue-clam-769210.hostingersite.com/studentsignup.php', form, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

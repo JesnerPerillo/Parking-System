@@ -49,7 +49,7 @@ export default function StudentAbout() {
   const handleLogout = async () => {
     try {
       console.log('Attempting to log out...');
-      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
+      const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -69,7 +69,7 @@ export default function StudentAbout() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-          const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', {
+          const response = await fetch('https://skyblue-clam-769210.hostingersite.com/fetchdata.php', {
               method: 'GET',
               credentials: 'include', // Include cookies in the request
           });

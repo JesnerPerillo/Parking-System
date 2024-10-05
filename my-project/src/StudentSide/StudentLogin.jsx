@@ -38,7 +38,7 @@ export default function StudentLogin() {
         setIsLoading(true);
         
         try {
-            const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/studentlogin.php', {
+            const response = await fetch('https://skyblue-clam-769210.hostingersite.com/studentlogin.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ studentNumber, fullname, password }),
@@ -75,7 +75,7 @@ export default function StudentLogin() {
         }
 
         try {
-            const response = await fetch('https://seagreen-wallaby-986472.hostingersite.com/forgetpassword.php', {
+            const response = await fetch('https://skyblue-clam-769210.hostingersite.com/forgetpassword.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),

@@ -43,7 +43,7 @@ export default function StudentParkingSlots() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/fetchdata.php', {
           withCredentials: true
         });
 
@@ -69,7 +69,7 @@ export default function StudentParkingSlots() {
 
     const fetchOccupiedSlots = async () => {
       try {
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchoccupiedslot.php', {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/fetchoccupiedslot.php', {
           withCredentials: true
         });
 
@@ -129,7 +129,7 @@ export default function StudentParkingSlots() {
     setShowConfirmationModal(false); // Hide the modal
   
     try {
-      const response = await axios.post('https://seagreen-wallaby-986472.hostingersite.com/selectparkingslot.php', {
+      const response = await axios.post('https://skyblue-clam-769210.hostingersite.com/selectparkingslot.php', {
         slotType: selectedVehicle,
         slotNumber: selectedSpot,
         id: userData.id

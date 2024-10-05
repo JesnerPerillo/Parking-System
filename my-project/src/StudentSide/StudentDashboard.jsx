@@ -48,7 +48,7 @@ export default function StudentDashboard() {
   const handleLogout = async () => {
     try {
       console.log('Attempting to log out...');
-      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
+      const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -69,7 +69,7 @@ export default function StudentDashboard() {
     const fetchData = async () => {
       try {
         // Make sure the credentials (cookies) are sent with the request
-        const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/fetchdata.php', {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/fetchdata.php', {
           withCredentials: true
         });
   
