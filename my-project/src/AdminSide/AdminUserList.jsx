@@ -482,6 +482,30 @@ const [searchTerm, setSearchTerm] = useState('');
     }
   });
 
+  const [deleteUsersPopup, setDeleteUsersPopup] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [showDeleteUserMessage, setShowDeleteUserMessage] = useState(false);
+
+  const deleteAllUsers = async (selectedUserType) => {
+    try {
+      const response = await axios.post('https://skyblue-clam-769210.hostingersite.com/admindeleteusers.php', {
+        userType: selectedUserType,
+      }, { withCredentials: true });
+      
+      if (response.status === 200 && response.data.status === 'success') {
+        setShowDeleteUserMessage(true);
+        setDeleteUsersPopup(false); 
+        setShowConfirmation(false);
+      } else {
+        throw new Error(response.data.message || 'Unknown error');
+      }
+    } catch (error) {
+      console.error("Error deleting users:", error);
+      const errorMessage = error.response?.data?.message || error.message || 'An unknown error occurred';
+      alert("An error occurred while trying to delete users: " + errorMessage);
+    }    
+  };  
+
 
   return (
     <>
@@ -544,7 +568,7 @@ const [searchTerm, setSearchTerm] = useState('');
           <div className="bg-white h-4/5 p-3 rounded-lg shadow-md overflow-x-auto w-11/12 mx-auto">
           <div className="flex justify-between items-center mb-3">
             <h2>Approved</h2>
-            <div className="w-1/3 flex justify-between items-center">
+            <div className="w-[41rem] flex justify-between items-center">
                 <input
                   onChange={(e) => setSearchTerm(e.target.value)}
                   value={searchTerm}
@@ -561,6 +585,12 @@ const [searchTerm, setSearchTerm] = useState('');
                 <option value="student">Students</option>
                 <option value="faculty">Faculty</option>
               </select>
+              <button
+                  className="bg-red-600 text-white w-40 h-10 rounded hover:bg-red-700 transition duration-150"
+                  onClick={() => setShowConfirmation(true)}
+                >
+                  Delete All User's
+                </button>
             </div>
           </div>
             <table table className="max-w-5/6 table-auto border-collapse border border-gray-200">
@@ -763,21 +793,21 @@ const [searchTerm, setSearchTerm] = useState('');
                   <option>BS Psychology</option>
                   <option>BS Computer Science</option>
                   <option>Bachelor in Human Services</option>
-                  <option>BE Education</option>
-                  <option>BSE - Science</option>
-                  <option>BSE - English</option>
-                  <option>BSE - Mathematics</option>
-                  <option>BSE - Home Economics</option>
-                  <option>BSE - Industrial Arts</option>
-                  <option>BSE - Information and Communication Technology</option>
-                  <option>BTVTE - Drafting Technology</option>
-                  <option>BIT - Automotive Technology</option>
-                  <option>BIT - Architectural Drafting Technology</option>
-                  <option>BIT - Construction Technology</option>
-                  <option>BIT - Electrical Technology</option>
-                  <option>BIT - Electronics Technology</option>
-                  <option>BIT - Heating, Ventilating and Air-conditioning</option>
-                  <option>BIT - Mechanical Technology</option>
+                  <option>Bachelor of Elementary Education</option>
+                  <option>Bachelor of Secondary Education - Science</option>
+                  <option>Bachelor of Secondary Education - English</option>
+                  <option>Bachelor of Secondary Education - Mathematics</option>
+                  <option>Bachelor of Livelihood Education - Home Economics</option>
+                  <option>Bachelor of Livelihood Education - Industrial Arts</option>
+                  <option>Bachelor of Livelihood Education - Information and Communication Technology</option>
+                  <option>Bachelor of Technical Vocational Teacher Education - Drafting Technology</option>
+                  <option>Bachelor of Industrial Technology - Automotive Technology</option>
+                  <option>Bachelor of Industrial Technology - Architectural Drafting Technology</option>
+                  <option>Bachelor of Industrial Technology - Construction Technology</option>
+                  <option>Bachelor of Industrial Technology - Electrical Technology</option>
+                  <option>Bachelor of Industrial Technology - Electronics Technology</option>
+                  <option>Bachelor of Industrial Technology - Heating, Ventilating and Air-conditioning</option>
+                <option>Bachelor of Industrial Technology - Mechanical Technology</option>
                   </select>
                 </label>
                 <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
@@ -1233,6 +1263,66 @@ const [searchTerm, setSearchTerm] = useState('');
           </div>
         </div>
         )}
+
+{showConfirmation && (
+              <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white text-center rounded-lg shadow-lg p-5">
+                    <h1 className="text-2xl font-bold mb-4">Delete All The User</h1>
+                    {/* Option to select which user type to delete */}
+                    <div className="mb-4">
+                      <label className="block mb-2">Select User Type to Delete</label>
+                      <select
+                        value={selectedUserType}
+                        onChange={(e) => setSelectedUserType(e.target.value)}
+                        className="p-2 border border-gray-300 rounded"
+                      >
+                        <option value="student">Students</option>
+                        <option value="faculty">Faculty</option>
+                        <option value="all">All Users</option>
+                      </select>
+                    </div>
+              
+                    <div className="flex justify-around">
+                      <button className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700" onClick={() => 
+                        setDeleteUsersPopup(true)
+                      }
+                        >Confirm</button>
+                      <button onClick={() => setShowConfirmation(false)} className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Cancel</button>
+                    </div>
+              </div>
+            </div>
+            )}
+
+            {deleteUsersPopup && (
+              <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white text-center rounded-lg shadow-lg p-5">
+                <h2 className="text-lg font-semibold mb-4">Confirm Delete</h2>
+                <p>Are you sure you want to delete this admin?</p>
+                <div className="flex justify-around mt-4">
+                  <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setDeleteUsersPopup(false)}>
+                    Cancel
+                  </button>
+                  <button className="px-4 py-2 bg-red-600 text-white rounded" onClick={() => {deleteAllUsers(String(selectedUserType))}}>
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+            )}
+
+            {showDeleteUserMessage && (
+              <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white flex flex-col items-center text-center rounded-lg shadow-lg p-5">
+                <FaRegCircleCheck className="w-12 text-green-500 h-12"/>
+                <p>Deleted Selected Users Successfully.</p>
+                <div className="flex justify-around mt-4">
+                  <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setShowDeleteUserMessage(false)}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+            )}
 
         </div>
       </div>
