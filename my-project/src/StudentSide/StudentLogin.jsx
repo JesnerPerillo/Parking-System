@@ -16,10 +16,12 @@ export default function StudentLogin() {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [approvalMessage, setApprovalMessage] = useState('');
+
 
     const togglePassword = () => {
         setShowPassword(!showPassword);
@@ -42,29 +44,30 @@ export default function StudentLogin() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ studentNumber, fullname, password }),
-                credentials: 'include', // Include cookies in the request
+                credentials: 'include',
             });
     
             const data = await response.json();
+            setErrorMessage(message);
     
             if (data.success) {
                 setTimeout(() => {
                     navigate('/studentdashboard');
-                }, 300); // Adjust the delay if necessary
+                }, 300);
             } else {
                 if (data.message.includes('not approved')) {
-                    setApprovalMessage(data.message); // Set the approval message
+                    setApprovalMessage(true); // Set the approval message
                 } else {
                     setError(data.message || 'Login failed. Please try again.');
                 }
             }
         } catch (error) {
             console.error('Error:', error);
-            setError('An unexpected error occurred.');
         } finally {
-            setIsLoading(false); // Set loading state to false after the request is completed
+            setIsLoading(false);
         }
     };
+    
     
 
     const handleSubmitForgetPassword = async (e) => {
@@ -106,7 +109,7 @@ export default function StudentLogin() {
                 </div>
             )}
 
-            <div className="relative form xl:w-2/4 mt-28 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full">
+            <div className="relative form xl:w-2/4 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full">
                 <div className="header flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
                     <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />
                 </div>
@@ -217,13 +220,30 @@ export default function StudentLogin() {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
                     <div className="bg-white p-6 rounded shadow-md">
                         <h2 className="text-xl font-bold">Notice</h2>
-                        <p>{approvalMessage}</p>
+                        <p>Your account is not approved yet. Please wait for the email.</p>
                         <button onClick={() => setApprovalMessage('')} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">
                             Close
                         </button>
                     </div>
                 </div>
             )}
+
+            {errorMessage && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
+                    <div className="bg-white max-w-96 p-6 flex flex-col justify-center rounded shadow-md">
+                        <h2 className="text-xl text-center font-bold">Notice <span className="text-red-600">*</span></h2>
+                        <p>{message}</p>
+                        <button 
+                            onClick={() => {
+                                setErrorMessage(false);
+                            }} 
+                            className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">
+                            Okay
+                        </button>
+                    </div>
+                </div>
+            )}
+
             </div>
         </div>
     );

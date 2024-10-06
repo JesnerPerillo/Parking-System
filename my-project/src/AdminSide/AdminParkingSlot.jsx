@@ -1398,21 +1398,21 @@ useEffect(() => {
               <option>BS Psychology</option>
               <option>BS Computer Science</option>
               <option>Bachelor in Human Services</option>
-              <option>Bachelor of Elementary Education</option>
-              <option>Bachelor of Secondary Education - Science</option>
-              <option>Bachelor of Secondary Education - English</option>
-              <option>Bachelor of Secondary Education - Mathematics</option>
-              <option>Bachelor of Livelihood Education - Home Economics</option>
-              <option>Bachelor of Livelihood Education - Industrial Arts</option>
-              <option>Bachelor of Livelihood Education - Information and Communication Technology</option>
-              <option>Bachelor of Technical Vocational Teacher Education - Drafting Technology</option>
-              <option>Bachelor of Industrial Technology - Automotive Technology</option>
-              <option>Bachelor of Industrial Technology - Architectural Drafting Technology</option>
-              <option>Bachelor of Industrial Technology - Construction Technology</option>
-              <option>Bachelor of Industrial Technology - Electrical Technology</option>
-              <option>Bachelor of Industrial Technology - Electronics Technology</option>
-              <option>Bachelor of Industrial Technology - Heating, Ventilating and Air-conditioning</option>
-            <option>Bachelor of Industrial Technology - Mechanical Technology</option>
+              <option>BE Education</option>
+              <option>BSE - Science</option>
+              <option>BSE - English</option>
+              <option>BSE - Mathematics</option>
+              <option>BSE - Home Economics</option>
+              <option>BSE - Industrial Arts</option>
+              <option>BSE - Information and Communication Technology</option>
+              <option>BTVTE - Drafting Technology</option>
+              <option>BIT - Automotive Technology</option>
+              <option>BIT - Architectural Drafting Technology</option>
+              <option>BIT - Construction Technology</option>
+              <option>BIT - Electrical Technology</option>
+              <option>BIT - Electronics Technology</option>
+              <option>BIT - Heating, Ventilating and Air-conditioning</option>
+              <option>BIT - Mechanical Technology</option>
               </select>
             </label>
             <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">

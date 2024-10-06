@@ -11,6 +11,7 @@ export default function StudentSignup() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [approvalMessage, setApprovalMessage] = useState(false);
+  const [message, setMessage] = useState(false);
   const [formData, setFormData] = useState({
     studentNumber: '',
     fullname: '',
@@ -22,7 +23,7 @@ export default function StudentSignup() {
     password: '',
     license: null,
     orcr: null,
-    cor: null,
+    cor: null
   });
 
   const togglePassword = () => {
@@ -58,20 +59,20 @@ export default function StudentSignup() {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+      setMessage(response.data.message);
       if (response.data.status === 'success') {
-        setApprovalMessage(response.data.message);
+        setApprovalMessage(true);
       }
     } catch (error) {
       console.error(error);
-      alert('An error occurred during registration.');
+      setMessage(error.message);
     }
   };
 
   
   return (
     <div className="bg-blue-700 min-h-screen flex flex-col items-center justify-center">
-      <div className="relevant form xl:w-2/3 mt-3 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full ">
+      <div className="relevant form xl:w-2/3 mt-10 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full">
       <div className="header relative flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
           <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />
       </div>
@@ -113,21 +114,21 @@ export default function StudentSignup() {
             <option>BS Psychology</option>
             <option>BS Computer Science</option>
             <option>Bachelor in Human Services</option>
-            <option>Bachelor of Elementary Education</option>
-            <option>Bachelor of Secondary Education - Science</option>
-            <option>Bachelor of Secondary Education - English</option>
-            <option>Bachelor of Secondary Education - Mathematics</option>
-            <option>Bachelor of Livelihood Education - Home Economics</option>
-            <option>Bachelor of Livelihood Education - Industrial Arts</option>
-            <option>Bachelor of Livelihood Education - Information and Communication Technology</option>
-            <option>Bachelor of Technical Vocational Teacher Education - Drafting Technology</option>
-            <option>Bachelor of Industrial Technology - Automotive Technology</option>
-            <option>Bachelor of Industrial Technology - Architectural Drafting Technology</option>
-            <option>Bachelor of Industrial Technology - Construction Technology</option>
-            <option>Bachelor of Industrial Technology - Electrical Technology</option>
-            <option>Bachelor of Industrial Technology - Electronics Technology</option>
-            <option>Bachelor of Industrial Technology - Heating, Ventilating and Air-conditioning</option>
-          <option>Bachelor of Industrial Technology - Mechanical Technology</option>
+            <option>BE Education</option>
+            <option>BSE - Science</option>
+            <option>BSE - English</option>
+            <option>BSE - Mathematics</option>
+            <option>BSE - Home Economics</option>
+            <option>BSE - Industrial Arts</option>
+            <option>BSE - Information and Communication Technology</option>
+            <option>BTVTE - Drafting Technology</option>
+            <option>BIT - Automotive Technology</option>
+            <option>BIT - Architectural Drafting Technology</option>
+            <option>BIT - Construction Technology</option>
+            <option>BIT - Electrical Technology</option>
+            <option>BIT - Electronics Technology</option>
+            <option>BIT - Heating, Ventilating and Air-conditioning</option>
+            <option>BIT - Mechanical Technology</option>
             </select>
           </label>
           <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
@@ -148,13 +149,12 @@ export default function StudentSignup() {
             <input name="password" value={formData.password} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type={showPassword ? 'text' : 'password'} placeholder=" " required />
             <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Password</span>
             <button
-              type="button"
-              onClick={togglePassword}
-              className="absolute right-5 top-4">
+            onClick={togglePassword}
+            className="absolute right-5 top-5">
               {showPassword ? <IoEyeOff className="w-6 h-6"/> : <IoEye className="w-6 h-6"/>}
             </button>
           </label>
-          <p className="mt-2 text-gray-400">Upload the requirements as an image only.<span className="text-red-500">*</span></p>
+          <p className="mt-2 text-gray-400">Upload the file requirements as an image only.<span className="text-red-500">*</span></p>
           <div class="flex flex-col lg:flex-row lg:space-x-4 space-y-4 lg:space-y-0">
             <div class="w-full lg:w-1/3">
               <label for="formFileLicense" class="form-label block text-sm font-medium text-gray-700">License</label>
@@ -170,7 +170,7 @@ export default function StudentSignup() {
               <input name="cor" class="form-control block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" type="file" id="formFileCor" onChange={handleFileChange}/>
             </div>
           </div>
-          <button className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5">
+          <button type="submit" className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5">
             Submit
           </button>
           <p className="text-center text-base text-gray-400 sm:text-sm">
@@ -181,13 +181,28 @@ export default function StudentSignup() {
       </div>
       {approvalMessage && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
-            <div className="bg-white p-6 rounded shadow-md">
-                <h2 className="text-xl font-bold">Notice</h2>
-                <p>{approvalMessage}</p>
+            <div className="bg-white flex flex-col items-center p-6 rounded shadow-md">
+            <h2 className="text-xl text-center font-bold">Notice <span className="text-red-600">*</span></h2>
+                <p>Registration Successful! Please wait for the admin approval.</p>
                 <button 
                     onClick={() => {
-                        setApprovalMessage(''); // Clear the message
+                        setApprovalMessage(false); // Clear the message
                         navigate('/studentlogin'); // Redirect to the login page
+                    }} 
+                    className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">
+                    Okay
+                </button>
+            </div>
+        </div>
+      )}
+      {message && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
+            <div className="bg-white max-w-96 p-6 flex flex-col justify-center rounded shadow-md">
+                <h2 className="text-xl text-center font-bold">Notice <span className="text-red-600">*</span></h2>
+                <p>{message}</p>
+                <button 
+                    onClick={() => {
+                        setMessage(false);
                     }} 
                     className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">
                     Okay

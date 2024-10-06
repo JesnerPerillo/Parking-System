@@ -1,13 +1,16 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { BsFillPersonVcardFill, BsFillSignNoParkingFill, BsTaxiFront, BsCreditCard2Front, BsQuestionSquare, BsExclamation  } from "react-icons/bs";
+import { BsCreditCard2Front, BsQuestionSquare, BsExclamation } from "react-icons/bs";
+import { BsTaxiFront } from "react-icons/bs";
+import { BsFillPersonVcardFill, BsFillSignNoParkingFill  } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { FaRegCircleCheck} from "react-icons/fa6";
 import URSLogo from '../Pictures/urs.png';
-import sample from '../Pictures/aboutparking.jpg';
+import StudentMap from '../Pictures/studentmap.jpg';
+import 'react-medium-image-zoom/dist/styles.css';
 
 export default function StudentParkingSlots() {
   const [userData, setUserData] = useState({});
@@ -30,11 +33,33 @@ export default function StudentParkingSlots() {
     fourwheeler: []
   });
 
-  const categories = {
-    motorcycle: { count: 500, color: 'bg-green-500 text-white' },
-    tricycle: { count: 40, color: 'bg-green-500 text-white' },
-    fourwheeler: { count: 40, color: 'bg-green-500 text-white' }
-  };
+  const [categories, setCategories] = useState({
+    motorcycle: { count: 0, color: 'bg-green-500 text-white' },
+    tricycle: { count: 0, color: 'bg-green-500 text-white' },
+    fourwheeler: { count: 0, color: 'bg-green-500 text-white' }
+  });
+
+  // Fetch vehicle counts from the backend API
+  useEffect(() => {
+    const fetchVehicleCounts = async () => {
+      try {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/getvehiclecount.php');
+        const { motorcycle, tricycle, fourwheeler } = response.data;
+
+        // Update the categories with the counts from the database
+        setCategories(prevCategories => ({
+          ...prevCategories,
+          motorcycle: { ...prevCategories.motorcycle, count: motorcycle },
+          tricycle: { ...prevCategories.tricycle, count: tricycle },
+          fourwheeler: { ...prevCategories.fourwheeler, count: fourwheeler }
+        }));
+      } catch (error) {
+        console.error('Error fetching vehicle counts:', error);
+      }
+    };
+
+    fetchVehicleCounts();
+  }, []);
 
   const toggleNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -220,7 +245,7 @@ export default function StudentParkingSlots() {
   const handleLogout = async () => {
     try {
       console.log('Attempting to log out...');
-      const response = await axios.get('https://seagreen-wallaby-986472.hostingersite.com/logout.php', {
+      const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/logout.php', {
         withCredentials: true,
       });
 
@@ -263,22 +288,54 @@ export default function StudentParkingSlots() {
       </div>
     </div>
   );
+
+
+  const [scale, setScale] = useState(1);
+  const [translate, setTranslate] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
+  const imageRef = useRef(null);
+
+  // Handle zoom in and out
+  const handleWheel = (e) => {
+    e.preventDefault();
+    const newScale = Math.min(Math.max(scale + e.deltaY * -0.01, 1), 3); // Max zoom is 3x, min is 1x
+    setScale(newScale);
+  };
+
+  // Handle image dragging (panning)
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartPosition({ x: e.clientX - translate.x, y: e.clientY - translate.y });
+  };
+
+  const handleMouseMove = (e) => {
+    if (isDragging) {
+      const x = e.clientX - startPosition.x;
+      const y = e.clientY - startPosition.y;
+      setTranslate({ x, y });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
   
   
 
   return (
     <>
-      <div className="relative w-full h-screen bg-blue-700 flex">
+      <div className="w-full h-screen bg-blue-700 flex">
         {/* Navigation button */}
         <button
-          className="lg:hidden bg-white text-blue-700 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-10"
+          className="lg:hidden bg-white text-blue-700 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-40"
           onClick={toggleNav}
         >
           {isNavOpen ? '✕' : '☰'}
         </button>
 
-        {/* Navigation menu */}
-        <nav className={`bg-white rounded-r-2xl drop-shadow-2xl absolute inset-y-0 left-0 transform xl:w-1/5 lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
+          {/* Navigation menu */}
+          <nav className={`bg-white z-30 rounded-r-2xl drop-shadow-2xl absolute inset-y-0 left-0 transform xl:w-1/5 lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
             <div className=" w-full h-44 text-blue-700 flex flex-col items-center justify-between text-xl tracking-wider">
                 <img src={URSLogo} className="w-20 h-26" />
                 <h1 className="text-2xl tracking-widest lg:text-sm xl:text-2xl">PARKING SYSTEM</h1>
@@ -315,7 +372,14 @@ export default function StudentParkingSlots() {
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slot</p>
           </div>
-          <div className="container bg-blue-900 mx-auto p-4 h-4/5 overflow-auto mt-20 border-2 rounded max-sm:w-9/10">
+          <div className="flex items-center p-3 flex-col sm:flex-row">
+            <h3 className="text-white">Please select your prefered parking spot.</h3>
+            <div className="flex">
+              <div className="ml-3 h-6 w-20 bg-green-500 rounded text-center text-white">Available</div>
+              <div className="ml-3 h-6 w-20 bg-red-600 rounded text-center text-white">Occupied</div>
+            </div>
+          </div>
+          <div className="bg-blue-800 mx-auto p-4 h-5/6 overflow-auto border-2 rounded max-sm:w-9/10">
             <div className="mb-4">
               <label className="mr-4 text-white">Select Vehicle Type:</label>
               <select
@@ -338,7 +402,7 @@ export default function StudentParkingSlots() {
                   <h2 className="text-xl font-bold mb-4 text-white">
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                     {selectedSpot !== null && (
-                      <div className="bottom-10 absolute right-2 sm:right-40 top-60">
+                      <div className="bottom-10 absolute right-2 sm:right-16 bottom-10">
                         <button
                           onClick={handleSubmit}
                           className="p-2 bg-blue-500 text-white rounded"
@@ -357,11 +421,24 @@ export default function StudentParkingSlots() {
           </div>
           {popupImage && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
-              <div className="relative bg-white rounded-lg w-full h-auto sm:w-4/5 sm:h-4/5 rounded">
-                <button onClick={() => setPopupImage(false)} className="absolute right-5 top-2 text-white">X</button>
-                <img src={sample} alt="Vicinity Map" className="rounded w-full h-full"/>
-              </div>
+            <div className="relative rounded-lg w-full h-auto sm:w-3/6 sm:h-3/6 rounded zoom-container">
+              <button onClick={() => setPopupImage(false)} className="z-20 absolute right-5 top-2 text-white bg-gray-500 p-2 rounded">Close</button>
+              <img
+                src={StudentMap}
+                alt="Vicinity Map"
+                ref={imageRef}
+                className="zoomable-image"
+                style={{
+                  transform: `scale(${scale}) translate(${translate.x}px, ${translate.y}px)`,
+                }}
+                onWheel={handleWheel}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp} // Stop dragging if cursor leaves the image
+              />
             </div>
+          </div>
           )}
         </div>
 

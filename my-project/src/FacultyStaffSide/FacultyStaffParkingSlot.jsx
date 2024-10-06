@@ -1,13 +1,14 @@
 /* eslint-disable no-template-curly-in-string */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { BsExclamationDiamond, BsExclamation, BsFillPersonVcardFill, BsQuestionSquare, BsTaxiFront, BsCreditCard2Front, BsFillSignNoParkingFill } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { FaRegCircleCheck} from "react-icons/fa6";
 import URSLogo from '../Pictures/urs.png';
-import sample from '../Pictures/aboutparking.jpg';
+import FacultyMap from '../Pictures/facultymap.jpg';
+import 'react-medium-image-zoom/dist/styles.css';
 
 export default function FacultyStaffParkingSlot() {
   const [userData, setUserData] = useState({});
@@ -28,10 +29,31 @@ export default function FacultyStaffParkingSlot() {
     fourwheeler: []
   });
 
-  const categories = {
-    motorcycle: { count: 110, color: 'bg-green-500 text-white' },
-    fourwheeler: { count: 25, color: 'bg-green-500 text-white' }
-  };
+  const [categories, setCategories] = useState({
+    motorcycle: { count: 0, color: 'bg-green-500 text-white' },
+    fourwheeler: { count: 0, color: 'bg-green-500 text-white' }
+  });
+
+  // Fetch vehicle counts from the backend API
+  useEffect(() => {
+    const fetchVehicleCounts = async () => {
+      try {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/facultygetvehiclecount.php');
+        const { motorcycle, tricycle, fourwheeler } = response.data;
+
+        // Update the categories with the counts from the database
+        setCategories(prevCategories => ({
+          ...prevCategories,
+          motorcycle: { ...prevCategories.motorcycle, count: motorcycle },
+          fourwheeler: { ...prevCategories.fourwheeler, count: fourwheeler }
+        }));
+      } catch (error) {
+        console.error('Error fetching vehicle counts:', error);
+      }
+    };
+
+    fetchVehicleCounts();
+  }, []);
 
   const toggleImage = () => {
     setPopupImage(!popupImage);
@@ -220,7 +242,7 @@ export default function FacultyStaffParkingSlot() {
           className={`rounded-xl h-20 flex items-center justify-center cursor-pointer ${color} ${spotColorClass}`}
           style={{
             borderColor: isSelected || isOccupied ? '#E53E3E' : 'transparent',
-            color: isSelected || isOccupied ? '#FFFFFF' : '#000000',
+            color: isSelected || isOccupied ? '#FFFFFF': '#000000',
             boxShadow: isSelected ? '0 0 0 2px rgba(66, 153, 225, 0.5)' : 'none'
           }}
           onClick={() => {
@@ -263,6 +285,38 @@ export default function FacultyStaffParkingSlot() {
       </div>
     </div>
   );
+
+  const [scale, setScale] = useState(1);
+  const [translate, setTranslate] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
+  const imageRef = useRef(null);
+
+  // Handle zoom in and out
+  const handleWheel = (e) => {
+    e.preventDefault();
+    const newScale = Math.min(Math.max(scale + e.deltaY * -0.01, 1), 3); // Max zoom is 3x, min is 1x
+    setScale(newScale);
+  };
+
+  // Handle image dragging (panning)
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartPosition({ x: e.clientX - translate.x, y: e.clientY - translate.y });
+  };
+
+  const handleMouseMove = (e) => {
+    if (isDragging) {
+      const x = e.clientX - startPosition.x;
+      const y = e.clientY - startPosition.y;
+      setTranslate({ x, y });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
 
   return(
     <>
@@ -313,7 +367,14 @@ export default function FacultyStaffParkingSlot() {
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slot</p>
           </div>
-          <div className="container bg-blue-900 mx-auto p-4 h-4/5 rounded mt-20 border-2 overflow-auto">
+          <div className="flex items-center p-3 flex-col sm:flex-row">
+            <h3 className="text-white">Please select your prefered parking spot.</h3>
+            <div className="flex">
+              <div className="ml-3 h-6 w-20 bg-green-500 rounded text-center text-white">Available</div>
+              <div className="ml-3 h-6 w-20 bg-red-600 rounded text-center text-white">Occupied</div>
+            </div>
+          </div>
+          <div className="bg-blue-800 mx-auto p-4 h-5/6 overflow-auto border-2 rounded max-sm:w-9/10">
             <div className="mb-4">
               <label className="mr-4 text-white">Select Vehicle Type:</label>
               <select
@@ -368,11 +429,24 @@ export default function FacultyStaffParkingSlot() {
           </div>
           {popupImage && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
-              <div className="relative bg-white rounded-lg w-full h-auto sm:w-4/5 sm:h-4/5 rounded">
-                <button onClick={() => setPopupImage(false)} className="absolute right-5 top-2 text-white">X</button>
-                <img src={sample} alt="Vicinity Map" className="rounded w-full h-full"/>
-              </div>
+            <div className="relative rounded-lg w-full h-auto sm:w-3/6 sm:h-3/6 rounded zoom-container">
+              <button onClick={() => setPopupImage(false)} className="z-20 absolute right-5 top-2 text-white bg-gray-500 p-2 rounded">Close</button>
+              <img
+                src={FacultyMap}
+                alt="Vicinity Map"
+                ref={imageRef}
+                className="zoomable-image"
+                style={{
+                  transform: `scale(${scale}) translate(${translate.x}px, ${translate.y}px)`,
+                }}
+                onWheel={handleWheel}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp} // Stop dragging if cursor leaves the image
+              />
             </div>
+          </div>
           )}
 
 {alreadySelectSpot && (

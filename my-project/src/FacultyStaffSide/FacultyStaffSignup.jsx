@@ -12,6 +12,7 @@ export default function FacultyStaffSignup(){
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [approvalMessage, setApprovalMessage] = useState(false);
+  const [message, setMessage] = useState(false);
   const [formData, setFormData] = useState({
     employeeId: '',
     fullname: '',
@@ -60,9 +61,9 @@ export default function FacultyStaffSignup(){
           'Content-Type': 'multipart/form-data',
         },
       });
-
+      setMessage(response.data.message);
       if (response.data.status === 'success') {
-        setApprovalMessage(response.data.message);
+        setApprovalMessage(true);
       }
     } catch (error) {
       console.error(error);
@@ -74,7 +75,7 @@ export default function FacultyStaffSignup(){
   return(
     <>
       <div className="bg-blue-700 min-h-screen flex flex-col items-center justify-center">
-      <div className="form xl:w-2/3 mt-16 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-blue-700">
+      <div className="form xl:w-2/3 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-blue-700">
       <div className="header flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
         <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />
       </div>
@@ -136,7 +137,7 @@ export default function FacultyStaffSignup(){
               <input name="license" class="form-control block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" type="file" id="formFileLicense" onChange={handleFileChange}/>
             </div>
             <div class="w-full lg:w-1/2">
-              <label for="formFileOrcr" class="form-label block text-sm font-medium text-gray-700">ORCR</label>
+              <label for="formFileOrcr" class="form-label block text-sm font-medium text-gray-700">ORCR<span className="text-[7px]">(Original Receipt/Certificate of Registration)</span></label>
               <input name="orcr" class="form-control block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" type="file" id="formFileOrcr" onChange={handleFileChange}/>
             </div>
           </div>
@@ -152,12 +153,27 @@ export default function FacultyStaffSignup(){
       {approvalMessage && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
             <div className="bg-white p-6 rounded shadow-md">
-                <h2 className="text-xl font-bold">Notice</h2>
-                <p>{approvalMessage}</p>
+            <h2 className="text-xl text-center font-bold">Notice <span className="text-red-600">*</span></h2>
+                <p>Registration Successful! Please wait for the admin approval.</p>
                 <button 
                     onClick={() => {
                         setApprovalMessage(''); // Clear the message
                         navigate('/facultystafflogin'); // Redirect to the login page
+                    }} 
+                    className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">
+                    Okay
+                </button>
+            </div>
+        </div>
+      )}
+      {message && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
+            <div className="bg-white max-w-96 p-6 flex flex-col justify-center rounded shadow-md">
+                <h2 className="text-xl text-center font-bold">Notice <span className="text-red-600">*</span></h2>
+                <p>{message}</p>
+                <button 
+                    onClick={() => {
+                        setMessage(false);
                     }} 
                     className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">
                     Okay

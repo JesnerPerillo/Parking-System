@@ -5,7 +5,6 @@ import GSOlogo from '.././Pictures/gsoo.png';
 import '.././App.css'
 import { IoEyeOff, IoEye  } from "react-icons/io5";
 import SideImg from '../Pictures/sideimg.png';
-import { ImSpinner2 } from 'react-icons/im';
 
 export default function FacultyStaffLogin() {
     const [fullname, setFullname] = useState('');
@@ -17,7 +16,6 @@ export default function FacultyStaffLogin() {
     const [message, setMessage] = useState('');
     const [isVisible, setIsVisible] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const [approvalMessage, setApprovalMessage] = useState('');
 
     const togglePassword = () => {
@@ -34,8 +32,6 @@ export default function FacultyStaffLogin() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
-        
         try {
             const response = await fetch('https://skyblue-clam-769210.hostingersite.com/facultystafflogin.php', {
                 method: 'POST',
@@ -53,22 +49,19 @@ export default function FacultyStaffLogin() {
             const data = await response.json();
 
             if (data.success) {
-                // Store user data in session storage or state if needed
                 setTimeout(() => {
                   navigate('/facultystaffdashboard');
               }, 300);
             } else {
               if (data.message.includes('not approved')) {
-                setApprovalMessage(data.message); // Set the approval message
-            } else {
-                setError(data.message || 'Login failed. Please try again.');
-            }
+                  setApprovalMessage(data.message); // Set the approval message
+              } else {
+                  setError(data.message || 'Login failed. Please try again.');
+              }
             }
         } catch (error) {
             console.error('Error:', error);
             setError('An unexpected error occurred.');
-        } finally {
-          setIsLoading(false); // Set loading state to false after the request is completed
         }
     };
 
@@ -103,17 +96,9 @@ export default function FacultyStaffLogin() {
 
   return (
     <div className="bg-blue-700 min-h-screen flex flex-col items-center justify-center">
-      {/* Modal for Loading Spinner */}
-      {isLoading && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white p-6 rounded-lg flex items-center justify-center">
-                        <ImSpinner2 className="animate-spin w-10 h-10 text-blue-500" />
-                    </div>
-                </div>
-            )}
-      <div className="form xl:w-2/4 mt-28 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-blue-700">
+      <div className="form xl:w-2/4 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-blue-700">
         <div className="header flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
-          <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />
+        <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />
         </div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 float:right w-2/4 p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 max-sm:w-full sm:p-5">
       <p className="text-3xl font-semibold tracking-tight relative flex items-center pl-7 text-cyan-500 sm:text-2xl">
@@ -133,13 +118,13 @@ export default function FacultyStaffLogin() {
         <input name="password" value={password} onChange={(e) => setPassword(e.target.value)} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type={showPassword ? 'text' : 'password'} placeholder=" " required />
         <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Password</span>
         <button
-          type="button"
           onClick={togglePassword}
+          type="button"
           className="absolute right-5 top-4">
           {showPassword ? <IoEyeOff className="w-6 h-6"/> : <IoEye className="w-6 h-6"/>}
         </button>
       </label>
-      <button type="submit" className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5" disabled={isLoading}>
+      <button className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5">
         Submit
       </button>
       {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -184,8 +169,8 @@ export default function FacultyStaffLogin() {
       </div>
         )}
 
-          {approvalMessage && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
+        {approvalMessage && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
               <div className="bg-white p-6 rounded shadow-md">
                   <h2 className="text-xl font-bold">Notice</h2>
                   <p>{approvalMessage}</p>
