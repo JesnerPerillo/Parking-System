@@ -362,7 +362,7 @@ const handleApprove = (userId) => {
 const confirmApprove = () => {
   axios
     .post(
-      `https://skyblue-clam-769210.hostingersite.com/handleapproveincorrect.php`,
+      `https://skyblue-clam-769210.hostingersite.com/handleapprove.php`,
       { id: userIdToApprove, action: 'approve' },
       { withCredentials: true }
     )
