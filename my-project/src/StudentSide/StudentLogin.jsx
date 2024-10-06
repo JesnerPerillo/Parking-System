@@ -1,9 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import URSlogo from '../Pictures/urs.png';
 import GSOlogo from '../Pictures/gsoo.png';
-import '../App.css';
 import SideImg from '../Pictures/sideimg.png';
 import { IoEyeOff, IoEye  } from "react-icons/io5";
 import { ImSpinner2 } from 'react-icons/im';
