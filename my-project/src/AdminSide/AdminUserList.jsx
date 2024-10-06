@@ -3,14 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { BsCreditCard2Front, BsTaxiFront, BsFillPersonVcardFill, BsQuestionSquare, BsPersonFillGear } from 'react-icons/bs';
 import { FiLogOut } from 'react-icons/fi';
-import { MdDeleteForever  } from 'react-icons/md';
+import { MdDeleteForever, MdEdit   } from 'react-icons/md';
 import GSO from '../Pictures/gsoo.png';
-import { FaUsers, FaEdit, FaClipboardList, FaEye  } from "react-icons/fa";
-import { FaUserEdit } from "react-icons/fa";
-import { jsPDF } from 'jspdf';
+import { FaUsers, FaClipboardList  } from "react-icons/fa";
 import 'jspdf-autotable';
 import { IoEyeOff, IoEye } from "react-icons/io5";
-import { FaCircleCheck } from "react-icons/fa6";
+import { FaCircleCheck, FaRegCircleCheck} from "react-icons/fa6";
 
 export default function AdminUserList() {
   const [userData, setUserData] = useState(null);
@@ -30,9 +28,15 @@ export default function AdminUserList() {
   const [selectedType, setSelectedType] = useState('student');
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState(false);
+  const [idPendingDelete, setIdPendingDelete] = useState({ id: null, userType: null });
   const [userIdToDelete, setUserIdToDelete] = useState(null);
-  const [popupMessageDelete, setPopupMessageDelete] = useState('');
+  const [userIdToApprove, setUserIdToApprove] = useState(null);
+  const [approveDelete, setApproveDelete] = useState(false);
+  const [idApproveDelete, setIdApproveDelete] = useState({ id: null, userType: null });
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [approveMessage, setApproveMessage] = useState(false);
+  const [logoutMessage, setLogoutMessage] = useState(false);
   const [formData, setFormData] = useState({
     student: {
       studentNumber: '',
@@ -106,29 +110,6 @@ export default function AdminUserList() {
     }));
   };
 
-  useEffect(() => {
-    const fetchAdminData = async () => {
-      try {
-        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/adminfetchdata.php', {
-          withCredentials: true,
-        });
-  
-        if (response.data.success) {
-          // Handle admin data if needed
-        } else {
-          setError(response.data.message || 'No data found for the admin.');
-          navigate('/');
-        }
-      } catch (error) {
-        setError('Error fetching admin data: ' + error.message);
-        console.error('Error fetching admin data: ', error);
-        navigate('/');
-      }
-    };
-  
-    fetchAdminData();
-  }, []);
-
   const handleSubmit = async (e, type) => {
     e.preventDefault();
 
@@ -189,6 +170,30 @@ export default function AdminUserList() {
         alert('Error updating account. Please try again.');
     }
 };
+
+
+useEffect(() => {
+  const fetchAdminData = async () => {
+    try {
+      const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/adminfetchdata.php', {
+        withCredentials: true,
+      });
+
+      if (response.data.success) {
+        // Handle admin data if needed
+      } else {
+        setError(response.data.message || 'No data found for the admin.');
+        navigate('/');
+      }
+    } catch (error) {
+      setError('Error fetching admin data: ' + error.message);
+      console.error('Error fetching admin data: ', error);
+      navigate('/');
+    }
+  };
+
+  fetchAdminData();
+}, []);
 
   const handleLogout = async () => {
     try {
@@ -267,14 +272,9 @@ useEffect(() => {
 
   
 const handleDelete = async (userId, userType) => {
-  const isConfirmed = window.confirm('Are you sure you want to delete this user?');
-
-  console.log(userId, userType);
-
-  if (!isConfirmed) return;
-
   try {
-      const response = await axios.post('https://skyblue-clam-769210.hostingersite.com/delete.php', 
+      const response = await axios.post(
+          'https://skyblue-clam-769210.hostingersite.com/delete.php', 
           { id: userId, userType },
           { 
               withCredentials: true,
@@ -283,15 +283,18 @@ const handleDelete = async (userId, userType) => {
       );
 
       if (response.data.success) {
-          alert('User deleted successfully.');
-          setUserData(prevUserData => prevUserData.filter(user => user.id !== userId));
+          setDeleteSuccess(true);
+          setApproveDelete(false);
+          setUserData(prevUserData => prevUserData.filter(user => user.id !== userId)); // Ensure `user.id` is the right field
       } else {
           alert('Failed to delete user: ' + (response.data.message || 'Unknown error'));
       }
   } catch (error) {
+      console.error('Error deleting user:', error); // Log error for debugging
       alert('Error deleting user: ' + error.message);
   }
 };
+
 
 useEffect(() => {
   const fetchPendingUsersData = async () => {
@@ -350,64 +353,134 @@ useEffect(() => {
 
 // Approve user
 const handleApprove = (userId) => {
+  // Show the confirmation modal before approval
+  setUserIdToApprove(userId);
+  setApproveMessage(true);
+};
+
+// Function to confirm the approval
+const confirmApprove = () => {
   axios
-    .post(`https://skyblue-clam-769210.hostingersite.com/handleapprove.php`, { id: userId, action: 'approve'},
+    .post(
+      `https://skyblue-clam-769210.hostingersite.com/handleapproveincorrect.php`,
+      { id: userIdToApprove, action: 'approve' },
       { withCredentials: true }
     )
     .then((response) => {
-      setPendingUsers((prev) => prev.filter((user) => user.id !== userId));
+      setPendingUsers((prev) => prev.filter((user) => user.id !== userIdToApprove));
       setPopupMessage("User approved and email sent.");
       setIsPopupVisible(true);
     })
     .catch((error) => {
       console.error("Error approving user:", error);
     });
+  setApproveMessage(false); // Close modal after action
+};
+
+const cancelApprove = () => {
+  setApproveMessage(false); // Close modal if cancelled
 };
 
 const handleDeletePending = (userId) => {
-  // Show the confirmation modal
+  // Set the user ID to be deleted and show the confirmation modal
   setUserIdToDelete(userId);
-  setModalVisible(true);
+  setPendingDelete(true);
 };
 
-// Confirm deletion
-const confirmDelete = () => {
-  axios
-    .post(
-      `https://skyblue-clam-769210.hostingersite.com/deletepending.php`, 
-      { id: userIdToDelete, type: selectedType }, // Include user type
-      { withCredentials: true }
-    )
-    .then((response) => {
-      console.log(response.data); // Log the response data for debugging
-      if (response.data.success) {
-        setPendingUsers((prev) => prev.filter((user) => user.id !== userIdToDelete));
-        setPopupMessage("User deleted.");
-      } else {
-        setPopupMessage(response.data.message || "Failed to delete user.");
+// Confirm deletion function
+const confirmDelete = async (userIdToDelete, selectedType) => {
+  try {
+    // Send a POST request to the backend for deletion
+    const response = await axios.post(
+      'https://skyblue-clam-769210.hostingersite.com/deletepending.php', 
+      { id: userIdToDelete, type: selectedType }, // Include the user ID and user type
+      { 
+        withCredentials: true, // To handle cookies/sessions if necessary
+        headers: { 'Content-Type': 'application/json' }
       }
-      setIsPopupVisible(true);
-      setModalVisible(false);
-    })    
-    .catch((error) => {
-      console.error("Error deleting user:", error);
-      setPopupMessage("Error deleting user. Please try again.");
-      setIsPopupVisible(true);
-      setModalVisible(false); // Close the modal on error
-    });
+    );
+
+    console.log('Response from backend:', response.data); // Log backend response for debugging
+
+    // Check if the deletion was successful
+    if (response.data.success) {
+      setDeleteSuccess(true); // Set success state
+      setPendingUsers(prev => prev.filter(user => user.id !== userIdToDelete)); 
+      setPendingDelete(false);
+      setIsPopupVisible(false);
+    } else {
+      setPopupMessage(response.data.message || "Failed to delete user."); // Set error message if delete fails
+    }
+
+    setIsPopupVisible(true); // Show popup message for success or failure
+    setPendingDelete(false); // Close the delete confirmation modal
+  } catch (error) {
+    console.error("Error deleting user:", error); // Log error for debugging
+    setPopupMessage("Error deleting user. Please try again."); // Set generic error message
+    setIsPopupVisible(true); // Show error message in popup
+    setPendingDelete(false); // Close modal even if error occurs
+  }
 };
+
+
 
 
 const Popup = ({ message, onClose }) => (
-  <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-    <div className="bg-white p-4 rounded shadow-lg">
+  <div className="fixed inset-0 flex items-center justify-center z-40 bg-black bg-opacity-50">
+    <div className="bg-white p-4 flex flex-col items-center rounded shadow-lg">
+      <FaRegCircleCheck className="text-green-500 h-10 w-10 mb-2"/>
       <p>{message}</p>
-      <button onClick={onClose} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">
+      <button onClick={onClose} className="mt-4 bg-gray-500 text-white py-2 px-4 rounded">
         Close
       </button>
     </div>
   </div>
 );
+
+const [searchTerm, setSearchTerm] = useState('');
+  const [searchTermPending, setSearchTermPending] = useState('');
+
+  // Filtering approved users
+  const filteredUsers = Array.isArray(userData) ? userData.filter((user) => {
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    if (selectedUserType === 'student') {
+      return (
+        user['Student Number']?.toLowerCase().includes(lowerSearchTerm) ||
+        user.Name?.toLowerCase().includes(lowerSearchTerm) ||
+        user.slot_number?.toString().toLowerCase().includes(lowerSearchTerm) ||
+        user['Plate Number']?.toLowerCase().includes(lowerSearchTerm)
+      );
+    } else {
+      return (
+        user['Employee Id']?.toLowerCase().includes(lowerSearchTerm) ||
+        user.Name?.toLowerCase().includes(lowerSearchTerm) ||
+        user.Position?.toLowerCase().includes(lowerSearchTerm) ||
+        user.Building?.toLowerCase().includes(lowerSearchTerm) ||
+        user.slot_number?.toString().toLowerCase().includes(lowerSearchTerm) ||
+        user['Plate Number']?.toLowerCase().includes(lowerSearchTerm)
+      );
+    }
+  }) : [];
+
+  // Filtering pending users
+  const filteredPendingUsers = pendingUsers.filter((user) => {
+    const lowerSearchTermPending = searchTermPending.toLowerCase();
+    if (selectedUserType === 'student') {
+      return (
+        user['Student Number']?.toLowerCase().includes(lowerSearchTermPending) ||
+        user.Name?.toLowerCase().includes(lowerSearchTermPending) ||
+        user['Plate Number']?.toLowerCase().includes(lowerSearchTermPending)
+      );
+    } else {
+      return (
+        user['Employee Id']?.toLowerCase().includes(lowerSearchTermPending) ||
+        user.Name?.toLowerCase().includes(lowerSearchTermPending) ||
+        user.Position?.toLowerCase().includes(lowerSearchTermPending) ||
+        user.Building?.toLowerCase().includes(lowerSearchTermPending) ||
+        user['Plate Number']?.toLowerCase().includes(lowerSearchTermPending)
+      );
+    }
+  });
 
 
   return (
@@ -422,49 +495,40 @@ const Popup = ({ message, onClose }) => (
         </button>
 
         {/* Navigation menu */}
-        <nav
-          className={`bg-white absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-md:flex max-md:flex-col max-md:items-center md:flex md:flex-col md:items-center ${
-            isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'
-          }`}
-        >
-          <div className="border-b-2 border-blue-700 w-full h-40 text-blue-700 flex flex-col items-center justify-center text-xl tracking-wider">
-            <img src={GSO} className="w-24 h-24" />
-            <h1 className="text-bold text-4xl tracking-widest">PARKING SYSTEM</h1>
-          </div>
-          <div className="flex flex-col justify-evenly w-full h-2/4 relative">
-            <Link to="/admindashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
-                <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
+        <nav className={`bg-white rounded-r-2xl drop-shadow-2xl absolute inset-y-0 left-0 transform xl:w-1/5 lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
+          <div className=" w-full h-40 text-blue-700 flex flex-col items-center justify-center text-xl tracking-wider">
+              <img src={GSO} className="w-24 h-24" />
+              <h1 className="text-2xl tracking-widest lg:text-sm xl:text-2xl">PARKING SYSTEM</h1>
+            </div>
+          <div className="flex w-full flex-col justify-evenly h-2/4 relative">
+            <Link to="/admindashboard" className="group no-underline h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-lg text-blue-700 tracking-widest flex items-center w-full lg:text-sm xl:text-lg ml-5">
+              <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/adminparkingslot" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
-                <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
+            <Link to="/adminparkingslot" className="group no-underline h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-lg text-blue-700 tracking-widest flex items-center w-full lg:text-sm xl:text-lg ml-5">
+              <BsTaxiFront /> <span className="ml-5">Parking Slots</span>
               </li>
             </Link>
-            <Link to="/adminreport" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
-                <BsFillPersonVcardFill /> <span className="ml-5">Report</span>
+            <Link to="/adminreport" className="group no-underline w-full h-12 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-lg text-blue-700 tracking-widest flex items-center w-full lg:text-sm xl:text-lg ml-5">
+              <BsFillPersonVcardFill /> <span className="ml-5">Report</span>
               </li>
             </Link>
-            <Link to="/adminaccount" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
-                <BsQuestionSquare /> <span className="ml-5">Account</span>
+            <Link to="/adminaccount" className="group no-underline h-12 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-lg text-blue-700 tracking-widest flex items-center w-full lg:text-sm xl:text-lg ml-5">
+              <BsQuestionSquare /> <span className="ml-5">Account</span>
               </li>
             </Link>
-            <Link to="/adminuserlist" className="group no-underline h-16 flex items-center pl-8 bg-blue-700 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
-                <FaUsers /> <span className="ml-5">User List</span>
+            <Link to="/adminuserlist" className="group no-underline h-12 flex items-center pl-8 bg-blue-700 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white border-l-2 border-white pl-5 text-lg text-white tracking-widest flex items-center w-full lg:text-sm xl:text-lg ml-5">
+              <FaUsers /> <span className="ml-5">User List</span>
               </li>
             </Link>
           </div>
-          <button
-            className="w-full bg-blue-900 h-14 text-red-600 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center"
-            onClick={handleLogout}
-          >
-            <span className="hover:text-white hover:bg-red-600 flex items-center justify-center w-full h-full transition ease-linear duration-200">
-              <FiLogOut className="rotate-180 mr-2" />Logout
-            </span>
+          <button className="w-full bg-blue-900 h-12 text-red-600 font-semibold tracking-widest text-lg bg-white flex items-center justify-center" onClick={() => setLogoutMessage(true)}>
+            <span className="hover:text-white hover:bg-red-600 flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut className="rotate-180 mr-2"/>Logout</span>
           </button>
         </nav>
 
@@ -474,23 +538,31 @@ const Popup = ({ message, onClose }) => (
             <p className="text-white font-semibold text-2xl tracking-widest z-10 ml-5">User List</p>
           </div>
         <div className="w-full h-screen">
-          <div className="flex justify-between items-center mb-5">
-            <h2 className="text-white font-semibold ml-10 mt-10 text-2xl flex">User's List <FaClipboardList className="ml-5"/></h2>
-            <div className="w-80 flex justify-between items-baseline">
+          <h2 className="text-white font-semibold ml-10 mt-10 text-2xl flex">User's List <FaClipboardList className="ml-5"/></h2>
+
+          {/* Table */}
+          <div className="bg-white h-4/5 p-3 rounded-lg shadow-md overflow-x-auto w-11/12 mx-auto">
+          <div className="flex justify-between items-center mb-3">
+            <h2>Approved</h2>
+            <div className="w-1/3 flex justify-between items-center">
+                <input
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchTerm}
+                  type="text"
+                  className="w-full border md:w-60 h-10 rounded pl-3"
+                  placeholder="Search user"
+                />
               <button onClick={togglePending} className="p-2 h-10 w-32 bg-yellow-500 rounded text-white">Pending</button>
               <select
                 value={selectedUserType}
                 onChange={(e) => setSelectedUserType(e.target.value)}
-                className="bg-white text-blue-700 p-2 rounded mr-10 mt-10"
+                className="bg-blue-700 text-white p-2 rounded"
               >
                 <option value="student">Students</option>
                 <option value="faculty">Faculty</option>
               </select>
             </div>
           </div>
-
-          {/* Table */}
-          <div className="bg-white h-4/5 p-2 rounded-lg shadow-md overflow-x-auto w-11/12 mx-auto">
             <table table className="max-w-5/6 table-auto border-collapse border border-gray-200">
               <thead>
                 <tr className="bg-gray-100 text-xs font-bolder">
@@ -529,21 +601,21 @@ const Popup = ({ message, onClose }) => (
                 </tr>
               </thead>
               <tbody>
-                {Array.isArray(userData) && userData.length > 0 ? (
-                  userData.map((user, index) => (
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((user, index) => (
                     <tr key={user.id} className="border-b border-gray-200 hover:bg-gray-100 transition duration-150 text-xs">
                       {selectedUserType === 'student' ? (
                         <>
-                          <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
-                          <td className="border border-gray-300 px-4 py-2">{user['Student Number']}</td>
-                          <td className="border border-gray-300 px-4 py-2">{user.Name}</td>
-                          <td className="border border-gray-300 px-4 py-2">{user.Email}</td>
-                          <td className="border border-gray-300 px-4 py-2">{user['Year and Section']}</td>
-                          <td className="border border-gray-300 px-4 py-2">{user.Course}</td>
-                          <td className="border border-gray-300 px-4 py-2">{user.Vehicle}</td>
-                          <td className="border border-gray-300 px-4 py-2">{user.slot_number}</td>
-                          <td className="border border-gray-300 px-4 py-2">{user['Plate Number']}</td>
-                          <td className="border border-gray-300 px-4 py-2">
+                          <td className="border border-gray-300 px-2 py-1">{index + 1}</td>
+                          <td className="border border-gray-300 px-2 py-1">{user['Student Number']}</td>
+                          <td className="border border-gray-300 px-2 py-1">{user.Name}</td>
+                          <td className="border border-gray-300 px-2 py-1">{user.Email}</td>
+                          <td className="border border-gray-300 px-2 py-1">{user['Year and Section']}</td>
+                          <td className="border border-gray-300 px-2 py-1">{user.Course}</td>
+                          <td className="border border-gray-300 px-2 py-1">{user.Vehicle}</td>
+                          <td className="border border-gray-300 px-2 py-1">{user.slot_number || ''}</td>
+                          <td className="border border-gray-300 px-2 py-1">{user['Plate Number']}</td>
+                          <td className="border border-gray-300 px-2 py-1">
                             {user.License ? (
                               <>
                               <img onClick={() => handleOpenModal(`data:image/png;base64,${user.License}`)} src={`data:image/png;base64,${user.License}`} alt="License" className="w-16 h-16 object-cover rounded cursor-pointer" />
@@ -552,7 +624,7 @@ const Popup = ({ message, onClose }) => (
                               <span>No License</span>
                             )}
                           </td>
-                          <td className="border border-gray-300 px-4 py-2">
+                          <td className="border border-gray-300 px-4 py-1">
                             {user.ORCR ? (
                               <>
                               <img onClick={() => handleOpenModal(`data:image/png;base64,${user.ORCR}`)} src={`data:image/png;base64,${user.ORCR}`} alt="ORCR" className="w-16 h-16 object-cover rounded cursor-pointer" />
@@ -561,7 +633,7 @@ const Popup = ({ message, onClose }) => (
                               <span>No ORCR</span>
                             )}
                           </td>
-                          <td className="border border-gray-300 px-4 py-2">
+                          <td className="border border-gray-300 px-4 py-1">
                             {user.COR ? (
                               <>
                               <img onClick={() => handleOpenModal(`data:image/png;base64,${user.COR}`)} src={`data:image/png;base64,${user.COR}`} alt="COR" className="w-16 h-16 object-cover rounded cursor-pointer" />
@@ -570,16 +642,19 @@ const Popup = ({ message, onClose }) => (
                               <span>No COR</span>
                             )}
                           </td>
-                          <td className="border border-gray-300 px-3 py-2">
+                          <td className="border border-gray-300 px-3 py-1">
                             <button onClick={() => {
                               setIsEditModalOpen(true);
                               const userDataToEdit = userData.find((u) => u.id === user.id);
                               setSelectedUserData(userDataToEdit);
                               setSelectedUserId(user.id);
                             }} className="text-green-600 hover:text-gray-900 transition duration-200">
-                              <FaEdit className="w-6 h-6"/>
+                              <MdEdit  className="w-6 h-6"/>
                             </button>
-                            <button onClick={() => handleDelete(user.id, selectedUserType)} className="text-red-600 hover:text-red-900 transition duration-200">
+                            <button onClick={() => {
+                              setApproveDelete(true); 
+                              setIdApproveDelete({ userId: user.id, userType: selectedUserType });
+                          }} className="text-red-600 hover:text-red-900 transition duration-200">
                               <MdDeleteForever className="w-6 h-6" />
                             </button>
                           </td>
@@ -593,32 +668,36 @@ const Popup = ({ message, onClose }) => (
                           <td className="border border-gray-300 px-4 py-2">{user.Position}</td>
                           <td className="border border-gray-300 px-4 py-2">{user.Building}</td>
                           <td className="border border-gray-300 px-4 py-2">{user.Vehicle}</td>
+                          <td className="border border-gray-300 px-4 py-2">{user.slot_number || ''}</td>
                           <td className="border border-gray-300 px-4 py-2">{user['Plate Number']}</td>
                           <td className="border border-gray-300 px-4 py-2">
                             {user.License ? (
-                              <img onClick={() => handleOpenModal(`data:image/png;base64,${user.License}`)} src={`data:image/png;base64,${user.License}`} alt="License" className="w-full h-auto object-cover rounded cursor-pointer" />
+                              <img onClick={() => handleOpenModal(`data:image/png;base64,${user.License}`)} src={`data:image/png;base64,${user.License}`} alt="License" className="w-16 h-16 object-cover rounded cursor-pointer" />
                             ) : (
                               <span>No License</span>
                             )}
                           </td>
                           <td className="border border-gray-300 px-4 py-2">
                             {user.ORCR ? (
-                              <img onClick={() => handleOpenModal(`data:image/png;base64,${user.ORCR}`)} src={`data:image/png;base64,${user.ORCR}`} alt="ORCR" className="w-full h-auto object-cover rounded cursor-pointer" />
+                              <img onClick={() => handleOpenModal(`data:image/png;base64,${user.ORCR}`)} src={`data:image/png;base64,${user.ORCR}`} alt="ORCR" className="w-16 h-16 object-cover rounded cursor-pointer" />
                             ) : (
                               <span>No ORCR</span>
                             )}
                           </td>
-                          <td className="border border-gray-300 px-4 py-2">
+                          <td className="border border-gray-300 px-3 py-1">
                             <button onClick={() => {
                               setIsEditModalOpen(true);
                               const userDataToEdit = userData.find((u) => u.id === user.id);
                               setSelectedUserData(userDataToEdit);
                               setSelectedUserId(user.id);
-                            }} className="text-gray-600 hover:text-gray-900 transition duration-200">
-                              <FaEdit className="w-5 h-5" />
+                            }} className="text-green-600 hover:text-gray-900 transition duration-200">
+                              <MdEdit  className="w-6 h-6"/>
                             </button>
-                            <button onClick={() => handleDelete(user.id, selectedUserType)} className="text-red-600 hover:text-red-900 transition duration-200">
-                              <MdDeleteForever className="w-5 h-5" />
+                            <button onClick={() => {
+                              setApproveDelete(true); 
+                              setIdApproveDelete({ userId: user.id, userType: String(selectedUserType) });
+                          }} className="text-red-600 hover:text-red-900 transition duration-200">
+                              <MdDeleteForever className="w-6 h-6" />
                             </button>
                           </td>
                         </>
@@ -837,19 +916,28 @@ const Popup = ({ message, onClose }) => (
                   <label htmlFor="userType" className="font-semibold">
                     Select User Type:
                   </label>
-                  <select
-                    id="userType"
-                    value={selectedType}
-                    onChange={handleUserTypeChange}
-                    className="p-2 rounded-md bg-gray-700 text-white"
-                  >
-                    <option value="student">Students</option>
-                    <option value="faculty">Faculty</option>
-                  </select>
+                  <div className="w-1/4 flex justify-between">
+                    <input
+                    onChange={(e) => setSearchTermPending(e.target.value)}
+                    value={searchTermPending}
+                    type="text"
+                    className="w-full border md:w-60 h-10 rounded pl-3"
+                    placeholder="Search user"
+                  />
+                    <select
+                      id="userType"
+                      value={selectedType}
+                      onChange={handleUserTypeChange}
+                      className="p-2 rounded-md w-40 bg-gray-700 text-white"
+                    >
+                      <option value="student">Students</option>
+                      <option value="faculty">Faculty</option>
+                    </select>
+                  </div>
                 </div>
 
                 {/* Table for Pending Users */}
-                <table className="min-w-full table-auto border-collapse border border-gray-200">
+                <table className="min-w-full text-xs table-auto border-collapse border border-gray-200">
                   <thead>
                     <tr className="bg-gray-100">
                       {selectedType === 'student' ? (
@@ -858,7 +946,7 @@ const Popup = ({ message, onClose }) => (
                           <th className="border border-gray-300 px-4 py-2">Student Number</th>
                           <th className="border border-gray-300 px-4 py-2">Name</th>
                           <th className="border border-gray-300 px-4 py-2">Email</th>
-                          <th className="border border-gray-300 px-4 py-2">Year & Section</th>
+                          <th className="border w-20 border-gray-300 px-4 py-2">Year & Section</th>
                           <th className="border border-gray-300 px-4 py-2">Course</th>
                           <th className="border border-gray-300 px-4 py-2">Vehicle</th>
                           <th className="border border-gray-300 px-4 py-2">Plate Number</th>
@@ -886,22 +974,22 @@ const Popup = ({ message, onClose }) => (
                   </thead>
 
                   <tbody>
-                    {pendingUsers.length > 0 ? (
-                      pendingUsers.map((user, index) => (
+                  {filteredPendingUsers.length > 0 ? (
+                      filteredPendingUsers.map((user, index)  => (
                         <tr key={user.id} className="border-b border-gray-200 hover:bg-gray-50 transition duration-150">
                           {selectedType === 'student' ? (
                             <>
-                              <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
-                              <td className="border border-gray-300 px-4 py-2">{user['Student Number']}</td>
-                              <td className="border border-gray-300 px-4 py-2">{user.Name}</td>
-                              <td className="border border-gray-300 px-4 py-2">{user.Email}</td>
-                              <td className="border border-gray-300 px-4 py-2">{user['Year and Section']}</td>
-                              <td className="border border-gray-300 px-4 py-2">{user.Course}</td>
-                              <td className="border border-gray-300 px-4 py-2">{user.Vehicle}</td>
-                              <td className="border border-gray-300 px-4 py-2">{user['Plate Number']}</td>
+                              <td className="border border-gray-300 px-2 py-2">{index + 1}</td>
+                              <td className="border w-20 border-gray-300 px-2 py-2">{user['Student Number']}</td>
+                              <td className="border border-gray-300 px-2 py-2">{user.Name}</td>
+                              <td className="border border-gray-300 px-2 py-2">{user.Email}</td>
+                              <td className="border border-gray-300 px-2 py-2">{user['Year and Section']}</td>
+                              <td className="border border-gray-300 px-2 py-2">{user.Course}</td>
+                              <td className="border border-gray-300 px-2 py-2">{user.Vehicle}</td>
+                              <td className="border border-gray-300 px-2 py-2">{user['Plate Number']}</td>
 
                               {/* License Image */}
-                              <td className="border border-gray-300 px-4 py-2">
+                              <td className="border border-gray-300 px-2 py-2">
                                 {user.License ? (
                                   <img
                                     onClick={() => handleOpenModal(`data:image/png;base64,${user.License}`)}
@@ -944,19 +1032,24 @@ const Popup = ({ message, onClose }) => (
 
                               {/* Action Buttons */}
                               <td className="border border-gray-300 px-4 py-2">
-                                <button
-                                  onClick={() => handleApprove(user.id)}
-                                  className=" text-green-600 hover:text-green-900 transition duration-200"
-                                >
-                                  <FaCircleCheck className="h-6 w-6"/>
-                                </button>
+                                <div className="flex items-center justify-around space-x-2"> {/* Add a flex container for the buttons */}
+                                  <button
+                                    onClick={() => handleApprove(user.id)}
+                                    className="text-green-600 hover:text-green-900 transition duration-200"
+                                  >
+                                    <FaCircleCheck className="h-6 w-6" />
+                                  </button>
 
-                                <button
-                                  onClick={() => handleDeletePending(user.id)}
-                                  className="text-red-600 hover:text-red-900 transition duration-200"
-                                >
-                                  <MdDeleteForever className="h-8 w-8" />
-                                </button>
+                                  <button
+                                    onClick={() => {
+                                      setPendingDelete(true);
+                                      setIdPendingDelete({ userIdToDelete: user.id, userType: String(selectedUserType) });
+                                    }}
+                                    className="text-red-600 hover:text-red-900 transition duration-200"
+                                  >
+                                    <MdDeleteForever className="h-8 w-8" />
+                                  </button>
+                                </div>
                               </td>
                             </>
                           ) : (
@@ -1000,19 +1093,23 @@ const Popup = ({ message, onClose }) => (
 
                               {/* Action Buttons */}
                               <td className="border border-gray-300 px-4 py-2">
-                                <button
-                                  onClick={() => handleApprove(user.id)}
-                                  className=" text-green-600 hover:text-green-900 transition duration-200"
-                                >
-                                  <FaCircleCheck className="h-6 w-6"/>
-                                </button>
+                                <div className="flex items-center justify-around space-x-2"> {/* Add a flex container for the buttons */}
+                                  <button
+                                    onClick={() => handleApprove(user.id)}
+                                    className="text-green-600 hover:text-green-900 transition duration-200"
+                                  >
+                                    <FaCircleCheck className="h-6 w-6" />
+                                  </button>
 
-                                <button
-                                  onClick={() => handleDeletePending(user.id)}
-                                  className="text-red-600 hover:text-red-900 transition duration-200"
-                                >
-                                  <MdDeleteForever className="h-8 w-8" />
-                                </button>
+                                  <button
+                                    onClick={() => {
+                                      setPendingDelete(true);
+                                      setIdPendingDelete({ userIdToDelete: user.id, userType: String(selectedUserType) })}}
+                                    className="text-red-600 hover:text-red-900 transition duration-200"
+                                  >
+                                    <MdDeleteForever className="h-8 w-8" />
+                                  </button>
+                                </div>
                               </td>
                             </>
                           )}
@@ -1037,43 +1134,106 @@ const Popup = ({ message, onClose }) => (
             />
           )}
 
-      {isModalVisible && (
-        <div className="fixed z-40 inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-lg font-semibold mb-4">Confirmation</h2>
-            <p>Are you sure you want to delete this user?</p>
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={() => setModalVisible(false)}
-                className="mr-2 px-4 py-2 bg-gray-300 rounded"
-              >
-                No
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded"
-              >
-                Yes
+        {pendingDelete && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-lg font-semibold mb-4">Confirmation</h2>
+              <p>Are you sure you want to delete pending this user?</p>
+              <div className="mt-4 flex justify-around">
+                <button
+                  onClick={() => setPendingDelete(false)}
+                  className="mr-2 px-4 py-2 bg-gray-300 rounded"
+                >
+                  No
+                </button>
+                <button
+                  onClick={() => confirmDelete(idPendingDelete.userIdToDelete, String(idPendingDelete.userType))}
+                  className="px-4 py-2 bg-red-500 text-white rounded"
+                >
+                  Yes
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {approveDelete && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-lg font-semibold mb-4">Confirmation</h2>
+              <p>Are you sure you want to delete this user?</p>
+              <div className="mt-4 flex justify-around">
+                <button
+                  onClick={() => setApproveDelete(false)}
+                  className="mr-2 px-4 py-2 bg-gray-300 rounded"
+                >
+                  No
+                </button>
+                <button
+                  onClick={() => handleDelete(idApproveDelete.userId, String(idApproveDelete.userType))}
+                  className="px-4 py-2 bg-red-500 text-white rounded"
+                >
+                  Yes
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {deleteSuccess && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white flex flex-col items-center text-center rounded-lg shadow-lg p-5">
+            <FaRegCircleCheck className="w-12 text-green-500 h-12"/>
+            <p>Deleted Successfully.</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setDeleteSuccess(false)}>
+                Cancel
               </button>
             </div>
           </div>
         </div>
-      )}
+        )}
 
-      {/* Popup Message */}
-      {isPopupVisible && (
-        <div className="fixed z-40 top-0 left-0 right-0 mt-4 flex justify-center">
-          <div className="bg-white p-4 rounded-lg shadow-lg">
-            <p>{popupMessage}</p>
-            <button
-              onClick={() => setIsPopupVisible(false)}
-              className="mt-2 px-4 py-2 bg-gray-300 rounded"
-            >
-              Close
-            </button>
+        {/* Modal for approval confirmation */}
+        {approveMessage && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
+            <div className="bg-white h-60 flex flex-col justify-around p-6 rounded-lg shadow-lg">
+              <div>
+                <p className="text-xl text-center">Approval</p>
+                <p>Are you sure you want to approve this user?</p>
+              </div>
+              <div className="w-full flex justify-between">
+                <button onClick={confirmApprove} className="p-2 bg-green-500 rounded w-1/3 text-white">Yes</button>
+                <button onClick={cancelApprove} className="p-2 bg-gray-500 rounded w-1/3 text-white">No</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Display the message popup after approval */}
+        {isPopupVisible && (
+          <div className="popup-message">
+            {popupMessage}
+          </div>
+        )}
+
+        {logoutMessage && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white text-center rounded-lg shadow-lg p-5">
+            <h2 className="text-lg font-semibold mb-4">Confirm Logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setLogoutMessage(false)}>
+                Cancel
+              </button>
+              <button className="px-4 py-2 bg-red-600 text-white rounded" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
           </div>
         </div>
-      )}
+        )}
+
         </div>
       </div>
       </div>

@@ -91,7 +91,7 @@ export default function AdminDashboard() {
             </Link>
             <Link to="/adminparkingslot" className="group no-underline h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
               <li className="group-hover:text-white text-lg text-blue-700 tracking-widest flex items-center w-full lg:text-sm xl:text-lg ml-5">
-              <BsCreditCard2Front /> <span className="ml-5">Parking Slots</span>
+              <BsTaxiFront /> <span className="ml-5">Parking Slots</span>
               </li>
             </Link>
             <Link to="/adminreport" className="group no-underline w-full h-12 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">

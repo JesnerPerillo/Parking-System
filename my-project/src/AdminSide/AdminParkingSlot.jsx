@@ -11,18 +11,19 @@ import QRScanner from '../components/QRScanner.jsx';
 import { BrowserMultiFormatReader } from '@zxing/library';
 import Beep from '../Pictures/beep.png';
 import { MdTimerOff, MdTimer, MdDeleteForever, MdOutlineFileDownload  } from "react-icons/md";
-import { FaUserEdit } from "react-icons/fa";
+import { FaUserEdit, FaUsers } from "react-icons/fa";
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import GSO from '../Pictures/gsoo.png';
 import { IoEyeOff, IoEye } from "react-icons/io5";
-import { FaUsers } from "react-icons/fa";
+import { FaChalkboardUser, FaRegCircleCheck } from "react-icons/fa6";
 
 export default function AdminParkingSlot() {
   const [userData, setUserData] = useState('');
   const [error, setError] = useState('');
   const [selectedUserType, setSelectedUserType] = useState('student');
   const [selectedVehicle, setSelectedVehicle] = useState('motorcycle');
+  const [selectedSlotNumber, setSelectedSlotNumber] = useState(1);
   const [licenseSrc, setLicenseSrc] = useState(null);
   const [orcrSrc, setOrcrSrc] = useState(null);
   const [corSrc, setCorSrc] = useState(null);
@@ -38,6 +39,13 @@ export default function AdminParkingSlot() {
   const streamRef = useRef(null);
   const [reader, setReader] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [timeinConfirm, setTimeinConfirm] = useState(false);
+  const [timeinSuccess, setTimeinSuccess] = useState(false);
+  const [timeoutConfirm, setTimeoutConfirm] = useState(false);
+  const [timeoutSuccess, setTimeoutSuccess] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmDeleteUserType, setConfirmDeleteUserType] = useState('');
+  const [confirmDeleteSuccess, setconfirmDeleteSuccess] = useState(false);
   const [occupiedSpots, setOccupiedSpots] = useState({
     motorcycle: [],
     tricycle: [],
@@ -49,6 +57,30 @@ export default function AdminParkingSlot() {
   const [logs, setLogs] = useState([]);
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [logoutMessage, setLogoutMessage] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/adminfetchdata.php', {
+          withCredentials: true,
+        });
+
+        if (response.data.success) {
+          setUserData(response.data.data);
+        } else {
+          setError(response.data.message || 'No data found for the logged-in user.');
+          navigate('/');
+        }
+      } catch (error) {
+        setError('Error fetching data: ' + error.message);
+        console.error('Error fetching data: ', error);
+        navigate('/');
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const togglePassword = () => {
     setShowPassword(!showPassword);
@@ -165,7 +197,6 @@ export default function AdminParkingSlot() {
         alert('Error updating account. Please try again.');
     }
 };
-  
 
   const handleOpenModal = (src) => {
     setModalImageSrc(src);
@@ -232,13 +263,20 @@ export default function AdminParkingSlot() {
         const fetchUrl = selectedUserType === 'faculty'
           ? 'https://skyblue-clam-769210.hostingersite.com/fetchfacultydata.php'
           : 'https://skyblue-clam-769210.hostingersite.com/fetchstudentsdata.php';
-    
+  
         const response = await axios.get(fetchUrl, { withCredentials: true });
-    
+  
         if (response.data.success) {
           const data = selectedUserType === 'faculty' ? response.data.faculty : response.data.students;
-          const userData = data.find(user => user.slot_number === spotNumberStr);
-    
+          
+          console.log(data); // Log data to inspect its structure
+          console.log(`Selected Vehicle Type: ${selectedVehicle}`);
+  
+          const userData = data.find(user => {
+            console.log(`Checking user: ${user.fullname}, Slot: ${user.slot_number}, Vehicle: ${user.slot_type}`);
+            return user.slot_number === spotNumberStr && user.slot_type === selectedVehicle;
+          });
+  
           if (userData) {
             setPopupData(userData);
             setLicenseSrc(userData.License ? `data:image/jpeg;base64,${userData.License}` : null);
@@ -259,6 +297,7 @@ export default function AdminParkingSlot() {
       }
     }
   };
+  
 
   const categories = selectedUserType === 'student' ? {
     motorcycle: { count: 500, color: 'bg-green-500' },
@@ -266,7 +305,6 @@ export default function AdminParkingSlot() {
     fourwheeler: { count: 40, color: 'bg-green-500' }
   } : {
     motorcycle: { count: 110, color: 'bg-yellow-400' },
-    tricycle: { count: 0, color: 'bg-orange-500' },
     fourwheeler: { count: 25, color: 'bg-yellow-400' }
   };
   
@@ -301,40 +339,39 @@ export default function AdminParkingSlot() {
   };
 
   const handleDelete = async (userType) => {
-
-    const isConfirmed = window.confirm('Are you sure you want to delete this user?');
-
-    if (!isConfirmed) {
-      return;
-    }
     try {
-      // Log the data being sent
-      console.log('Sending request with:', { id: popupData.id });
-      
-      // Send POST request
-      const response = await axios.post('https://skyblue-clam-769210.hostingersite.com/delete.php', 
-        { 
-          id: popupData.id,
-          userType: userType // Include userType to help PHP determine which table to use
-        }, 
-        { 
-          withCredentials: true,
-          headers: { 'Content-Type': 'application/json' } // Ensure the content type is correct
+        if (!popupData || !popupData.id) {
+            alert('User ID is missing.');
+            return;
         }
-      );
-  
-      // Handle the response
-      console.log('Response data:', response.data);
-      if (response.data.success) {
-        alert('User deleted successfully.');
-        setPopupData(null);
-      } else {
-        alert('Failed to delete user: ' + response.data.message);
-      }
+        
+        console.log('Sending request with:', { id: popupData.id, userType });
+
+        const response = await axios.post('https://skyblue-clam-769210.hostingersite.com/delete.php', 
+            { 
+                id: popupData.id,
+                userType: userType
+            }, 
+            { 
+                withCredentials: true,
+                headers: { 'Content-Type': 'application/json' }
+            }
+        );
+
+        console.log('Response data:', response.data);
+        if (response.data.success) {
+            setconfirmDeleteSuccess(true);
+            setConfirmDelete(false);
+            setPopupData(null);
+        } else {
+            alert('Failed to delete user: ' + (response.data.message || 'Unknown error'));
+        }
     } catch (error) {
-      alert('Error deleting user: ' + error.message);
+        console.error('Error deleting user:', error);
+        alert('Error deleting user: ' + (error.response ? error.response.data.message : error.message));
     }
-  };
+};
+
   
 
   const updateTime = async (userType, id, timeIn, timeOut) => {
@@ -440,7 +477,9 @@ const handleTimeIn = async () => {
   }
   const timeIn = formatAMPM(new Date().toTimeString().substring(0, 5)); // Get current time in "HH:mm" format
   await updateTime(userType, userId, timeIn, ''); // Pass the formatted time
-  alert('Time In recorded successfully!');
+  setTimeinSuccess(true);
+  setTimeinConfirm(false);
+  setPopupData(false);
 };
 
 // Function to handle Time Out for both students and faculty
@@ -453,7 +492,9 @@ const handleTimeOut = async () => {
   }
   const timeOut = formatAMPM(new Date().toTimeString().substring(0, 5)); // Get current time in "HH:mm" format
   await updateTime(userType, userId, '', timeOut); // Pass the formatted time
-  alert('Time Out recorded successfully!');
+  setTimeoutSuccess(true);
+  setTimeoutConfirm(false);
+  setPopupData(false);
 };
 
 const handleCloseModalQR = () => {
@@ -477,7 +518,10 @@ const onScanSuccess = async (slotType, slotNumber) => {
       const data = selectedUserType === 'faculty' ? response.data.faculty : response.data.students;
       console.log('Fetched user data:', data);
       
-      const userData = data.find(user => user.slot_number === slotNumber);
+      // Find user based on both slot type and slot number
+      const userData = data.find(user => 
+        user.slot_number === slotNumber && user.slot_type === slotType
+      );
 
       if (userData) {
         setPopupData(userData);
@@ -501,6 +545,7 @@ const onScanSuccess = async (slotType, slotNumber) => {
 };
 
 
+
 // Function to handle QR code scan and parse the data
 const handleQRCodeScan = (qrCodeData) => {
   const { slot_type, slot_number } = qrCodeData;
@@ -512,7 +557,6 @@ const handleQRCodeScan = (qrCodeData) => {
   }
 };
 
-// Handle internal QR code scan result
 // Handle internal QR code scan result
 const handleScanSuccessInternal = (result) => {
   if (result && result.text) {
@@ -688,6 +732,42 @@ useEffect(() => {
       console.error('Error fetching logs:', error);
     }
   };
+
+  const sortLogs = (logs) => {
+    return logs.sort((a, b) => {
+      // Default sorting by created_at if no search term
+      if (!searchTerm) {
+        return new Date(b.created_at) - new Date(a.created_at);
+      }
+
+      // Sorting logic based on search term and user type
+      if (searchTerm) {
+        // Compare based on search term and fields
+        const term = searchTerm.toLowerCase();
+        const aMatches = 
+          a.Name.toLowerCase().includes(term) ||
+          a.Email.toLowerCase().includes(term) ||
+          a['Student Number']?.toLowerCase().includes(term) ||
+          a.user_type?.toLowerCase().includes(term) ||
+          new Date(a['Time In']).toLocaleTimeString().toLowerCase().includes(term) ||
+          new Date(a.created_at).toLocaleDateString().toLowerCase().includes(term);
+
+        const bMatches = 
+          b.Name.toLowerCase().includes(term) ||
+          b.Email.toLowerCase().includes(term) ||
+          b['Student Number']?.toLowerCase().includes(term) ||
+          b.user_type?.toLowerCase().includes(term) ||
+          new Date(b['Time In']).toLocaleTimeString().toLowerCase().includes(term) ||
+          new Date(b.created_at).toLocaleDateString().toLowerCase().includes(term);
+
+        if (aMatches && !bMatches) return -1;
+        if (!aMatches && bMatches) return 1;
+      }
+
+      return 0; // No sorting if neither a nor b matches the term
+    });
+  };
+
   
   const [popupVisible, setIsPopupVisible] = useState(false);
   const [selectedSelection, setSelectedSelection] = useState('');
@@ -756,116 +836,171 @@ useEffect(() => {
     }
   };
 
+  const [vehicleCountOpen, setVehicleCountOpen] = useState(false);
+  const [vehicleUserType, setVehicleUserType] = useState('student');
+  const [confirmUpdateCount, setConfirmUpdateCount] = useState(false);
+  const [updateCountMessage, setUpdateCountMessage] = useState(false);
+  const [vehicleCounts, setVehicleCounts] = useState({
+    motorcycle: 0,
+    tricycle: 0,
+    fourwheeler: 0,
+  });
+  const [newCounts, setNewCounts] = useState({
+    motorcycle: '',
+    tricycle: '',
+    fourwheeler: '',
+  });
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/adminfetchdata.php', {
-          withCredentials: true,
-        });
+    // Fetch the current vehicle counts based on selected user type (student/faculty)
+    fetchVehicleCounts();
+  }, [vehicleUserType]);
 
-        if (response.data.success) {
-          setUserData(response.data.data);
-        } else {
-          setError(response.data.message || 'No data found for the logged-in user.');
-          navigate('/');
+  const fetchVehicleCounts = async () => {
+    try {
+      const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/admingetvehiclecount.php', {
+        withCredentials: true, // To handle session cookies
+      });
+
+      if (response.data.success) {
+        const { studentCounts, facultyCounts } = response.data; // Adjusted according to your backend response
+
+        // Set vehicle counts based on user type
+        if (vehicleUserType === 'student') {
+          setVehicleCounts({
+            motorcycle: studentCounts.motorcycle || 0,
+            tricycle: studentCounts.tricycle || 0,
+            fourwheeler: studentCounts.fourwheeler || 0,
+          });
+        } else if (vehicleUserType === 'faculty') {
+          setVehicleCounts({
+            motorcycle: facultyCounts.motorcycle || 0,
+            tricycle: 0, // No tricycle for faculty
+            fourwheeler: facultyCounts.fourwheeler || 0,
+          });
         }
-      } catch (error) {
-        setError('Error fetching data: ' + error.message);
-        console.error('Error fetching data: ', error);
-        navigate('/');
+      } else {
+        alert(response.data.message);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching vehicle counts:", error);
+    }
+  };
 
-    fetchData();
-  }, []);
+  const handleUserTypeChange = (e) => {
+    setVehicleUserType(e.target.value);
+  };
+
+  const handleChangeVehicleCount = async () => {
+    try {
+        const response = await axios.post('https://skyblue-clam-769210.hostingersite.com/adminupdatevehiclecount.php', {
+            vehicleUserType: String(vehicleUserType), // Ensure this is a string
+            motorcycle: Number(newCounts.motorcycle) || vehicleCounts.motorcycle, // Ensure this is a number
+            tricycle: vehicleUserType === 'student' ? (Number(newCounts.tricycle) || vehicleCounts.tricycle) : 0, // Ensure this is a number and default to 0 if not a student
+            fourwheeler: Number(newCounts.fourwheeler) || vehicleCounts.fourwheeler, // Ensure this is a number
+        }, { withCredentials: true });
+
+        // Check if response data has success property
+        if (response.data && response.data.success) {
+            setUpdateCountMessage(true);
+            setConfirmUpdateCount(false);
+            setVehicleCountOpen(false);
+            fetchVehicleCounts(); // Refresh the counts after successful update
+        } else {
+            // Provide more informative error messages
+            alert(response.data.message || "An unexpected error occurred.");
+        }
+    } catch (error) {
+        console.error("Error updating vehicle counts:", error);
+        alert("An error occurred while updating vehicle counts. Please check the console for details.");
+    }
+};
+
+  
 
 
   return (
     <div className="relative w-full h-screen bg-blue-700 flex">
       <button
-          className="lg:hidden bg-white text-blue-700 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-10"
+          className="lg:hidden bg-white text-blue-700 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-50"
           onClick={toggleNav}
         >
           {isNavOpen ? '✕' : '☰'}
         </button>
 
-        <nav
-          className={`bg-white z-20 absolute inset-y-0 left-0 transform lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-md:flex max-md:flex-col max-md:items-center md:flex md:flex-col md:items-center ${
-            isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'
-          }`}
-        >
-          <div className="border-b-2 border-blue-700 w-full h-40 text-blue-700 flex flex-col items-center justify-center text-xl tracking-wider">
-          <img src={GSO} className="w-24 h-24" />
-          <h1 className="text-bold text-4xl tracking-widest">PARKING SYSTEM</h1>
-        </div>
-        <div className="flex flex-col justify-evenly w-full h-2/4 relative">
-            <Link to="/admindashboard" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+        <nav className={`bg-white z-40 rounded-r-2xl drop-shadow-2xl absolute inset-y-0 left-0 transform xl:w-1/5 lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
+          <div className=" w-full h-40 text-blue-700 flex flex-col items-center justify-center text-xl tracking-wider">
+              <img src={GSO} className="w-24 h-24" />
+              <h1 className="text-2xl tracking-widest lg:text-sm xl:text-2xl">PARKING SYSTEM</h1>
+            </div>
+          <div className="flex w-full flex-col justify-evenly h-2/4 relative">
+            <Link to="/admindashboard" className="group no-underline h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-lg text-blue-700 tracking-widest flex items-center w-full lg:text-sm xl:text-lg ml-5">
               <BsCreditCard2Front /> <span className="ml-5">Dashboard</span>
               </li>
             </Link>
-            <Link to="/adminparkingslot" className="group no-underline h-16 flex items-center pl-8 bg-blue-700 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-base xl:text-2xl ml-5">
-              <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
+            <Link to="/adminparkingslot" className="group no-underline h-14 flex items-center pl-8 bg-blue-700 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white border-l-2 border-white pl-5 text-lg text-white tracking-widest flex items-center w-full lg:text-sm xl:text-lg ml-5">
+              <BsTaxiFront /> <span className="ml-5">Parking Slots</span>
               </li>
             </Link>
-            <Link to="/adminreport" className="group no-underline w-full h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/adminreport" className="group no-underline w-full h-12 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-lg text-blue-700 tracking-widest flex items-center w-full lg:text-sm xl:text-lg ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Report</span>
               </li>
             </Link>
-            <Link to="/adminaccount" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/adminaccount" className="group no-underline h-12 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-lg text-blue-700 tracking-widest flex items-center w-full lg:text-sm xl:text-lg ml-5">
               <BsQuestionSquare /> <span className="ml-5">Account</span>
               </li>
             </Link>
-            <Link to="/adminuserlist" className="group no-underline h-16 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-2xl ml-5">
+            <Link to="/adminuserlist" className="group no-underline h-12 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
+              <li className="group-hover:text-white text-lg text-blue-700 tracking-widest flex items-center w-full lg:text-sm xl:text-lg ml-5">
               <FaUsers /> <span className="ml-5">User List</span>
               </li>
             </Link>
-        </div>
-        <button className="w-full bg-blue-900 h-14 text-red-600 font-semibold tracking-widest text-2xl bg-white flex items-center justify-center" onClick={handleLogout}>
-          <span className="hover:text-white hover:bg-red-600 flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut className="rotate-180 mr-2"/>Logout</span>
-        </button>
-      </nav>
+          </div>
+          <button className="w-full bg-blue-900 h-12 text-red-600 font-semibold tracking-widest text-lg bg-white flex items-center justify-center" onClick={() => setLogoutMessage(true)}>
+            <span className="hover:text-white hover:bg-red-600 flex items-center justify-center w-full h-full transition ease-linear duration-200"><FiLogOut className="rotate-180 mr-2"/>Logout</span>
+          </button>
+        </nav>
 
       {/* Main Content */}
       <div className="w-full h-screen bg-blue-700">
         <div className="w-full h-20 flex justify-end items-end border-b-2">
-          <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slots</p>
+          <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slot</p>
         </div>
         <div className="w-full h-9/10.5 flex flex-col overflow-auto">
           <div onScanSuccess={handleQRCodeScan} className="mt-10 flex flex-col md:flex-row items-center justify-evenly w-full space-y-4 md:space-y-0">
           <div className="bg-gray-700 border text-white p-8 rounded-lg shadow-md w-full max-w-md">
-      <h1 className="text-3xl font-bold mb-6 text-center">QR Code Scanner</h1>
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Upload QR Code Image</h2>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileUpload}
-          className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none"
-        />
-        {imageFile && <p className="mt-2 text-sm">Image file selected: {imageFile.name}</p>}
-        <p className="mt-2 text-sm">{scanResult}</p>
-      </div>
-      <div className="text-center mb-3"> - OR - </div>
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Scan QR Code with Camera</h2>
-        {!scanning ? (
-          <button
-            onClick={() => setScanning(true)}
-            className="w-full bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
-          >
-            Start Scanning
-          </button>
-        ) : (
-          <p className="text-center">Scanning...</p>
-        )}
-        <video ref={videoRef} style={{ width: '100%', height: 'auto' }}></video>
-      </div>
-    </div>
+          <h1 className="text-3xl font-bold mb-6 text-center">QR Code Scanner</h1>
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-2">Upload QR Code Image</h2>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none"
+            />
+            {imageFile && <p className="mt-2 text-sm">Image file selected: {imageFile.name}</p>}
+            <p className="mt-2 text-sm">{scanResult}</p>
+          </div>
+          <div className="text-center mb-3"> - OR - </div>
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold mb-2">Scan QR Code with Camera</h2>
+            {!scanning ? (
+              <button
+                onClick={() => setScanning(true)}
+                className="w-full bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
+              >
+                Start Scanning
+              </button>
+            ) : (
+              <p className="text-center">Scanning...</p>
+            )}
+            <video ref={videoRef} style={{ width: '100%', height: 'auto' }}></video>
+          </div>
+        </div>
             <div className="w-1/2 h-auto flex relative">
               {isNavOpen ? '' : <img src={Beep} alt="Beep Vehicle Image" className="drop-shadow-2xl w-full md:w-2/3" />}
             </div>
@@ -1001,17 +1136,22 @@ useEffect(() => {
           <div className="w-full h-full mt-6">
             <div className="bg-gray-700 w-full p-4 h-auto md:h-full border-2 rounded">
               <div className="mb-4 flex flex-col md: space-y-4 md:space-y-0">
-                <div className="relative flex flex-col mb-2 md:flex-row items-center">
-                  <label className="mr-4 text-white">Select User Type:</label>
-                  <select
-                    onChange={(e) => setSelectedUserType(e.target.value)}
-                    className="p-2 w-full md:w-40 bg-blue-200 rounded text-blue-900 font-semibold"
-                    value={selectedUserType}
-                  >
-                    <option value="student">Student</option>
-                    <option value="faculty">Faculty</option>
-                  </select>
-                  <button onClick={fetchLogs} className="block mt-3 sm:absolute right-0 bg-gray-400 w-40 h-10 rounded text-white tracking-widest">Logs</button>
+                <div className="relative flex flex-col mb-2 md:flex-row items-center justify-between">
+                  <div>
+                    <label className="mr-4 text-white">Select User Type:</label>
+                    <select
+                      onChange={(e) => setSelectedUserType(e.target.value)}
+                      className="p-2 w-full md:w-40 bg-blue-200 rounded text-blue-900 font-semibold"
+                      value={selectedUserType}
+                    >
+                      <option value="student">Student</option>
+                      <option value="faculty">Faculty</option>
+                    </select>
+                  </div>
+                  <div className="flex items-center mt-3">
+                    <button onClick={() => setVehicleCountOpen(true)} className="w-40 h-10 bg-blue-700 rounded text-white">Vehicle Count</button>
+                    <button onClick={fetchLogs} className="block ml-3 bg-gray-400 w-40 h-10 rounded text-white tracking-widest">Logs</button>
+                  </div>
                 </div>
                 <div className="flex flex-col md:flex-row items-center">
                   <label className="mr-4 text-white">Select Vehicle Type:</label>
@@ -1027,6 +1167,8 @@ useEffect(() => {
                 </div>
               </div>
               <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-4 text-white">
+
+                {/*Rendering Spots */}
                 {renderSpots(categories[selectedVehicle].count, categories[selectedVehicle].color, selectedVehicle)}
               </div>
             </div>
@@ -1042,7 +1184,6 @@ useEffect(() => {
           <div className="text-sm md:text-base">
             {selectedUserType === 'student' ? (
               <div>
-                <p><strong>Student ID:</strong> {popupData.id || 'N/A'}</p>
                 <p><strong>Student Number:</strong> {popupData['Student Number'] || 'N/A'}</p>
                 <p><strong>Name:</strong> {popupData.Name || 'N/A'}</p>
                 <p><strong>Email:</strong> {popupData.Email || 'N/A'}</p>
@@ -1054,8 +1195,8 @@ useEffect(() => {
               </div>
             ) : (
               <div>
-                <p><strong>Name:</strong> {popupData.Name || 'N/A'}</p>
                 <p><strong>Employee Id:</strong> {popupData['Employee Id'] || 'N/A'}</p>
+                <p><strong>Name:</strong> {popupData.Name || 'N/A'}</p>
                 <p><strong>Email:</strong> {popupData.Email || 'N/A'}</p>
                 <p><strong>Position:</strong> {popupData.Position || 'N/A'}</p>
                 <p><strong>Building:</strong> {popupData.Building || 'N/A'}</p>
@@ -1152,13 +1293,13 @@ useEffect(() => {
             <div className="w-full flex flex-col md:flex-row items-center justify-evenly mt-16">
               <button
                 className="p-2 flex justify-center items-center w-full md:w-48 bg-green-500 text-white text-lg md:text-xl rounded hover:bg-green-700 mb-4 md:mb-0"
-                onClick={handleTimeIn}
+                onClick={() => setTimeinConfirm(true)}
               >
                 Time In <MdTimer className="ml-3"/>
               </button>
               <button
                 className="p-2 flex justify-center items-center w-full md:w-48 bg-red-500 text-white text-lg md:text-xl rounded hover:bg-red-700 mb-4 md:mb-0"
-                onClick={handleTimeOut}
+                onClick={() => setTimeoutConfirm(true)}
               >
                 Time Out <MdTimerOff className="ml-3"/>
               </button>
@@ -1189,16 +1330,21 @@ useEffect(() => {
               Edit <FaUserEdit className="ml-3"/>
             </button> : <button
               className="mt-2 flex justify-center items-center md:mt-4 w-full md:w-1/3 p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-              onClick={() => {setIsEditModalOpen(true);
+              onClick={() => {
+                setIsEditModalOpen(true);
               }}
             >
-              Edit <FaUserEdit className="ml-3"/>
+              Edit <FaUserEdit className="ml-3" />
             </button>}
             {selectedUserType === 'student' ? 
-              <button className="mt-2 flex justify-center items-center md:mt-4 w-full md:w-1/3 p-2 bg-red-500 text-white rounded hover:bg-red-700" onClick={() => handleDelete('student')}>
+              <button className="mt-2 flex justify-center items-center md:mt-4 w-full md:w-1/3 p-2 bg-red-500 text-white rounded hover:bg-red-700" onClick={() => {
+                setConfirmDelete(true); 
+                setConfirmDeleteUserType('student')}}>
                 Delete Student <MdDeleteForever className="ml-3"/>
               </button> :
-              <button className="mt-2 flex justify-center items-center md:mt-4 w-full md:w-1/3 p-2 bg-red-500 text-white rounded hover:bg-red-700" onClick={() => handleDelete('faculty')}>
+              <button className="mt-2 flex justify-center items-center md:mt-4 w-full md:w-1/3 p-2 bg-red-500 text-white rounded hover:bg-red-700" onClick={() => {
+                setConfirmDelete(true); 
+                setConfirmDeleteUserType('faculty')}}>
                 Delete Faculty <MdDeleteForever className="ml-3"/>
               </button>
             }
@@ -1213,7 +1359,7 @@ useEffect(() => {
       </div>
       
       )}
-      {isEditModalOpen && (
+      {isEditModalOpen &&(
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30 max-sm:w-full">
         <div className="bg-opacity-50 p-2 rounded-lg max-sm:h-full max-sm:w-full overflow-auto">
           {selectedUserType === 'student' ? (<form onSubmit={(e) => handleSubmit(e, 'student')} encType="multipart/form-data" className="flex flex-col w-full gap-3 float:right h-auto max-w-3xl p-6 rounded-2xl relative bg-gray-900 text-white border border-gray-700 max-sm:w-full sm:p-5">
@@ -1222,24 +1368,24 @@ useEffect(() => {
               </p>
             <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
               <label className="relative w-full">
-                <input name="studentNumber" value={formData.studentNumber} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" "required/>
+                <input name="studentNumber" value={formData[selectedUserType].studentNumber} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" "required/>
                 <span className="text-gray-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Student Number</span>
               </label>
               <label className="relative w-full">
-                <input name="fullname" value={formData.fullname} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                <input name="fullname" value={formData[selectedUserType].fullname} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
                 <span className="text-gray-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">FullName</span>
               </label>
             </div>
             <label className="relative">
-              <input name="email" value={formData.email} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="email" placeholder=" " required />
+              <input name="email" value={formData[selectedUserType].email} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="email" placeholder=" " required />
               <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Email</span>
             </label>
             <label className="relative">
-              <input name="yearsection" value={formData.yearsection} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+              <input name="yearsection" value={formData[selectedUserType].yearsection} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
               <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Year & Section</span>
             </label>
             <label className="relative">
-              <select name="course" value={formData.course} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5 sm:overflow-auto" type="text" placeholder=" " required >
+              <select name="course" value={formData[selectedUserType].course} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5 sm:overflow-auto" type="text" placeholder=" " required >
               <option value="" disabled selected hidden>Course</option>
               <option>BS Civil Engineering</option>
               <option>BS Computer Engineering</option>
@@ -1271,17 +1417,17 @@ useEffect(() => {
             </label>
             <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
               <label className="relative w-full">
-                <select name="vehicleType" value={formData.vehicleType} onChange={handleChange} className="placeholder:text-gray-400 w-full bg-gray-800 text-red-500 py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" disabled required>
+                <select name="vehicleType" value={formData[selectedUserType].vehicleType} onChange={handleChange} className="placeholder:text-gray-400 w-full bg-gray-800 text-red-500 py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" disabled required>
                   <option>{popupData.Vehicle}</option>
                 </select>
               </label>
               <label className="relative w-full">
-                <input name="plateNumber" value={formData.plateNumber} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                <input name="plateNumber" value={formData[selectedUserType].plateNumber} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
                 <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Plate Number</span>
               </label>
             </div>
             <label className="relative">
-              <input name="password" value={formData.password} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type={showPassword ? 'text' : 'password'} placeholder=" " required />
+              <input name="password" value={formData[selectedUserType].password} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type={showPassword ? 'text' : 'password'} placeholder=" " required />
               <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Password</span>
               <button type="button" onClick={togglePassword} className="absolute right-5 top-4">
                 {showPassword ? <IoEyeOff className="w-6 h-6" /> : <IoEye className="w-6 h-6" />}
@@ -1309,6 +1455,8 @@ useEffect(() => {
               </button>
               <button
                 type="submit"
+                onClick={console.log('selectedUserType:', selectedUserType)
+                }
                 className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded w-1/2"
               >
                 Save Changes
@@ -1322,39 +1470,39 @@ useEffect(() => {
                 </p>
                 <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
                   <label className="relative w-full">
-                    <input name="employeeId" value={formData.employeeId}  onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                    <input name="employeeId" value={formData[selectedUserType].employeeId}  onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
                     <span className="text-gray-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Employee Id</span>
                   </label>
                   <label className="relative w-full">
-                    <input name="fullname" value={formData.fullname} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                    <input name="fullname" value={formData[selectedUserType].fullname} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
                     <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">FullName</span>
                   </label>
                 </div>
                 <label className="relative w-full">
-                    <input name="email" value={formData.email}  onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="email" placeholder=" " required />
+                    <input name="email" value={formData[selectedUserType].email}  onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="email" placeholder=" " required />
                     <span className="text-gray-400 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Email</span>
                   </label>
                 <label className="relative">
-                  <input name="position" value={formData.position} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                  <input name="position" value={formData[selectedUserType].position} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
                   <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Position</span>
                 </label>
                 <label className="relative">
-                  <input name="building" value={formData.building} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                  <input name="building" value={formData[selectedUserType].building} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
                   <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Building</span>
                 </label>
                 <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
                   <label className="relative w-full">
-                    <select name="vehicleType" value={formData.vehicleType} onChange={handleChange} className="placeholder:text-gray-400 w-full bg-gray-800 text-red-500 py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" disabled required>
+                    <select name="vehicleType" value={formData[selectedUserType].vehicleType} onChange={handleChange} className="placeholder:text-gray-400 w-full bg-gray-800 text-red-500 py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" disabled required>
                       <option>{popupData.Vehicle}</option>
                     </select>
                   </label>
                   <label className="relative w-full">
-                    <input name="plateNumber" value={formData.plateNumber} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
+                    <input name="plateNumber" value={formData[selectedUserType].plateNumber} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type="text" placeholder=" " required />
                     <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Plate Number</span>
                   </label>
                 </div>
                 <label className="relative">
-                  <input name="password" value={formData.password} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type={showPassword ? 'text' : 'password'} placeholder=" " required />
+                  <input name="password" value={formData[selectedUserType].password} onChange={handleChange} className="bg-gray-800 text-white w-full py-3 px-3.5 outline-none border border-gray-600 rounded-md peer sm:py-2 sm:px-2.5" type={showPassword ? 'text' : 'password'} placeholder=" " required />
                   <span className="text-gray-500 absolute left-3.5 top-3 transform -translate-y-1/2 transition-all duration-300 ease peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-sm peer-focus:top-3 peer-focus:text-xs peer-focus:text-cyan-500 sm:left-2.5 sm:text-xs">Password</span>
                   <button type="button" onClick={togglePassword} className="absolute right-5 top-4">
                     {showPassword ? <IoEyeOff className="w-6 h-6" /> : <IoEye className="w-6 h-6" />}
@@ -1389,6 +1537,231 @@ useEffect(() => {
         </div>
       </div>
       )}
+
+      {vehicleCountOpen && (
+        <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="admin-vehicle-count-form bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-xl font-bold text-center mb-4">Admin Vehicle Count Management</h2>
+
+            <div className="mb-4">
+              <label className="block mb-2">Select User Type:</label>
+              <select
+                value={vehicleUserType}
+                onChange={handleUserTypeChange}
+                className="p-2 border border-gray-300 rounded w-full"
+              >
+                <option value="student">Student</option>
+                <option value="faculty">Faculty</option>
+              </select>
+            </div>
+
+            <div className="vehicle-counts mb-4">
+              <h3 className="text-lg font-semibold mb-2">
+                Current Vehicle Counts for {vehicleUserType.charAt(0).toUpperCase() + vehicleUserType.slice(1)}
+              </h3>
+              <div className="flex justify-between">
+                <label>Motorcycle:</label>
+                <span>{vehicleCounts.motorcycle}</span>
+              </div>
+              {vehicleUserType === 'student' && (
+                <div className="flex justify-between">
+                  <label>Tricycle:</label>
+                  <span>{vehicleCounts.tricycle}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <label>Fourwheeler:</label>
+                <span>{vehicleCounts.fourwheeler}</span>
+              </div>
+            </div>
+
+            <h3 className="text-lg font-semibold mb-2">Update Vehicle Counts</h3>
+            <div className="mb-2">
+              <label className="block mb-1">Motorcycle:</label>
+              <input
+                type="number"
+                value={newCounts.motorcycle}
+                onChange={(e) => setNewCounts({ ...newCounts, motorcycle: e.target.value })}
+                placeholder="Enter new motorcycle count"
+                className="p-2 border border-gray-300 rounded w-full"
+              />
+            </div>
+            {vehicleUserType === 'student' && (
+              <div className="mb-2">
+                <label className="block mb-1">Tricycle:</label>
+                <input
+                  type="number"
+                  value={newCounts.tricycle}
+                  onChange={(e) => setNewCounts({ ...newCounts, tricycle: e.target.value })}
+                  placeholder="Enter new tricycle count"
+                  className="p-2 border border-gray-300 rounded w-full"
+                />
+              </div>
+            )}
+            <div className="mb-4">
+              <label className="block mb-1">Fourwheeler:</label>
+              <input
+                type="number"
+                value={newCounts.fourwheeler}
+                onChange={(e) => setNewCounts({ ...newCounts, fourwheeler: e.target.value })}
+                placeholder="Enter new fourwheeler count"
+                className="p-2 border border-gray-300 rounded w-full"
+              />
+            </div>
+
+            <button
+              onClick={() => setConfirmUpdateCount(true)}
+              className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-200"
+            >
+              Update Counts
+            </button>
+            <button className="mt-2 w-full py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition duration-200" onClick={() => setVehicleCountOpen(false)}>
+                Cancel
+              </button>
+          </div>
+        </div>
+      )}
+
+        {confirmUpdateCount && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white text-center rounded-lg shadow-lg p-5">
+            <h2 className="text-lg font-semibold mb-4">Confirm Update Vehicle Count</h2>
+            <p>Are you sure you want to update vehicle count?</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setConfirmUpdateCount(false)}>
+                Cancel
+              </button>
+              <button className="px-4 py-2 bg-green-500 text-white rounded" onClick={handleChangeVehicleCount}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+        )}
+
+        {updateCountMessage && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white flex flex-col items-center text-center rounded-lg shadow-lg p-5">
+            <FaRegCircleCheck className="w-12 text-green-500 h-12"/>
+            <p>Update Vehicle Count Successfully.</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setUpdateCountMessage(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+        )}    
+
+        {logoutMessage && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white text-center rounded-lg shadow-lg p-5">
+            <h2 className="text-lg font-semibold mb-4">Confirm Logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setLogoutMessage(false)}>
+                Cancel
+              </button>
+              <button className="px-4 py-2 bg-red-600 text-white rounded" onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+        )}
+
+        {timeinConfirm && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white text-center rounded-lg shadow-lg p-5">
+            <h2 className="text-lg font-semibold mb-4">Confirm Time in</h2>
+            <p>Are you sure you want to Time in?</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setTimeinConfirm(false)}>
+                Cancel
+              </button>
+              <button className="px-4 py-2 bg-green-500 text-white rounded" onClick={handleTimeIn}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+        )}
+
+        {timeinSuccess && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white flex flex-col items-center text-center rounded-lg shadow-lg p-5">
+            <FaRegCircleCheck className="w-12 text-green-500 h-12"/>
+            <p>Time in Successfully.</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setTimeinSuccess(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+        )}
+
+        {timeoutConfirm && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white text-center rounded-lg shadow-lg p-5">
+            <h2 className="text-lg font-semibold mb-4">Confirm Time Out</h2>
+            <p>Are you sure you want to Time out?</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setTimeoutConfirm(false)}>
+                Cancel
+              </button>
+              <button className="px-4 py-2 bg-red-500 text-white rounded" onClick={handleTimeOut}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+        )}
+
+        {timeoutSuccess && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white flex flex-col items-center text-center rounded-lg shadow-lg p-5">
+            <FaRegCircleCheck className="w-12 text-green-500 h-12"/>
+            <p>Time out Successfully.</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setTimeoutSuccess(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+        )}
+
+        {confirmDelete && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white text-center rounded-lg shadow-lg p-5">
+            <h2 className="text-lg font-semibold mb-4">Confirm Delete User</h2>
+            <p>Are you sure you want to Delete this user?</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setConfirmDelete(false)}>
+                Cancel
+              </button>
+              <button className="px-4 py-2 bg-red-500 text-white rounded" onClick={() => handleDelete(String(confirmDeleteUserType))}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+        )}
+
+        {confirmDeleteSuccess && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white flex flex-col items-center text-center rounded-lg shadow-lg p-5">
+            <FaRegCircleCheck className="w-12 text-green-500 h-12"/>
+            <p>Deleted Successfully.</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setconfirmDeleteSuccess(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+        )}
     </div>
   );
 }
