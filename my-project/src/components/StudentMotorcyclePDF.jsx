@@ -3,11 +3,16 @@ import axios from 'axios';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable'; // Import the autoTable plugin
 import { FaFilePdf } from "react-icons/fa";
+import GSO from '../Pictures/gsoo.png';
+import URS from '../Pictures/urs.png';
 
 export default function StudentMotorcyclePDF() {
   const [students, setStudents] = useState([]);
   const [error, setError] = useState('');
   const [vehicleCounts, setVehicleCounts] = useState({});
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [GSOImage, setGSOImage] = useState('');
+  const [URSImage, setURSImage] = useState('');
 
   useEffect(() => {
     const fetchStudentData = async () => {
@@ -45,15 +50,76 @@ export default function StudentMotorcyclePDF() {
     fetchStudentData();
   }, []);
 
+  useEffect(() => {
+    const loadImages = async () => {
+      const gsoResponse = await fetch(GSO);
+      const gsoBlob = await gsoResponse.blob();
+      const gsoUrl = URL.createObjectURL(gsoBlob);
+      setGSOImage(gsoUrl);
+
+      const ursResponse = await fetch(URS);
+      const ursBlob = await ursResponse.blob();
+      const ursUrl = URL.createObjectURL(ursBlob);
+      setURSImage(ursUrl);
+
+      setImagesLoaded(true);
+    };
+
+    loadImages();
+  }, []);
+
   const generatePDF = () => {
     const doc = new jsPDF();
+  
+    // Set the width and height of the images
+    const gsoImgWidth = 20; // Width for GSO image
+    const gsoImgHeight = 20; // Height for GSO image
+    const ursImgWidth = 15; // Width for URS image (slimmer)
+    const ursImgHeight = 20; // Height for URS image (slimmer)
+  
+    // Function to draw the header
+    const drawHeader = () => {
+      // Add URS image at the upper left corner
+      if (URSImage) {
+        doc.addImage(URSImage, 'PNG', 10, 10, ursImgWidth, ursImgHeight);
+      }
+  
+      // Add GSO image at the upper right corner
+      if (GSOImage) {
+        const gsoX = doc.internal.pageSize.getWidth() - gsoImgWidth - 10; // 10 units padding from the right
+        doc.addImage(GSOImage, 'PNG', gsoX, 10, gsoImgWidth, gsoImgHeight);
+      }
+  
+      const republicY = Math.max(ursImgHeight, gsoImgHeight) - 6; // Positioning the title very close to the images
+      doc.setFontSize(10); // Larger font for the university title
+      doc.text('Republic of the Philippines', doc.internal.pageSize.getWidth() / 2, republicY, { align: 'center' });
 
-    doc.text('Motorcycle Students Data', 10, 10);
-
+      const titleY = Math.max(ursImgHeight, gsoImgHeight); // Positioning the title very close to the images
+      doc.setFontSize(20); // Larger font for the university title
+      doc.text('University of Rizal System', doc.internal.pageSize.getWidth() / 2, titleY, { align: 'center' });
+  
+      // Set font size for smaller text
+      doc.setFontSize(12); // Smaller font for the campus and report titles
+      const campusY = titleY + 6; // Position Morong Campus text closer
+      doc.text('Morong Campus', doc.internal.pageSize.getWidth() / 2, campusY, { align: 'center' });
+  
+      const reportY = campusY + 8; // Position Student Parking Slot Report text closer
+      doc.text('Student Parking Slot Report', doc.internal.pageSize.getWidth() / 2, reportY, { align: 'center' });
+  
+      // Draw a horizontal line below the Student Parking Slot Report
+      const lineY = reportY + 4; // Position for the line
+      doc.line(10, lineY, doc.internal.pageSize.getWidth() - 10, lineY); // Draw line from left to right
+  
+      return lineY; // Return the Y position for the table
+    };
+  
+    // Track the starting Y position for the table
+    let startY = drawHeader(); // Call the drawHeader function and set the initial startY
+  
     // Define the columns and rows for the table
     const tableColumn = ["#", "Student Number", "Name", "Email", "Vehicle", "Plate Number", "Parking Slot"];
     const tableRows = [];
-
+  
     // Loop through students and push the data into rows
     students.forEach((student, index) => {
       const studentData = [
@@ -66,26 +132,40 @@ export default function StudentMotorcyclePDF() {
         student.slot_number,
       ];
       tableRows.push(studentData);
+  
+      // Check if the current position is close to the bottom of the page
+      if (doc.autoTable.previous.finalY + 10 >= doc.internal.pageSize.getHeight()) {
+        doc.addPage(); // Add a new page
+        startY = drawHeader(); // Redraw the header on the new page
+      }
     });
-
+  
     // Generate the table
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
-      startY: 20, // Starting position of the table
+      startY: startY + 10, // Start position of the table below the line
       theme: 'grid', // Optional: Use 'grid' for grid lines or 'striped' for alternating row colors
       headStyles: { fillColor: [0, 0, 102] }, // Header style
       styles: { fontSize: 10 }, // Optional: Adjust font size
     });
-
-    // Save the PDF
-    doc.save('Student-Motorcycle.pdf');
+  
+    // Create a Blob from the PDF and generate a URL
+    const pdfOutput = doc.output('blob');
+    const pdfUrl = URL.createObjectURL(pdfOutput);
+  
+    // Open the PDF in a new tab
+    window.open(pdfUrl, '_blank');
   };
+  
+  
 
   return (
     <div className="relative w-full h-full flex flex-col items-center">
       <span className="text-4xl mt-10">{vehicleCounts['Motorcycle'] || 0}/500</span>
-      <button className="w-full flex justify-center items-center h-1/4 bg-red-600 rounded text-white absolute bottom-0 mb-1" onClick={generatePDF}>Download File <FaFilePdf /></button>
+      <button className="w-full flex justify-center items-center h-1/4 bg-red-600 rounded text-white absolute bottom-0 mb-1" onClick={generatePDF}>
+        Download File <FaFilePdf />
+      </button>
     </div>
   );
 }

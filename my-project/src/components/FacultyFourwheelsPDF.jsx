@@ -48,29 +48,56 @@ export default function FacultyFourwheelsPDF() {
   const generatePDF = () => {
     const doc = new jsPDF();
   
-    // Add the logo at the upper left corner
-    doc.addImage(URS, 'png', 10, 5, 20, 30);
-    doc.addImage(GSO, 'png', 170, 5, 30, 30);
+    // Set the width and height of the images
+    const gsoImgWidth = 20; // Width for GSO image
+    const gsoImgHeight = 20; // Height for GSO image
+    const ursImgWidth = 15; // Width for URS image (slimmer)
+    const ursImgHeight = 20; // Height for URS image (slimmer)
   
-    // Calculate position to center the text
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const text = 'FourWheeler Faculty Data';
-    const textWidth = doc.getTextWidth(text);
-    const textXPosition = (pageWidth - textWidth) / 2;
+    // Function to draw the header
+    const drawHeader = () => {
+      // Add URS image at the upper left corner
+      if (URS) {
+        doc.addImage(URS, 'PNG', 10, 10, ursImgWidth, ursImgHeight);
+      }
   
-    // Add the text centered at the top
-    doc.text(text, textXPosition, 20);
+      // Add GSO image at the upper right corner
+      if (GSO) {
+        const gsoX = doc.internal.pageSize.getWidth() - gsoImgWidth - 10; // 10 units padding from the right
+        doc.addImage(GSO, 'PNG', gsoX, 10, gsoImgWidth, gsoImgHeight);
+      }
   
-    // Move to the next line after the logo and text
-    doc.setFontSize(16); // Optional: Adjust font size for the table
+      const republicY = Math.max(ursImgHeight, gsoImgHeight) - 6; // Positioning the title very close to the images
+      doc.setFontSize(10); // Larger font for the university title
+      doc.text('Republic of the Philippines', doc.internal.pageSize.getWidth() / 2, republicY, { align: 'center' });
+
+      const titleY = Math.max(ursImgHeight, gsoImgHeight); // Positioning the title very close to the images
+      doc.setFontSize(20); // Larger font for the university title
+      doc.text('University of Rizal System', doc.internal.pageSize.getWidth() / 2, titleY, { align: 'center' });
   
-    // Adjust the Y position based on the logo height
-    const tableYPosition = 40; // Adjust as needed
+      // Set font size for smaller text
+      doc.setFontSize(12); // Smaller font for the campus and report titles
+      const campusY = titleY + 6; // Position Morong Campus text closer
+      doc.text('Morong Campus', doc.internal.pageSize.getWidth() / 2, campusY, { align: 'center' });
   
-    // Create the table
+      const reportY = campusY + 8; // Position Student Parking Slot Report text closer
+      doc.text('Student Parking Slot Report', doc.internal.pageSize.getWidth() / 2, reportY, { align: 'center' });
+  
+      // Draw a horizontal line below the Student Parking Slot Report
+      const lineY = reportY + 4; // Position for the line
+      doc.line(10, lineY, doc.internal.pageSize.getWidth() - 10, lineY); // Draw line from left to right
+  
+      return lineY; // Return the Y position for the table
+    };
+  
+    // Track the starting Y position for the table
+    let startY = drawHeader(); // Call the drawHeader function and set the initial startY
+  
+    // Define the columns and rows for the table
     const tableColumn = ["#", "Name", "Email", "Position", "Building", "Vehicle", "Plate Number", "Parking Slot"];
     const tableRows = [];
   
+    // Loop through students and push the data into rows
     faculty.forEach((faculty, index) => {
       const facultyData = [
         index + 1,
@@ -83,18 +110,30 @@ export default function FacultyFourwheelsPDF() {
         faculty.slot_number,
       ];
       tableRows.push(facultyData);
+  
+      // Check if the current position is close to the bottom of the page
+      if (doc.autoTable.previous.finalY + 10 >= doc.internal.pageSize.getHeight()) {
+        doc.addPage(); // Add a new page
+        startY = drawHeader(); // Redraw the header on the new page
+      }
     });
   
+    // Generate the table
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
-      startY: tableYPosition, // Start the table below the logo and text
-      theme: 'grid',
-      headStyles: { fillColor: [0, 0, 102] },
-      styles: { fontSize: 9 },
+      startY: startY + 10, // Start position of the table below the line
+      theme: 'grid', // Optional: Use 'grid' for grid lines or 'striped' for alternating row colors
+      headStyles: { fillColor: [0, 0, 102] }, // Header style
+      styles: { fontSize: 9 }, // Optional: Adjust font size
     });
   
-    doc.save('Faculty-FourWheeler.pdf');
+    // Create a Blob from the PDF and generate a URL
+    const pdfOutput = doc.output('blob');
+    const pdfUrl = URL.createObjectURL(pdfOutput);
+  
+    // Open the PDF in a new tab
+    window.open(pdfUrl, '_blank');
   };
 
 
