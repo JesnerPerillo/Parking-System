@@ -3,9 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { BsCreditCard2Front, BsQuestionSquare, BsExclamation } from "react-icons/bs";
 import { BsTaxiFront } from "react-icons/bs";
-import { BsFillPersonVcardFill, BsFillSignNoParkingFill  } from "react-icons/bs";
+import { BsFillPersonVcardFill, BsFillSignNoParkingFill, BsCreditCard2Front, BsQuestionSquare, BsExclamation  } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
 import { FaRegCircleCheck} from "react-icons/fa6";
 import URSLogo from '../Pictures/urs.png';
@@ -17,7 +16,6 @@ export default function StudentParkingSlots() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [qrCode, setQrCode] = useState(null);
   const [popupImage, setPopupImage] = useState(false);
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectedSpot, setSelectedSpot] = useState(null);

@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import URSlogo from '.././Pictures/urs.png';
-import GSOlogo from '.././Pictures/gsoo.png';
 import '.././App.css'
 import axios from 'axios';
 import SideImg from '../Pictures/sideimg.png';
