@@ -6,12 +6,14 @@ import GSOlogo from '.././Pictures/gsoo.png';
 import '.././App.css'
 import AdminLogo from '../components/admin.png'
 import { IoEyeOff, IoEye  } from "react-icons/io5";
+import { ImSpinner2 } from 'react-icons/im';
 
 export default function StudentLogin() {
   const [fullname, setFullname] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePassword = () => {
@@ -37,14 +39,18 @@ export default function StudentLogin() {
         const data = await response.json();
 
         if (data.success) {
+          setTimeout(() => {
             navigate('/admindashboard');
+        }, 300);
         } else {
             setError(data.message);
         }
     } catch (error) {
         console.error('Fetch error:', error);
         alert('An unexpected error occurred.');
-    }
+    } finally {
+      setIsLoading(false);
+  }
 };
 
 
@@ -52,6 +58,16 @@ export default function StudentLogin() {
 
   return (
     <div className="bg-blue-700 min-h-screen flex flex-col items-center justify-center">
+
+      {/* Modal for Loading Spinner */}
+      {isLoading && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white p-6 rounded-lg flex items-center justify-center">
+                        <ImSpinner2 className="animate-spin w-10 h-10 text-blue-500" />
+                    </div>
+                </div>
+            )}
+
       <div className="form drop-shadow-xl xl:w-2/4 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full bg-blue-600">
         <div className="header flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
           <div className="gso-logo flex items-center justify-center w-full md:w-1/3">
@@ -89,7 +105,7 @@ export default function StudentLogin() {
           {showPassword ? <IoEyeOff className="w-6 h-6"/> : <IoEye className="w-6 h-6"/>}
         </button>
       </label>
-      <button type="submit" className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5 mb-10">
+      <button type="submit" className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5 mb-10" disabled={isLoading}>
         Submit
       </button>
       {error && <p className="text-red-500 text-sm">{error}</p>}
