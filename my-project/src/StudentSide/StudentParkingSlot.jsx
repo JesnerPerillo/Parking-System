@@ -345,17 +345,17 @@ export default function StudentParkingSlots() {
               </li>
             </Link>
             <Link to="/studentparkingslot" className="group no-underline h-14 flex items-center pl-8 bg-blue-700 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white border-l-2 border-white pl-5 text-2xl text-white tracking-widest flex items-center w-full lg:text-base xl:text-lg ml-4">
+              <li className="group-hover:text-white border-l-2 border-white pl-5 text-lg text-white tracking-widest flex items-center w-full lg:text-base xl:text-lg ml-4">
               <BsTaxiFront /> <span className="ml-5">Parking Slot</span>
               </li>
             </Link>
             <Link to="/studentaccount" className="group no-underline w-full h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-lg xl:text-lg ml-5">
+              <li className="group-hover:text-white text-lg text-blue-700 tracking-widest flex items-center w-full lg:text-lg xl:text-lg ml-5">
               <BsFillPersonVcardFill /> <span className="ml-5">Account</span>
               </li>
             </Link>
             <Link to="/studentabout" className="group no-underline h-14 flex items-center pl-8 hover:bg-blue-700 mb-2 duration-200 lg:pl-3">
-              <li className="group-hover:text-white text-2xl text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-lg ml-5">
+              <li className="group-hover:text-white text-lg text-blue-700 tracking-widest flex items-center w-full lg:text-xl xl:text-lg ml-5">
               <BsQuestionSquare /> <span className="ml-5">About</span>
               </li>
             </Link>
