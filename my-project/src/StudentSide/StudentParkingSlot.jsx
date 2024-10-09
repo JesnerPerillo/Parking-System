@@ -400,7 +400,7 @@ export default function StudentParkingSlots() {
                   <h2 className="text-xl font-bold mb-4 text-white">
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                     {selectedSpot !== null && (
-                      <div className="bottom-10 absolute right-2 sm:right-16 bottom-10">
+                      <div className="bottom-8 absolute right-8 sm:right-16 bottom-10">
                         <button
                           onClick={handleSubmit}
                           className="p-2 bg-blue-500 text-white rounded"

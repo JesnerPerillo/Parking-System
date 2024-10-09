@@ -370,8 +370,8 @@ export default function FacultyStaffParkingSlot() {
           <div className="flex items-center p-3 flex-col sm:flex-row">
             <h3 className="text-white">Please select your prefered parking spot.</h3>
             <div className="flex">
-              <div className="ml-3 h-6 w-20 bg-green-500 rounded text-center text-white">Available</div>
-              <div className="ml-3 h-6 w-20 bg-red-600 rounded text-center text-white">Occupied</div>
+              <div className="ml-3 h-6 w-20 bg-green-500 rounded flex justify-center items-center text-white">Available</div>
+              <div className="ml-3 h-6 w-20 bg-red-600 rounded flex justify-center items-center text-white">Occupied</div>
             </div>
           </div>
           <div className="bg-blue-800 mx-auto p-4 h-5/6 overflow-auto border-2 rounded max-sm:w-9/10">
@@ -410,7 +410,7 @@ export default function FacultyStaffParkingSlot() {
                   <h2 className="text-xl font-bold mb-4 text-white">
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                     {selectedSpot !== null && (
-                      <div className="mt-4">
+                      <div className="bottom-8 absolute right-8 sm:right-16 bottom-10">
                         <button
                           onClick={handleSubmit}
                           className="p-2 bg-blue-500 text-white rounded"

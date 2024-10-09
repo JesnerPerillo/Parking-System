@@ -319,7 +319,7 @@ const handleDownloadQRCode = () => {
 
           {!isNavOpen && (
             <>
-            <div className="w-full h-auto flex justify-center mt-5">
+            <div className="w-full bg-blue-700 h-auto flex justify-center mt-5">
               <div className="w-5/6 h-[78rem] max-h-full bg-white rounded-xl flex flex-col justify-start sm:h-[35rem] sm:flex-col sm:justify-between items-center p-4">
               <div className="flex w-full flex-col sm:flex-row">
                 <div

@@ -194,7 +194,7 @@ export default function StudentDashboard() {
                   </div>
                 </div>
               <div className="w-full h-screen lg:w-1/2 sm:w-1/2 h-64 sm:h-full flex items-center justify-center">
-                <img src={getVehicleImage()} alt={`${selectedVehicle} Image`} className="max-w-full h-auto sm:h-3/4" />
+                <img src={getVehicleImage()} alt={`${selectedVehicle} Image`} className="bg-blue-700 max-w-full h-auto sm:h-3/4" />
               </div>
             </div>
           </div>}
