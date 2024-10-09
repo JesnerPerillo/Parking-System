@@ -3,12 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import SideImg from '../Pictures/sideimg.png';
 import { IoEyeOff, IoEye  } from "react-icons/io5";
+import { ImSpinner2 } from 'react-icons/im';
 
 export default function StudentSignup() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [approvalMessage, setApprovalMessage] = useState(false);
   const [message, setMessage] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     studentNumber: '',
     fullname: '',
@@ -45,6 +47,7 @@ export default function StudentSignup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const form = new FormData();
     Object.keys(formData).forEach((key) => {
       form.append(key, formData[key]);
@@ -58,17 +61,31 @@ export default function StudentSignup() {
       });
       setMessage(response.data.message);
       if (response.data.status === 'success') {
-        setApprovalMessage(true);
+        setTimeout(() => {
+          setApprovalMessage(true);
+      }, 300);
       }
     } catch (error) {
       console.error(error);
       setMessage(error.message);
-    }
+    } finally {
+      setIsLoading(false);
+  }
   };
 
   
   return (
     <div className="bg-blue-700 min-h-screen flex flex-col items-center justify-center">
+
+      {/* Modal for Loading Spinner */}
+      {isLoading && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white p-6 rounded-lg flex items-center justify-center">
+                        <ImSpinner2 className="animate-spin w-10 h-10 text-blue-500" />
+                    </div>
+                </div>
+            )}
+            
       <div className="relevant form xl:w-2/3 mt-10 justify-between rounded-xl h-4/5 sm:flex max-sm:flex-column max-sm:text-center max-sm:w-full">
       <div className="header relative flex flex-col items-center justify-center space-y-24 w-2/4 h-auto py-4 max-sm:w-full">
           <img src={SideImg} alt="URS Logo" className="w-98 h-98 z-20" />
@@ -167,7 +184,7 @@ export default function StudentSignup() {
               <input name="cor" class="form-control block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" type="file" id="formFileCor" onChange={handleFileChange}/>
             </div>
           </div>
-          <button type="submit" className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5">
+          <button type="submit" className="border-none outline-none py-3 rounded-md text-white text-lg transform transition duration-300 ease bg-cyan-500 hover:bg-cyan-400 sm:py-2.5" disabled={isLoading}>
             Submit
           </button>
           <p className="text-center text-base text-gray-400 sm:text-sm">

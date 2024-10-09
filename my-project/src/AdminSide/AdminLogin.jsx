@@ -22,6 +22,8 @@ export default function StudentLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    
     try {
         const response = await fetch('https://skyblue-clam-769210.hostingersite.com/adminlogin.php', {
             method: 'POST',
