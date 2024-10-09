@@ -366,7 +366,7 @@ export default function StudentParkingSlots() {
           </nav>
 
         {/* Main Content */}
-        <div className="w-full h-screen">
+        <div className="w-full h-[90rem] bg-blue-700">
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slot</p>
           </div>
@@ -400,7 +400,7 @@ export default function StudentParkingSlots() {
                   <h2 className="text-xl font-bold mb-4 text-white">
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                     {selectedSpot !== null && (
-                      <div className="bottom-8 absolute right-8 sm:right-16 bottom-10">
+                      <div className="bottom-12 fixed right-8 sm:right-16 bottom-10">
                         <button
                           onClick={handleSubmit}
                           className="p-2 bg-blue-500 text-white rounded"

@@ -323,14 +323,14 @@ export default function FacultyStaffParkingSlot() {
       <div className="relative w-full h-screen bg-blue-700 flex">
         {/* Navigation button */}
         <button
-          className="lg:hidden bg-white text-blue-700 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-10"
+          className="lg:hidden bg-white text-blue-700 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-40"
           onClick={toggleNav}
         >
           {isNavOpen ? '✕' : '☰'}
         </button>
 
         {/* Navigation menu */}
-        <nav className={`bg-white rounded-r-2xl drop-shadow-2xl absolute inset-y-0 left-0 transform xl:w-1/5 lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
+        <nav className={`bg-white z-30 rounded-r-2xl drop-shadow-2xl absolute inset-y-0 left-0 transform xl:w-1/5 lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
             <div className=" w-full h-44 text-blue-700 flex flex-col items-center justify-between text-xl tracking-wider">
                 <img src={URSLogo} className="w-20 h-26" />
                 <h1 className="text-2xl tracking-widest lg:text-sm xl:text-2xl">PARKING SYSTEM</h1>
@@ -363,7 +363,7 @@ export default function FacultyStaffParkingSlot() {
           </nav>
 
         {/* Main Content */}
-        <div className="w-full h-screen">
+        <div className="w-full h-[90rem] bg-blue-700">
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slot</p>
           </div>
@@ -410,7 +410,7 @@ export default function FacultyStaffParkingSlot() {
                   <h2 className="text-xl font-bold mb-4 text-white">
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                     {selectedSpot !== null && (
-                      <div className="bottom-8 absolute right-8 sm:right-16 bottom-10">
+                      <div className="bottom-12 fixed right-8 sm:right-16 bottom-10">
                         <button
                           onClick={handleSubmit}
                           className="p-2 bg-blue-500 text-white rounded"
