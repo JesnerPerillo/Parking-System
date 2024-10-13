@@ -187,7 +187,7 @@ export default function StudentLogin() {
                 </form>
                 {isVisible && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30 max-sm:w-full">
-                <form onSubmit={handleSubmitForgetPassword} className="bg-white p-6 rounded shadow-md">
+                <form onSubmit={handleSubmitForgetPassword} className="bg-white p-6 rounded shadow-md w-full sm:w-1/5">
                     <div className="w-full flex justify-between items-center mb-4">
                         <h2 className="text-xl font-bold">Forgot Password</h2>
                         <img src={GSOlogo} alt="GSO Logo"  className="w-10 h-10"/>

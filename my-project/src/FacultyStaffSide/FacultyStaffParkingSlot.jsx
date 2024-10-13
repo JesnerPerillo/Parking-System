@@ -449,7 +449,7 @@ export default function FacultyStaffParkingSlot() {
           </div>
           )}
 
-{alreadySelectSpot && (
+        {alreadySelectSpot && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
             <div className="bg-white h-60 flex flex-col justify-around p-6 rounded-lg shadow-lg">
               <div className="w-full flex justify-center">
