@@ -68,7 +68,6 @@ export default function StudentDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Make sure the credentials (cookies) are sent with the request
         const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/fetchdata.php', {
           withCredentials: true
         });
@@ -79,16 +78,11 @@ export default function StudentDashboard() {
         } else {
           // Handle the case where data fetch is unsuccessful
           setError(response.data.message || 'No data found for the logged-in user.');
-          console.error('Error:', response.data.message || 'No data found.');
           
         }
       } catch (error) {
         // Handle any errors that occurred during the request
         setError('Error fetching data: ' + error.message);
-        console.error('Error fetching data:', error);
-        
-        // Optionally navigate to the home/login page on error
-        
       }
     };
   

@@ -77,8 +77,6 @@ export default function StudentParkingSlots() {
           const vehicleType = user.Vehicle.toLowerCase();
           setSelectedVehicle(vehicleType);
 
-          console.log('User Data:', user);
-          console.log('Vehicle Type:', vehicleType);
         } else {
           setError(response.data.message || 'No data found for the logged-in user.');
           navigate('/');
@@ -102,7 +100,6 @@ export default function StudentParkingSlots() {
             tricycle: [],
             fourwheeler: []
           });
-          console.log("Occupied slots fetched:", response.data.data);
         } else {
           setError(response.data.message || 'Error fetching occupied slots.');
         }
@@ -194,17 +191,11 @@ export default function StudentParkingSlots() {
     const currentUserSpot = userData.parkingSlot ? userData.parkingSlot.slotNumber : null;
     const currentUserVehicleType = userData.parkingSlot ? userData.parkingSlot.slotType : null;
 
-    console.log(`Rendering spots for ${vehicleType}`);
-    console.log('Occupied spots:', occupied);
-    console.log('Current User Spot:', currentUserSpot, 'Current User Vehicle Type:', currentUserVehicleType);
-
     return Array.from({ length: count }, (_, index) => {
       const spotNumber = index + 1;
       const isOccupied = occupied.map(Number).includes(spotNumber); // Convert occupied spots to numbers for comparison
       const isSelected = selectedSpot === spotNumber && selectedVehicle === vehicleType;
       const isCurrentUserSpot = currentUserSpot === spotNumber && currentUserVehicleType === vehicleType;
-
-      console.log(`Spot ${spotNumber}: isOccupied=${isOccupied}, isSelected=${isSelected}, isCurrentUserSpot=${isCurrentUserSpot}`);
 
       let spotColorClass = '';
       if (isCurrentUserSpot) {

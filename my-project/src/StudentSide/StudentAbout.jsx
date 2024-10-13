@@ -77,8 +77,7 @@ export default function StudentAbout() {
           const data = await response.json();
   
           if (data.success) {
-              console.log('User Data:', data.data);
-              // Handle user data (e.g., save to state)
+          
           } else {
               console.log('Error fetching user data:', data.message);
               navigate('/');
