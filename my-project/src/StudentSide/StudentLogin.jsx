@@ -19,6 +19,7 @@ export default function StudentLogin() {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [approvalMessage, setApprovalMessage] = useState('');
+    const [emailPopup, setEmailPopup] = useState(false);
 
 
     const togglePassword = () => {
@@ -71,7 +72,7 @@ export default function StudentLogin() {
     const handleSubmitForgetPassword = async (e) => {
         e.preventDefault();
         if (!email) {
-            setMessage('Please enter your email.');
+            setEmailPopup('Please enter your email.');
             return;
         }
 
@@ -86,13 +87,14 @@ export default function StudentLogin() {
             const contentType = response.headers.get('Content-Type');
             if (contentType && contentType.includes('application/json')) {
                 const data = await response.json();
-                setMessage(data.success ? <p className="text-green-500">{'A temporary password has been sent to your email.'}</p> : <p className="text-red-500">{data.message}</p> || 'Something went wrong. Please try again.');
+                // Directly set the message returned from the backend
+                setEmailPopup(data.message);
             } else {
-                setMessage('Unexpected response format.');
+                setEmailPopup('Unexpected response format.');
             }
         } catch (error) {
             console.error('Error:', error);
-            setMessage('An error occurred. Please try again later.');
+            setEmailPopup('An error occurred. Please try again later.');
         }
     };
 
@@ -241,6 +243,21 @@ export default function StudentLogin() {
                     </div>
                 </div>
             )}
+
+            {emailPopup && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
+                    <div className="bg-white text-center p-6 rounded shadow-md">
+                        <h2 className="text-xl font-bold">Notice</h2>
+                        <p>{emailPopup}</p>
+                        <button
+                            onClick={() => setEmailPopup(false)}
+                            className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}  
 
             </div>
         </div>
