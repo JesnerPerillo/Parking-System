@@ -211,7 +211,6 @@ export default function StudentLogin() {
                             Cancel
                         </button>
                     </div>
-                    {message && <p>{message}</p>}
                 </form>
                 </div>
                 )}
