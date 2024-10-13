@@ -21,9 +21,12 @@ import { FaChalkboardUser, FaRegCircleCheck } from "react-icons/fa6";
 export default function AdminParkingSlot() {
   const [userData, setUserData] = useState('');
   const [error, setError] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
   const [selectedUserType, setSelectedUserType] = useState('student');
   const [selectedVehicle, setSelectedVehicle] = useState('motorcycle');
-  const [selectedSlotNumber, setSelectedSlotNumber] = useState(1);
+  const [updateConfirm, setUpdateConfirm] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
   const [licenseSrc, setLicenseSrc] = useState(null);
   const [orcrSrc, setOrcrSrc] = useState(null);
   const [corSrc, setCorSrc] = useState(null);
@@ -46,11 +49,6 @@ export default function AdminParkingSlot() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [confirmDeleteUserType, setConfirmDeleteUserType] = useState('');
   const [confirmDeleteSuccess, setconfirmDeleteSuccess] = useState(false);
-  const [occupiedSpots, setOccupiedSpots] = useState({
-    motorcycle: [],
-    tricycle: [],
-    fourwheeler: []
-  });
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [popupData, setPopupData] = useState(null);
   const navigate = useNavigate();
@@ -58,6 +56,9 @@ export default function AdminParkingSlot() {
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [logoutMessage, setLogoutMessage] = useState(false);
+  const [confirmDeleteLogs, setConfirmDeleteLogs] = useState(false);
+  const [selectedDeletedLogs, setSelectedDeletedLogs] = useState(false);
+  const [deleteLogsSuccess, setDeleteLogsSuccess] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -151,52 +152,62 @@ export default function AdminParkingSlot() {
   const handleSubmit = async (e, type) => {
     e.preventDefault();
 
-    const form = new FormData();
-    const currentFormData = formData[type]; // Get the form data for the selected type
-
-    // Append fields from the specific user type
-    for (const key in currentFormData) {
-        form.append(key, currentFormData[key]);
-    }
-
-    // Add ID to the form data
-    form.append('id', popupData.id);
-
-    // Determine the URL based on the type (student or faculty/staff)
-    const url = type === 'student'
-        ? 'https://skyblue-clam-769210.hostingersite.com/admineditstudent.php'
-        : 'https://skyblue-clam-769210.hostingersite.com/admineditfaculty.php';
-
-    // Log the form data being sent
-    console.log('Form data being sent:', Array.from(form.entries())); // Convert FormData to a readable array
-
-    try {
-        const response = await axios.post(url, form, {
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        });
-
-        console.log('Response data:', response.data);
-
-        if (response.data.success) {
-            setPopupData((prev) => ({
-                ...prev,
-                ...currentFormData,
-                password: '', // Don't show the password in user data
-            }));
-            alert('Account updated successfully');
-            setIsEditModalOpen(false);
-            setPopupData(false);
-        } else {
-            alert('Error: ' + response.data.message);
-        }
-    } catch (error) {
-        console.error('Error updating account:', error);
-        alert('Error updating account. Please try again.');
-    }
+    // Show confirmation modal
+    setUpdateConfirm(true);
 };
+
+// This function will handle the actual submission after confirmation
+const handleConfirmSubmit = async () => {
+  setErrorMessage(''); // Clear previous error message
+  const form = new FormData();
+  const currentFormData = formData[selectedUserType];
+
+  for (const key in currentFormData) {
+      form.append(key, currentFormData[key]);
+  }
+
+  form.append('id', popupData.id);
+
+  const url = selectedUserType === 'student'
+      ? 'https://skyblue-clam-769210.hostingersite.com/admineditstudent.php'
+      : 'https://skyblue-clam-769210.hostingersite.com/admineditfaculty.php';
+
+  console.log('Form data being sent:', Array.from(form.entries()));
+
+  try {
+      const response = await axios.post(url, form, {
+          withCredentials: true,
+          headers: {
+              'Content-Type': 'multipart/form-data',
+          },
+      });
+
+      console.log('Response data:', response.data);
+
+      if (response.data.success) {
+          setPopupData((prev) => ({
+              ...prev,
+              ...currentFormData,
+              password: '', // Don't show the password in user data
+          }));
+          setUpdateSuccess(true); 
+          setPopupData(false)
+          setIsEditModalOpen(false);
+      } else {
+          // Set error message from backend response
+          setErrorMessage(response.data.message || 'An error occurred. Please try again.');
+          setUpdateSuccess(false); // Show error pop-up
+      }
+  } catch (error) {
+      console.error('Error updating account:', error);
+      setErrorMessage('Error updating account. Please try again.'); // Set error message
+      setUpdateSuccess(false); // Show error pop-up
+  } finally {
+      setUpdateConfirm(false); // Close confirmation modal
+  }
+};
+
+
 
   const handleOpenModal = (src) => {
     setModalImageSrc(src);
@@ -299,14 +310,51 @@ export default function AdminParkingSlot() {
   };
   
 
-  const categories = selectedUserType === 'student' ? {
-    motorcycle: { count: 500, color: 'bg-green-500' },
-    tricycle: { count: 40, color: 'bg-green-500' },
-    fourwheeler: { count: 40, color: 'bg-green-500' }
-  } : {
-    motorcycle: { count: 110, color: 'bg-yellow-400' },
-    fourwheeler: { count: 25, color: 'bg-yellow-400' }
-  };
+  const [occupiedSpots, setOccupiedSpots] = useState({
+    motorcycle: [],
+    tricycle: [],
+    fourwheeler: []
+});
+
+const [categories, setCategories] = useState({
+    motorcycle: { count: 0, color: 'bg-green-500 text-white' },
+    tricycle: { count: 0, color: 'bg-green-500 text-white' },
+    fourwheeler: { count: 0, color: 'bg-green-500 text-white' }
+});
+
+// Fetch vehicle counts based on selected user type
+useEffect(() => {
+    const fetchVehicleCounts = async () => {
+        try {
+            const endpoint = selectedUserType === 'student' 
+                ? 'https://skyblue-clam-769210.hostingersite.com/getvehiclecount.php' 
+                : 'https://skyblue-clam-769210.hostingersite.com/facultygetvehiclecount.php';
+
+            const response = await axios.get(endpoint);
+            const { motorcycle, tricycle, fourwheeler } = response.data;
+
+            // Update the categories and occupied spots
+            setCategories(prevCategories => ({
+                ...prevCategories,
+                motorcycle: { ...prevCategories.motorcycle, count: motorcycle },
+                tricycle: { ...prevCategories.tricycle, count: tricycle },
+                fourwheeler: { ...prevCategories.fourwheeler, count: fourwheeler }
+            }));
+
+            // Assuming your API also returns occupied spots
+            setOccupiedSpots({
+                motorcycle: response.data.occupiedMotorcycle || [],
+                tricycle: response.data.occupiedTricycle || [],
+                fourwheeler: response.data.occupiedFourwheeler || []
+            });
+
+        } catch (error) {
+            console.error('Error fetching vehicle counts:', error);
+        }
+    };
+
+    fetchVehicleCounts();
+}, [selectedUserType]);
   
   const renderSpots = (count, color, vehicleType) => {
     const occupied = occupiedSpots[vehicleType] || [];
@@ -442,7 +490,7 @@ export default function AdminParkingSlot() {
     const date = new Date(timestamp);
   
     // Manually adjust to UTC+8
-    const utcOffset = 8 * 60 * 60 * 1000; // UTC+8 in milliseconds
+    const utcOffset = 12 * 60 * 60 * 1000; // UTC+8 in milliseconds
     const localDate = new Date(date.getTime() + utcOffset);
   
     // Array of month names
@@ -457,7 +505,7 @@ export default function AdminParkingSlot() {
     const year = localDate.getFullYear();
     const hours = localDate.getHours();
     const minutes = localDate.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const ampm = hours >= 12 ? 'AM' : 'PM';
     const hours12 = hours % 12 || 12;
     const minutesFormatted = minutes < 10 ? '0' + minutes : minutes;
   
@@ -803,11 +851,6 @@ useEffect(() => {
   
 
   const handleDeleteLogs = async (selection) => {
-    const isConfirmed = window.confirm('Are you sure you want to delete these logs?');
-
-    if (!isConfirmed) {
-      return;
-    }
     try {
       // Log the data being sent
       console.log('Sending request with:', { selection });
@@ -826,7 +869,8 @@ useEffect(() => {
       // Handle the response
       console.log('Response data:', response.data);
       if (response.data.success) {
-        alert('Logs deleted successfully.');
+        setDeleteLogsSuccess(true)
+        setConfirmDeleteLogs(false);
         setIsPopupVisible(false); // Hide popup on success
       } else {
         alert('Failed to delete logs: ' + response.data.message);
@@ -922,13 +966,13 @@ useEffect(() => {
   return (
     <div className="relative w-full h-screen bg-blue-700 flex">
       <button
-          className="lg:hidden bg-white text-blue-700 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-50"
+          className="lg:hidden bg-white text-blue-700 p-2 rounded-full h-10 w-10 absolute top-4 left-4 z-40"
           onClick={toggleNav}
         >
           {isNavOpen ? '✕' : '☰'}
         </button>
 
-        <nav className={`bg-white z-40 rounded-r-2xl drop-shadow-2xl absolute inset-y-0 left-0 transform xl:w-1/5 lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
+        <nav className={`bg-white z-30 rounded-r-2xl drop-shadow-2xl absolute inset-y-0 left-0 transform xl:w-1/5 lg:relative lg:translate-x-0 lg:top-0 lg:w-1/4 lg:h-screen lg:flex lg:flex-col lg:items-center lg:justify-around lg:overflow-y-auto max-sm:flex max-sm:flex-col max-sm:items-center max-sm:justify-around max-md:flex max-md:flex-col max-md:justify-around max-md:items-center md:flex md:flex-col md:justify-around md:items-center ${isNavOpen ? 'block w-full' : 'max-sm:hidden md:hidden max-md:hidden'}`}>
           <div className=" w-full h-40 text-blue-700 flex flex-col items-center justify-center text-xl tracking-wider">
               <img src={GSO} className="w-24 h-24" />
               <h1 className="text-2xl tracking-widest lg:text-sm xl:text-2xl">PARKING SYSTEM</h1>
@@ -1006,7 +1050,7 @@ useEffect(() => {
             </div>
             </div>
             {isPopupVisible && (
-              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                 <div className="bg-white p-8 rounded-lg shadow-lg h-9/10 w-4/5">
                   <div className="flex justify-between items-center">
                     <div className="flex">
@@ -1055,7 +1099,8 @@ useEffect(() => {
                           </div>
                           <div className="flex justify-end">
                             <button
-                              onClick={() => handleDeleteLogs(selectedSelection)}
+                              onClick={() => {setConfirmDeleteLogs(true);
+                                setSelectedDeletedLogs(selectedSelection)}}
                               className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
                             >
                               Confirm Delete
@@ -1398,21 +1443,21 @@ useEffect(() => {
               <option>BS Psychology</option>
               <option>BS Computer Science</option>
               <option>Bachelor in Human Services</option>
-              <option>BE Education</option>
-              <option>BSE - Science</option>
-              <option>BSE - English</option>
-              <option>BSE - Mathematics</option>
-              <option>BSE - Home Economics</option>
-              <option>BSE - Industrial Arts</option>
-              <option>BSE - Information and Communication Technology</option>
-              <option>BTVTE - Drafting Technology</option>
-              <option>BIT - Automotive Technology</option>
-              <option>BIT - Architectural Drafting Technology</option>
-              <option>BIT - Construction Technology</option>
-              <option>BIT - Electrical Technology</option>
-              <option>BIT - Electronics Technology</option>
-              <option>BIT - Heating, Ventilating and Air-conditioning</option>
-              <option>BIT - Mechanical Technology</option>
+              <option>Bachelor of Elementary Education</option>
+              <option>Bachelor of Secondary Education - Science</option>
+              <option>Bachelor of Secondary Education - English</option>
+              <option>Bachelor of Secondary Education - Mathematics</option>
+              <option>Bachelor of Livelihood Education - Home Economics</option>
+              <option>Bachelor of Livelihood Education - Industrial Arts</option>
+              <option>Bachelor of Livelihood Education - Information and Communication Technology</option>
+              <option>Bachelor of Technical Vocational Teacher Education - Drafting Technology</option>
+              <option>Bachelor of Industrial Technology - Automotive Technology</option>
+              <option>Bachelor of Industrial Technology - Architectural Drafting Technology</option>
+              <option>Bachelor of Industrial Technology - Construction Technology</option>
+              <option>Bachelor of Industrial Technology - Electrical Technology</option>
+              <option>Bachelor of Industrial Technology - Electronics Technology</option>
+              <option>Bachelor of Industrial Technology - Heating, Ventilating and Air-conditioning</option>
+            <option>Bachelor of Industrial Technology - Mechanical Technology</option>
               </select>
             </label>
             <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-1">
@@ -1454,8 +1499,8 @@ useEffect(() => {
                 Cancel
               </button>
               <button
-                type="submit"
-                onClick={console.log('selectedUserType:', selectedUserType)
+                type="button"
+                onClick={(e) => handleSubmit(e, selectedUserType)
                 }
                 className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded w-1/2"
               >
@@ -1525,7 +1570,8 @@ useEffect(() => {
                       Cancel
                     </button>
                     <button
-                      type="submit"
+                      onClick={(e) => handleSubmit(e, selectedUserType)
+                      }
                       className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded w-1/2"
                     >
                     Save Changes
@@ -1535,6 +1581,7 @@ useEffect(() => {
                 </div>
               </div>)}
         </div>
+        
       </div>
       )}
 
@@ -1735,13 +1782,13 @@ useEffect(() => {
         {confirmDelete && (
           <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white text-center rounded-lg shadow-lg p-5">
-            <h2 className="text-lg font-semibold mb-4">Confirm Delete User</h2>
-            <p>Are you sure you want to Delete this user?</p>
+            <h2 className="text-lg font-semibold mb-4">Confirm Update User</h2>
+            <p>Are you sure you want to update this user?</p>
             <div className="flex justify-around mt-4">
               <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setConfirmDelete(false)}>
                 Cancel
               </button>
-              <button className="px-4 py-2 bg-red-500 text-white rounded" onClick={() => handleDelete(String(confirmDeleteUserType))}>
+              <button className="px-4 py-2 bg-red-500 text-white rounded" type="submit">
                 Confirm
               </button>
             </div>
@@ -1762,6 +1809,75 @@ useEffect(() => {
           </div>
         </div>
         )}
+
+        {updateConfirm && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white text-center rounded-lg shadow-lg p-5">
+            <h2 className="text-lg font-semibold mb-4">Confirm Update</h2>
+            <p>Are you sure that the informations are correct?</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setUpdateConfirm(false)}>
+                Cancel
+              </button>
+              <button className="px-4 py-2 bg-green-500 text-white rounded" onClick={handleConfirmSubmit}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+        )}
+
+        {updateSuccess && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white flex flex-col items-center text-center rounded-lg shadow-lg p-5">
+              <FaRegCircleCheck className="w-12 text-green-500 h-12"/>
+              <p>Account updated successfully.</p>
+              <div className="flex justify-around mt-4">
+                <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setUpdateSuccess(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {errorMessage && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white text-center rounded-lg shadow-lg p-5">
+                  <h2 className="text-lg text-red-600 font-semibold mb-4">Error</h2>
+                  <p>{errorMessage}</p>
+                  <div className="flex justify-around mt-4">
+                      <button className="px-4 py-2 bg-gray-300 rounded" onClick={() => setErrorMessage('')}>
+                          Close
+                      </button>
+                  </div>
+              </div>
+          </div>
+          )}
+
+          {confirmDeleteLogs && (
+            <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white text-center rounded-lg shadow-lg p-5">
+                <h5 className="mb-5">Are you sure you want to delete logs?</h5>
+                <div className="flex justify-around">
+                  <button className="h-10 w-24 bg-gray-500 rounded text-white" onClick={() => setConfirmDeleteLogs(false)}>Cancel</button>
+                  <button className="h-10 w-24 bg-red-600 rounded text-white" onClick={() => handleDeleteLogs(selectedDeletedLogs)}>Confirm</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {deleteLogsSuccess && (
+            <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white text-center rounded-lg shadow-lg p-5">
+                <div className="flex items-center justify-center mb-5">
+                <h5>Delete Logs Success</h5>
+                <FaRegCircleCheck className="w-10 text-green-500 h-10 ml-2"/>
+                </div>
+                <button onClick={() => setDeleteLogsSuccess(false)} className="w-24 h-10 bg-gray-500 rounded text-white">Close</button>
+                </div>
+              </div>
+          )}
+
     </div>
   );
 }
