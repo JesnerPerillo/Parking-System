@@ -1813,7 +1813,7 @@ useEffect(() => {
             <p>This parking spot is available.</p>
             <div className="flex justify-around mt-4">
               <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setParkingAvailable(false)}>
-                Cancel
+                Close
               </button>
             </div>
           </div>
