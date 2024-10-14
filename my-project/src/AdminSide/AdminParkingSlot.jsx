@@ -1810,7 +1810,6 @@ useEffect(() => {
         {parkingAvailable && (
           <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white flex flex-col items-center text-center rounded-lg shadow-lg p-5">
-            <FaRegCircleCheck className="w-12 text-green-500 h-12"/>
             <p>This parking spot is available.</p>
             <div className="flex justify-around mt-4">
               <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setParkingAvailable(false)}>
