@@ -59,6 +59,7 @@ export default function AdminParkingSlot() {
   const [confirmDeleteLogs, setConfirmDeleteLogs] = useState(false);
   const [selectedDeletedLogs, setSelectedDeletedLogs] = useState(false);
   const [deleteLogsSuccess, setDeleteLogsSuccess] = useState(false);
+  const [parkingAvailable, setParkingAvailable] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -268,7 +269,7 @@ const handleConfirmSubmit = async () => {
     const isOccupied = occupiedSpots[selectedVehicle]?.includes(spotNumberStr);
   
     if (!isOccupied) {
-      alert('This parking spot is available.');
+      setParkingAvailable(true);
     } else {
       try {
         const fetchUrl = selectedUserType === 'faculty'
@@ -280,8 +281,6 @@ const handleConfirmSubmit = async () => {
         if (response.data.success) {
           const data = selectedUserType === 'faculty' ? response.data.faculty : response.data.students;
           
-          console.log(data); // Log data to inspect its structure
-          console.log(`Selected Vehicle Type: ${selectedVehicle}`);
   
           const userData = data.find(user => {
             console.log(`Checking user: ${user.fullname}, Slot: ${user.slot_number}, Vehicle: ${user.slot_type}`);
@@ -560,11 +559,9 @@ const onScanSuccess = async (slotType, slotNumber) => {
       : 'https://skyblue-clam-769210.hostingersite.com/fetchstudentsdata.php';
 
     const response = await axios.get(fetchUrl, { withCredentials: true });
-    console.log('Response:', response.data);
     
     if (response.data.success) {
       const data = selectedUserType === 'faculty' ? response.data.faculty : response.data.students;
-      console.log('Fetched user data:', data);
       
       // Find user based on both slot type and slot number
       const userData = data.find(user => 
@@ -1803,6 +1800,20 @@ useEffect(() => {
             <p>Deleted Successfully.</p>
             <div className="flex justify-around mt-4">
               <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setconfirmDeleteSuccess(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+        )}
+
+        {parkingAvailable && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white flex flex-col items-center text-center rounded-lg shadow-lg p-5">
+            <FaRegCircleCheck className="w-12 text-green-500 h-12"/>
+            <p>This parking spot is available.</p>
+            <div className="flex justify-around mt-4">
+              <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setParkingAvailable(false)}>
                 Cancel
               </button>
             </div>
