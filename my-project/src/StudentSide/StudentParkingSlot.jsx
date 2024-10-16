@@ -357,7 +357,7 @@ export default function StudentParkingSlots() {
           </nav>
 
         {/* Main Content */}
-        <div className="w-full h-[90rem] bg-blue-700">
+        <div className="w-full h-[80rem] bg-blue-700 sm:h-screen">
           <div className="w-full h-20 flex justify-end items-end border-b-2">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 mr-5">Parking Slot</p>
           </div>
