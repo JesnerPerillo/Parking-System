@@ -12,6 +12,7 @@ import { FaCircleCheck, FaRegCircleCheck} from "react-icons/fa6";
 
 export default function AdminUserList() {
   const [userData, setUserData] = useState(null);
+  const [images, setImages] = useState({});
   const [selectedUserType, setSelectedUserType] = useState('student'); // Default to 'student'
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [userId, setUserId] = useState(null);
@@ -37,6 +38,8 @@ export default function AdminUserList() {
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [approveMessage, setApproveMessage] = useState(false);
   const [logoutMessage, setLogoutMessage] = useState(false);
+  const [updateConfirm, setUpdateConfirm] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
   const [formData, setFormData] = useState({
     student: {
       studentNumber: '',
@@ -113,34 +116,34 @@ export default function AdminUserList() {
   const handleSubmit = async (e, type) => {
     e.preventDefault();
 
-    // Debug: Check userData and its id
-    console.log('userData:', selectedUserData);
-    console.log('userData.id:', selectedUserData.id);
+    // Show confirmation modal
+    setUpdateConfirm(true);
+};
 
+// This function will handle the actual submission after confirmation
+const handleConfirmSubmit = async () => {
+    setError(''); // Clear previous error message
     const form = new FormData();
-    const currentFormData = formData[type]; // Get the form data for the selected type
+    const currentFormData = formData[selectedUserType]; // Get the form data for the selected type
 
     // Append fields from the specific user type
     for (const key in currentFormData) {
         form.append(key, currentFormData[key]);
     }
 
-    // Check if id is defined before appending
+    // Check if ID is defined before appending
     if (selectedUserData.id) {
         form.append('id', selectedUserData.id);
     } else {
         console.error('ID is undefined');
-        alert('ID is missing. Please ensure you have selected a user.');
+        setError('ID is missing. Please ensure you have selected a user.');
         return; // Stop submission if ID is not valid
     }
 
     // Determine the URL based on the type (student or faculty/staff)
-    const url = type === 'student'
+    const url = selectedUserType === 'student'
         ? 'https://skyblue-clam-769210.hostingersite.com/admineditstudent.php'
         : 'https://skyblue-clam-769210.hostingersite.com/admineditfaculty.php';
-
-    // Log the form data being sent
-    console.log('Form data being sent:', Array.from(form.entries())); // Convert FormData to a readable array
 
     try {
         const response = await axios.post(url, form, {
@@ -150,24 +153,22 @@ export default function AdminUserList() {
             },
         });
 
-        console.log('Response data:', response.data);
-
         if (response.data.success) {
             setUserData((prev) => ({
                 ...prev,
                 ...currentFormData,
                 password: '', // Don't show the password in user data
             }));
-            alert('Account updated successfully');
+            setUpdateSuccess(true); // Show success message
             setIsEditModalOpen(false);
-            setUserData(false);
-            window.location.reload();
         } else {
-            alert('Error: ' + response.data.message);
+            setError(response.data.message || 'An error occurred. Please try again.');
         }
     } catch (error) {
         console.error('Error updating account:', error);
-        alert('Error updating account. Please try again.');
+        setError('Error updating account. Please try again.'); // Set error message
+    } finally {
+        setUpdateConfirm(false); // Close confirmation modal
     }
 };
 
@@ -239,6 +240,45 @@ useEffect(() => {
 
     fetchUserData();
 }, [selectedUserType]); // Fetch the user list when selectedUserType changes
+
+const handleViewImage = async (id, imageType) => {
+  try {
+      const apiUrl = selectedUserType === 'student'
+          ? `https://skyblue-clam-769210.hostingersite.com/fetchstudentsimage.php?id=${id}`
+          : `https://skyblue-clam-769210.hostingersite.com/fetchfacultyimage.php?id=${id}`;
+
+      const response = await axios.get(apiUrl, { withCredentials: true });
+
+      if (response.data.success) {
+          // Set the modal image source based on the image type
+          let imageSrc;
+          switch (imageType) {
+              case 'License':
+                  imageSrc = `data:image/jpeg;base64,${response.data.images.License}`;
+                  break;
+              case 'ORCR':
+                  imageSrc = `data:image/jpeg;base64,${response.data.images.ORCR}`;
+                  break;
+              case 'COR':
+                  imageSrc = `data:image/jpeg;base64,${response.data.images.COR}`;
+                  break;
+              default:
+                  return;
+          }
+
+          setModalImageSrc(imageSrc);
+          setError(null);
+          setIsModalOpen(true); // Open the modal
+      } else {
+          setImages({});
+          setError(response.data.message || 'No images found.');
+      }
+  } catch (error) {
+      setImages({});
+      setError('Error fetching images: ' + error.message);
+  }
+};
+
 
 useEffect(() => {
     const fetchSelectedUserData = async () => {
@@ -646,31 +686,13 @@ const [searchTerm, setSearchTerm] = useState('');
                           <td className="border border-gray-300 px-2 py-1">{user.slot_number || ''}</td>
                           <td className="border border-gray-300 px-2 py-1">{user['Plate Number']}</td>
                           <td className="border border-gray-300 px-2 py-1">
-                            {user.License ? (
-                              <>
-                              <img onClick={() => handleOpenModal(`data:image/png;base64,${user.License}`)} src={`data:image/png;base64,${user.License}`} alt="License" className="w-16 h-16 object-cover rounded cursor-pointer" />
-                              </>
-                            ) : (
-                              <span>No License</span>
-                            )}
+                          <button onClick={() => handleViewImage(user.id, 'License')}>View License</button>
                           </td>
                           <td className="border border-gray-300 px-4 py-1">
-                            {user.ORCR ? (
-                              <>
-                              <img onClick={() => handleOpenModal(`data:image/png;base64,${user.ORCR}`)} src={`data:image/png;base64,${user.ORCR}`} alt="ORCR" className="w-16 h-16 object-cover rounded cursor-pointer" />
-                              </>
-                            ) : (
-                              <span>No ORCR</span>
-                            )}
+                          <button onClick={() => handleViewImage(user.id, 'ORCR')}>View ORCR</button>
                           </td>
                           <td className="border border-gray-300 px-4 py-1">
-                            {user.COR ? (
-                              <>
-                              <img onClick={() => handleOpenModal(`data:image/png;base64,${user.COR}`)} src={`data:image/png;base64,${user.COR}`} alt="COR" className="w-16 h-16 object-cover rounded cursor-pointer" />
-                              </>
-                            ) : (
-                              <span>No COR</span>
-                            )}
+                          <button onClick={() => handleViewImage(user.id, 'COR')}>View COR</button>
                           </td>
                           <td className="border border-gray-300 px-3 py-1">
                             <button onClick={() => {
@@ -701,18 +723,10 @@ const [searchTerm, setSearchTerm] = useState('');
                           <td className="border border-gray-300 px-4 py-2">{user.slot_number || ''}</td>
                           <td className="border border-gray-300 px-4 py-2">{user['Plate Number']}</td>
                           <td className="border border-gray-300 px-4 py-2">
-                            {user.License ? (
-                              <img onClick={() => handleOpenModal(`data:image/png;base64,${user.License}`)} src={`data:image/png;base64,${user.License}`} alt="License" className="w-16 h-16 object-cover rounded cursor-pointer" />
-                            ) : (
-                              <span>No License</span>
-                            )}
+                          <button onClick={() => handleViewImage(user.id, 'License')}>View License</button>
                           </td>
                           <td className="border border-gray-300 px-4 py-2">
-                            {user.ORCR ? (
-                              <img onClick={() => handleOpenModal(`data:image/png;base64,${user.ORCR}`)} src={`data:image/png;base64,${user.ORCR}`} alt="ORCR" className="w-16 h-16 object-cover rounded cursor-pointer" />
-                            ) : (
-                              <span>No ORCR</span>
-                            )}
+                          <button onClick={() => handleViewImage(user.id, 'ORCR')}>View ORCR</button>
                           </td>
                           <td className="border border-gray-300 px-3 py-1">
                             <button onClick={() => {
@@ -742,13 +756,13 @@ const [searchTerm, setSearchTerm] = useState('');
                   </tr>
                 )}
                 {isModalOpen && (
-                  <div className="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                    <div className="bg-white p-4 rounded">
-                      <img src={modalImageSrc} alt="Enlarged" className="max-w-md max-h-screen" />
-                      <button className="mt-4 bg-red-600 text-white py-2 px-4 rounded" onClick={handleCloseModal}>
-                        Close
-                      </button>
-                    </div>
+                  <div className="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+                      <div className="bg-white p-4 rounded w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg relative" style={{ maxHeight: '90vh', overflow: 'auto' }}>
+                          <img src={modalImageSrc} alt="Enlarged" className="w-full h-auto rounded" style={{ maxHeight: '90%' }} />
+                          <button className="mt-4 bg-gray-500 text-white py-2 px-4 rounded" onClick={() => setIsModalOpen(false)}>
+                              Close
+                          </button>
+                      </div>
                   </div>
                 )}
               </tbody>
@@ -849,11 +863,9 @@ const [searchTerm, setSearchTerm] = useState('');
                     Cancel
                   </button>
                   <button
-                    type="submit"
-                    onClick={console.log('selectedUserType:', selectedUserType)
-                    }
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded w-1/2"
-                  >
+                    type="button"
+                    onClick={(e) => handleSubmit(e, selectedUserType)}
+                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded w-1/2">
                     Save Changes
                   </button>
                 </div>
@@ -920,11 +932,11 @@ const [searchTerm, setSearchTerm] = useState('');
                           Cancel
                         </button>
                         <button
-                          type="submit"
-                          className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded w-1/2"
-                        >
+                        type="button"
+                        onClick={(e) => handleSubmit(e, selectedUserType)}
+                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-4 rounded w-1/2">
                         Save Changes
-                          </button>
+                      </button>
                         </div>
                       </form>
                     </div>
@@ -1308,6 +1320,37 @@ const [searchTerm, setSearchTerm] = useState('');
                 </div>
               </div>
             </div>
+            )}
+
+            {updateConfirm && (
+                <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white text-center rounded-lg shadow-lg p-5">
+                        <h2 className="text-lg font-semibold mb-4">Confirm Update</h2>
+                        <p>Are you sure that the information is correct?</p>
+                        <div className="flex justify-around mt-4">
+                            <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setUpdateConfirm(false)}>
+                                Cancel
+                            </button>
+                            <button className="px-4 py-2 bg-green-500 text-white rounded" onClick={handleConfirmSubmit}>
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {updateSuccess && (
+                <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white flex flex-col items-center text-center rounded-lg shadow-lg p-5">
+                        <FaRegCircleCheck className="w-12 text-green-500 h-12"/>
+                        <p>Account updated successfully.</p>
+                        <div className="flex justify-around mt-4">
+                            <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setUpdateSuccess(false)}>
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
 
             {showDeleteUserMessage && (
