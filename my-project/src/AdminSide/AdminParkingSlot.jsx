@@ -17,12 +17,13 @@ import 'jspdf-autotable';
 import GSO from '../Pictures/gsoo.png';
 import { IoEyeOff, IoEye } from "react-icons/io5";
 import { FaChalkboardUser, FaRegCircleCheck } from "react-icons/fa6";
+import { HiMagnifyingGlass } from "react-icons/hi2";
 
 export default function AdminParkingSlot() {
   const [userData, setUserData] = useState('');
   const [error, setError] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
+  const [images, setImages] = useState({});
   const [selectedUserType, setSelectedUserType] = useState('student');
   const [selectedVehicle, setSelectedVehicle] = useState('motorcycle');
   const [updateConfirm, setUpdateConfirm] = useState(false);
@@ -586,6 +587,44 @@ const onScanSuccess = async (slotType, slotNumber) => {
   } catch (error) {
     console.error('Error fetching user data:', error.message);
     alert('Error fetching user data: ' + error.message);
+  }
+};
+
+const handleViewImage = async (id, imageType) => {
+  try {
+      const apiUrl = selectedUserType === 'student'
+          ? `https://skyblue-clam-769210.hostingersite.com/fetchstudentsimage.php?id=${id}`
+          : `https://skyblue-clam-769210.hostingersite.com/fetchfacultyimage.php?id=${id}`;
+
+      const response = await axios.get(apiUrl, { withCredentials: true });
+
+      if (response.data.success) {
+          // Set the modal image source based on the image type
+          let imageSrc;
+          switch (imageType) {
+              case 'License':
+                  imageSrc = `data:image/jpeg;base64,${response.data.images.License}`;
+                  break;
+              case 'ORCR':
+                  imageSrc = `data:image/jpeg;base64,${response.data.images.ORCR}`;
+                  break;
+              case 'COR':
+                  imageSrc = `data:image/jpeg;base64,${response.data.images.COR}`;
+                  break;
+              default:
+                  return;
+          }
+
+          setModalImageSrc(imageSrc);
+          setError(null);
+          setIsModalOpen(true); // Open the modal
+      } else {
+          setImages({});
+          setError(response.data.message || 'No images found.');
+      }
+  } catch (error) {
+      setImages({});
+      setError('Error fetching images: ' + error.message);
   }
 };
 
@@ -1249,88 +1288,17 @@ useEffect(() => {
                 <p><strong>Time Out:</strong> {popupData['Time Out'] ? formatAMPM(popupData['Time Out']) : 'N/A'}</p>
               </div>
             )}
-            <div className="w-full flex flex-col md:flex-row justify-around mt-4">
-            {licenseSrc ? (
+            <div className="w-full flex flex-col md:flex-row justify-around mt-20">
               <div className="flex flex-col items-center">
-                <p>License</p>
-                <div className="relative w-60 h-40 md:w-40 md:h-32 group">
-                  {/* Dark background overlay on hover */}
-                  <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
-
-                  {/* Image */}
-                  <img
-                    src={licenseSrc}
-                    alt="License"
-                    className="w-full h-full object-cover z-0"
-                  />
-
-                  {/* Eye icon in the center */}
-                  <button
-                    onClick={() => handleOpenModal(licenseSrc)}
-                    className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
-                    aria-label="View License"
-                  >
-                    <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
-                  </button>
-                </div>
+                <button className="flex justify-center items-center" onClick={() => handleViewImage(popupData.id, 'License')}>View License <HiMagnifyingGlass className="ml-2"/></button>
               </div>
-            ) : (
-              <p className="text-center">No License image available</p>
-            )}
-              {orcrSrc ? (
               <div className="flex flex-col items-center">
-                <p>ORCR</p>
-                <div className="relative w-60 h-40 md:w-40 md:h-32 group">
-                  {/* Dark background overlay on hover */}
-                  <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
-
-                  {/* Image */}
-                  <img
-                    src={orcrSrc}
-                    alt="ORCR"
-                    className="w-full h-full object-cover z-0"
-                  />
-
-                  {/* Eye icon in the center */}
-                  <button
-                    onClick={() => handleOpenModal(orcrSrc)}
-                    className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
-                    aria-label="View ORCR"
-                  >
-                    <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
-                  </button>
-                </div>
+                <button className="flex justify-center items-center" onClick={() => handleViewImage(popupData.id, 'ORCR')}>View ORCR <HiMagnifyingGlass className="ml-2"/></button>
               </div>
-            ) : (
-              <p className="text-center">No ORCR image available</p>
-            )}
-            {selectedUserType === 'student' ? <>{corSrc ? (
+            {selectedUserType === 'student' ? <>
               <div className="flex flex-col items-center">
-                <p>COR</p>
-                <div className="relative w-60 h-40 md:w-40 md:h-32 group">
-                  {/* Dark background overlay on hover */}
-                  <div className="absolute inset-0 bg-black bg-opacity-50 group-hover:bg-opacity-70 transition duration-300 ease-in-out z-10"></div>
-
-                  {/* Image */}
-                  <img
-                    src={corSrc}
-                    alt="COR"
-                    className="w-full h-full object-cover z-0"
-                  />
-
-                  {/* Eye icon in the center */}
-                  <button
-                    onClick={() => handleOpenModal(corSrc)}
-                    className="absolute inset-0 flex items-center justify-center text-blue-500 hover:text-blue-700 z-20"
-                    aria-label="View COR"
-                  >
-                    <BsEyeFill className="w-8 h-8 md:w-10 md:h-10" />
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <p className="text-center">No COR image available</p>
-            )}</> : ''}
+                <button className="flex justify-center items-center" onClick={() => handleViewImage(popupData.id, 'COR')}>View COR <HiMagnifyingGlass className="ml-2"/></button>
+              </div></> : ''}
             </div>
             <div className="w-full flex flex-col md:flex-row items-center justify-evenly mt-16">
               <button
