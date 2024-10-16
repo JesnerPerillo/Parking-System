@@ -561,7 +561,7 @@ const [searchTerm, setSearchTerm] = useState('');
           <div className="w-full h-20 flex justify-end items-end border-b-2 sm:justify-start md:justify-end">
             <p className="text-white font-semibold text-2xl tracking-widest z-10 ml-5">User List</p>
           </div>
-        <div className="w-full h-screen">
+        <div className="w-full h-9/10">
           <h2 className="text-white font-semibold ml-10 mt-10 text-2xl flex">User's List <FaClipboardList className="ml-5"/></h2>
 
           {/* Table */}
