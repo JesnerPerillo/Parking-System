@@ -146,7 +146,10 @@ export default function FacultyStaffSignup(){
               {showPassword ? <IoEyeOff className="w-6 h-6"/> : <IoEye className="w-6 h-6"/>}
             </button>
           </label>
-          <p className="mt-2 text-gray-400">Upload the file requirements as an image only.<span className="text-red-500">*</span></p>
+          <div>
+            <p className="mb-1 text-gray-400">Note: Upload the file requirements as an image only.<span className="text-red-500">*</span></p>
+            <p className="mb-1 text-gray-400">- Upload the Vehicle's OR and CR in a single image.<span className="text-red-500">*</span></p>
+          </div>
           <div class="flex flex-col lg:flex-row lg:space-x-4 space-y-4 lg:space-y-0">
             <div class="w-full lg:w-1/2">
               <label for="formFileLicense" class="form-label block text-sm font-medium text-gray-700">License</label>
