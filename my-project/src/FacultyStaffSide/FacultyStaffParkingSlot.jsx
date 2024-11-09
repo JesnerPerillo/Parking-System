@@ -379,13 +379,6 @@ export default function FacultyStaffParkingSlot() {
                 <option value="motorcycle">Motorcycle</option>
                 <option value="fourwheeler">Four Wheeler</option>
               </select>
-              {selectedVehicle === 'motorcycle' && (
-                <div className="font-semibold text-sm mt-2 flex items-center text-gray-400">
-                  <BsExclamationDiamond className="mr-2 text-red-500" />
-                  <span className="text-red-500">Notice: &nbsp;</span>
-                  <span>The Parking Slots of 1-100 is located at the EARTS/CIT. And the Parking Slots for 101-110 is located at the Guard House.</span>
-                </div>
-              )}
               {selectedVehicle === 'fourwheeler' && (
                 <div className="font-semibold text-sm mt-2 flex items-center text-gray-400">
                   <BsExclamationDiamond className="mr-2 text-red-500" />
