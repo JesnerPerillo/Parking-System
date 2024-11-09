@@ -981,7 +981,7 @@ const [searchTerm, setSearchTerm] = useState('');
             
             {showPending && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
-              <div className="bg-white rounded-lg w-9/10 max-h-4/5 max-sm:w-full overflow-auto p-4">
+              <div className="bg-white rounded-lg w-9/10 h-4/5 max-sm:w-full overflow-auto p-4">
                 <div className="w-full flex justify-between">
                   <h2 className="text-lg font-bold mb-4">Pending Users</h2>
                   <button onClick={() => setShowPending(false)} className="mb-4">Close</button>
@@ -1013,6 +1013,7 @@ const [searchTerm, setSearchTerm] = useState('');
                 </div>
 
                 {/* Table for Pending Users */}
+                <div className="h-5/6 overflow-auto">
                 <table className="min-w-full text-xs table-auto border-collapse border border-gray-200">
                   <thead>
                     <tr className="bg-gray-100">
@@ -1200,6 +1201,7 @@ const [searchTerm, setSearchTerm] = useState('');
                     )}
                   </tbody>
                 </table>
+                </div>
               </div>
             </div>
           )}

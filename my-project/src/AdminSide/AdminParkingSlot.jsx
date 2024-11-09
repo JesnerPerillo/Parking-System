@@ -11,7 +11,7 @@ import QRScanner from '../components/QRScanner.jsx';
 import { BrowserMultiFormatReader } from '@zxing/library';
 import Beep from '../Pictures/beep.png';
 import { MdTimerOff, MdTimer, MdDeleteForever, MdOutlineFileDownload  } from "react-icons/md";
-import { FaUserEdit, FaUsers } from "react-icons/fa";
+import { FaUserEdit, FaUsers, FaCamera  } from "react-icons/fa";
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import GSO from '../Pictures/gsoo.png';
@@ -1071,9 +1071,9 @@ useEffect(() => {
             {!scanning ? (
               <button
                 onClick={() => setScanning(true)}
-                className="w-full bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
+                className="w-full flex justify-center items-center bg-yellow-700 hover:bg-yellow-800 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"
               >
-                Start Scanning
+                Start Scanning <FaCamera className="ml-5"/>
               </button>
             ) : (
               <p className="text-center">Scanning...</p>
