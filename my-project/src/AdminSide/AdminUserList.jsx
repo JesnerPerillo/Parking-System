@@ -546,6 +546,32 @@ const [searchTerm, setSearchTerm] = useState('');
     }    
   };  
 
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    const fetchPendingCount = async () => {
+      try {
+        const response = await axios.get('https://skyblue-clam-769210.hostingersite.com/fetchpendingcount.php', {
+          withCredentials: true,
+        });
+        if (response.data.success) {
+          const count = Number(response.data.pendingCount); // Ensure it's a number
+          if (!isNaN(count)) {
+            setPendingCount(count);  // Set the pending count if valid
+          } else {
+            console.error('Invalid count received:', response.data.pendingCount);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching pending count:', error);
+      }
+    };
+  
+    fetchPendingCount();
+    const interval = setInterval(fetchPendingCount, 30000); // Refresh every 30 seconds
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, []);  
+
 
   return (
     <>
@@ -616,7 +642,15 @@ const [searchTerm, setSearchTerm] = useState('');
                   className="w-full border md:w-60 h-10 rounded pl-3"
                   placeholder="Search user"
                 />
-              <button onClick={togglePending} className="p-2 h-10 w-32 bg-yellow-500 rounded text-white">Pending</button>
+              <button 
+                onClick={togglePending} 
+                className="p-2 h-10 w-32 bg-yellow-500 rounded text-white flex items-center justify-center relative"
+              >
+                Pending
+                {pendingCount > 0 && (
+                  <span className="ml-2 inline-block w-2.5 h-2.5 bg-white rounded-full "></span>
+                )}
+              </button>
               <select
                 value={selectedUserType}
                 onChange={(e) => setSelectedUserType(e.target.value)}
