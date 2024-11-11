@@ -490,7 +490,7 @@ useEffect(() => {
     const date = new Date(timestamp);
   
     // Manually adjust to UTC+8
-    const utcOffset = 12 * 60 * 60 * 1000; // UTC+8 in milliseconds
+    const utcOffset = 8 * 60 * 60 * 1000; // UTC+8 in milliseconds
     const localDate = new Date(date.getTime() + utcOffset);
   
     // Array of month names
