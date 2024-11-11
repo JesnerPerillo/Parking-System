@@ -1839,6 +1839,34 @@ const handleViewMap = () => {
         </div>
       )}
 
+        {mapSuccess && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white flex flex-col items-center text-center rounded-lg shadow-lg p-5">
+              <FaRegCircleCheck className="w-12 text-green-500 h-12"/>
+              <p>Map updated successfully.</p>
+              <div className="flex justify-around mt-4">
+                <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setMapSuccess(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {noMap && (
+          <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white flex flex-col items-center text-center rounded-lg shadow-lg p-5">
+            <BsExclamationTriangle className="w-12 text-red-500 h-12"/>
+              <p>Please select a map file.</p>
+              <div className="flex justify-around mt-4">
+                <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setNoMap(false)}>
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {confirmUpdateCount && (
           <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white text-center rounded-lg shadow-lg p-5">
