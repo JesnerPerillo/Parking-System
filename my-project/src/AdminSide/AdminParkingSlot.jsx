@@ -996,6 +996,106 @@ useEffect(() => {
     }
 };
 
+const [selectedMap, setSelectedMap] = useState(null);
+  const [mapType, setMapType] = useState('');
+  const [uploadMapType, setUploadMapType] = useState('student');
+  const [imageUrl, setImageUrl] = useState(null);
+  const [showFileInput, setShowFileInput] = useState(false);
+  const [showMapSelectionPopup, setShowMapSelectionPopup] = useState(false); 
+  const [mapSuccess, setMapSuccess] = useState(false);
+  const [noMap, setNoMap] = useState(false);
+
+
+  const handleMapTypeChange = (e) => {
+    setUploadMapType(e.target.value);  // Updates the map type (student or faculty)
+};
+
+const handleMapChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        // Check file type (only allow image files)
+        const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        if (!validTypes.includes(file.type)) {
+            alert("Invalid file type. Only JPEG, PNG, and GIF are allowed.");
+            e.target.value = "";  // Clear the file input
+            return;
+        }
+
+        // Check file size (10MB max)
+        if (file.size > 10 * 1024 * 1024) {
+            alert("File size exceeds the 10MB limit.");
+            e.target.value = "";  // Clear the file input
+            return;
+        }
+
+        setSelectedMap(file);  // Updates the selected map file
+    }
+};
+
+const handleUpload = async () => {
+  if (!selectedMap) {
+      setNoMap(true);
+      return;
+  }
+
+  console.log('Selected Map:', selectedMap); // Check if the file is selected
+
+  const formData = new FormData();
+  formData.append("map", selectedMap);
+  formData.append("uploadMapType", uploadMapType);
+
+  try {
+      const response = await axios.post("http://localhost/websiteOrg/my-project/Backend/uploadmap.php", formData, {
+          withCredentials: true,
+          headers: {
+              "Content-Type": "multipart/form-data",
+          },
+      });
+
+      console.log("Response from backend:", response.data);
+
+      const result = response.data;
+      if (result.message) {
+          setMapSuccess(true);
+      } else {
+          alert(result.error || "An error occurred");
+      }
+  } catch (error) {
+      console.error("Error uploading map:", error);
+      alert("Error uploading map");
+  }
+};
+
+  const handleEditMap = () => {
+    setShowFileInput(true);
+  };
+
+  const fetchMap = async (selectedMapType) => {
+    try {
+        const response = await axios.get(`http://localhost/websiteOrg/my-project/Backend/getmap.php?mapType=${selectedMapType}`, {
+            withCredentials: true,
+            responseType: "blob",
+        });
+        
+        const imageUrl = URL.createObjectURL(response.data);
+        setImageUrl(imageUrl);
+    } catch (error) {
+        console.error("Error fetching map:", error);
+        alert("Error fetching map");
+    }
+};
+
+useEffect(() => {
+    if (mapType) {
+        fetchMap(mapType); // Fetch the map only when mapType is updated
+    }
+}, [mapType]);
+
+const handleViewMap = () => {
+    fetchMap(); 
+    setShowMapSelectionPopup(false); 
+};
+
   
 
 
@@ -1229,9 +1329,114 @@ useEffect(() => {
                       <option value="faculty">Faculty</option>
                     </select>
                   </div>
-                  <div className="flex items-center mt-3">
-                    <button onClick={() => setVehicleCountOpen(true)} className="w-40 h-10 bg-blue-700 rounded text-white">Vehicle Count</button>
-                    <button onClick={fetchLogs} className="block ml-3 bg-gray-400 w-40 h-10 rounded text-white tracking-widest">Logs</button>
+                  <div className="flex flex-col justify-between items-center mt-3 sm:flex-row">
+                  <div className="flex justify-center items-center">
+                    {/* Floating container for the map, buttons, and file input */}
+                    <div className=" flex flex-col items-center justify-center rounded-lg shadow-lg w-auto max-w-full sm:flex-row">
+                      {/* Button to trigger the map selection popup */}
+                      <button
+                        onClick={() => setShowMapSelectionPopup(true)}
+                        className="w-40 h-10 mr-0 text-white bg-blue-700 rounded mt-3 sm:mr-3 mt-0"
+                      >
+                        Vicinity Map
+                      </button>
+
+                      {/* Map selection popup */}
+                      {showMapSelectionPopup && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                          <div className="bg-white p-6 rounded shadow-lg w-80">
+                            <h2 className="text-lg font-bold mb-4">Select Map Type</h2>
+                            <div>
+                              <button
+                                onClick={() => {
+                                  setMapType("student");
+                                  handleViewMap();
+                                }}
+                                className={`w-full py-2 px-4 rounded mb-2 text-white bg-blue-700`}
+                              >
+                                Student Map
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setMapType("faculty");
+                                  handleViewMap();
+                                }}
+                                className={`w-full py-2 px-4 rounded text-white bg-blue-700`}
+                              >
+                                Faculty Map
+                              </button>
+                            </div>
+                            <button
+                              onClick={() => setShowMapSelectionPopup(false)}
+                              className="mt-4 w-full py-2 bg-red-600 text-white rounded"
+                            >
+                              Close
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Display the selected map */}
+                      {imageUrl && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                          <div className="mt-4 w-3/5 h-3/4 relative flex justify-center items-center">
+                            <img src={imageUrl} alt={`${mapType} map`} className="w-full h-full object-fill rounded-lg" />
+                            <button onClick={() => setImageUrl(false)} className="w-20 h-8 bg-gray-400 rounded text-white absolute top-5 right-5">Close</button>
+                          </div>
+                          
+                        </div>
+                      )}
+
+                      {/* Upload Map button */}
+                      <button
+                        onClick={handleEditMap}
+                        className="w-40 h-10 text-white bg-green-700 rounded mr-0 mt-0 sm:mr-3 mt-3"
+                      >
+                        Edit Vicinity Map
+                      </button>
+
+                      {/* File input for uploading the map */}
+                      {showFileInput && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                      <div className="mt-3 p-3 rounded bg-white w-9/10 h-3/4 flex flex-col justify-around items-center sm:h-1/3 sm:w-1/5">
+                          <h3>Change Map</h3>
+                          <div className="mb-3 w-full">
+                              <label className="block text-sm mb-2">Select Map Type</label>
+                              <select
+                                  value={uploadMapType}
+                                  onChange={handleMapTypeChange}
+                                  className="border p-2 w-full rounded"
+                              >
+                                  <option value="student">Student Map</option>
+                                  <option value="faculty">Faculty Map</option>
+                              </select>
+                          </div>
+                          <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleMapChange}
+                              required
+                              className="border p-2 w-full mb-3 rounded"
+                          />
+                          <button
+                              onClick={handleUpload}
+                              className="w-full bg-blue-600 text-white py-2 rounded"
+                          >
+                              Upload Map
+                          </button>
+                          <button
+                              onClick={() => setShowFileInput(false)}
+                              className="w-full bg-gray-600 text-white py-2 rounded"
+                          >
+                              Close
+                          </button>
+                      </div>
+                  </div>
+              )}
+                    </div>
+                  </div>
+                    <button onClick={() => setVehicleCountOpen(true)} className="w-40 h-10 bg-blue-700 mt-3 rounded text-white sm:mt-0">Vehicle Count</button>
+                    <button onClick={fetchLogs} className="block ml-0 mt-0 bg-gray-400 w-40 h-10 rounded text-white tracking-widest sm:ml-3 mt-3">Logs</button>
                   </div>
                 </div>
                 <div className="flex flex-col md:flex-row items-center">
