@@ -1045,7 +1045,7 @@ const handleUpload = async () => {
   formData.append("uploadMapType", uploadMapType);
 
   try {
-      const response = await axios.post("http://localhost/websiteOrg/my-project/Backend/uploadmap.php", formData, {
+      const response = await axios.post("https://skyblue-clam-769210.hostingersite.com/uploadmap.php", formData, {
           withCredentials: true,
           headers: {
               "Content-Type": "multipart/form-data",
@@ -1072,7 +1072,7 @@ const handleUpload = async () => {
 
   const fetchMap = async (selectedMapType) => {
     try {
-        const response = await axios.get(`http://localhost/websiteOrg/my-project/Backend/getmap.php?mapType=${selectedMapType}`, {
+        const response = await axios.get(`https://skyblue-clam-769210.hostingersite.com/getmap.php?mapType=${selectedMapType}`, {
             withCredentials: true,
             responseType: "blob",
         });
