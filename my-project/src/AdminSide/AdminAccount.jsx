@@ -259,7 +259,7 @@ export default function AdminAccount() {
         <div className="w-full h-9/10.5">
           <div className="w-full h-full sm:p-4">
             <div className="w-full flex flex-col md:flex-row justify-between items-center mb-6">
-              <h1 className="text-white text-lg md:text-xl">Users</h1>
+              <h1 className="text-white text-lg md:text-xl">Admin Users</h1>
               <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-2 md:space-y-0">
                 <input
                   onChange={(e) => setSearchTerm(e.target.value)}
