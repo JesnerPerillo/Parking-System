@@ -1846,7 +1846,7 @@ const handleViewMap = () => {
               <p>Map updated successfully.</p>
               <div className="flex justify-around mt-4">
                 <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setMapSuccess(false)}>
-                  Cancel
+                  Close
                 </button>
               </div>
             </div>
@@ -1939,7 +1939,7 @@ const handleViewMap = () => {
             <p>Time in Successfully.</p>
             <div className="flex justify-around mt-4">
               <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setTimeinSuccess(false)}>
-                Cancel
+                Close
               </button>
             </div>
           </div>
@@ -1970,7 +1970,7 @@ const handleViewMap = () => {
             <p>Time out Successfully.</p>
             <div className="flex justify-around mt-4">
               <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setTimeoutSuccess(false)}>
-                Cancel
+                Close
               </button>
             </div>
           </div>
@@ -2001,7 +2001,7 @@ const handleViewMap = () => {
             <p>Deleted Successfully.</p>
             <div className="flex justify-around mt-4">
               <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setconfirmDeleteSuccess(false)}>
-                Cancel
+                Close
               </button>
             </div>
           </div>
@@ -2045,7 +2045,7 @@ const handleViewMap = () => {
               <p>Account updated successfully.</p>
               <div className="flex justify-around mt-4">
                 <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setUpdateSuccess(false)}>
-                  Cancel
+                  Close
                 </button>
               </div>
             </div>
