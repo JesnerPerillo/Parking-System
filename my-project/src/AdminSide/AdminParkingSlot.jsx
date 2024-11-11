@@ -505,7 +505,7 @@ useEffect(() => {
     const year = localDate.getFullYear();
     const hours = localDate.getHours();
     const minutes = localDate.getMinutes();
-    const ampm = hours >= 12 ? 'AM' : 'PM';
+    const ampm = hours >= 12 ? 'PM' : 'AM';
     const hours12 = hours % 12 || 12;
     const minutesFormatted = minutes < 10 ? '0' + minutes : minutes;
   
