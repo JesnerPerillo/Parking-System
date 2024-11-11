@@ -2080,9 +2080,9 @@ const handleViewMap = () => {
           {deleteLogsSuccess && (
             <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
               <div className="bg-white text-center rounded-lg shadow-lg p-5">
-                <div className="flex items-center justify-center mb-5">
+                <div className="flex flex-col items-center justify-center mb-5">
+                <FaRegCircleCheck className="w-10 text-green-500 h-10"/>
                 <h5>Delete Logs Success</h5>
-                <FaRegCircleCheck className="w-10 text-green-500 h-10 ml-2"/>
                 </div>
                 <button onClick={() => setDeleteLogsSuccess(false)} className="w-24 h-10 bg-gray-500 rounded text-white">Close</button>
                 </div>
