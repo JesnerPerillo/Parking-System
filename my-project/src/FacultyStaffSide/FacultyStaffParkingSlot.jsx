@@ -448,7 +448,7 @@ useEffect(() => {
             <div className="relative rounded-lg w-full h-auto sm:w-3/6 sm:h-3/6 rounded zoom-container">
               <button onClick={() => setPopupImage(false)} className="z-20 absolute right-5 top-2 text-white bg-gray-500 p-2 rounded">Close</button>
               {loading ? (
-                <p>Loading map...</p>
+                <p className="text-white">Loading map...</p>
             ) : error ? (
                 <p style={{ color: "red" }}>{error}</p>
             ) : (
