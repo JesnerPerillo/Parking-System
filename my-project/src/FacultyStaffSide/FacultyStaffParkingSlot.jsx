@@ -308,6 +308,38 @@ export default function FacultyStaffParkingSlot() {
     setIsDragging(false);
   };
 
+  const [mapUrl, setMapUrl] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchFacultyMap = async () => {
+    try {
+        const response = await axios.get("https://skyblue-clam-769210.hostingersite.com/getmapuser.php", {
+            params: { mapType: "faculty" }, 
+            headers: {
+                "Content-Type": "application/json",
+            },
+            withCredentials: true, 
+            responseType: "arraybuffer",
+        });
+
+        const base64Image = btoa(
+            new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), "")
+        );
+
+        // Set the image URL
+        setMapUrl(`data:image/png;base64,${base64Image}`);
+    } catch (err) {
+        console.error("Error fetching the faculty map:", err);
+        setError("Failed to load the map. Please try again later.");
+    } finally {
+        setLoading(false);
+    }
+};
+
+useEffect(() => {
+    fetchFacultyMap();
+}, []);
+
 
   return(
     <>
@@ -415,9 +447,14 @@ export default function FacultyStaffParkingSlot() {
             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-30">
             <div className="relative rounded-lg w-full h-auto sm:w-3/6 sm:h-3/6 rounded zoom-container">
               <button onClick={() => setPopupImage(false)} className="z-20 absolute right-5 top-2 text-white bg-gray-500 p-2 rounded">Close</button>
+              {loading ? (
+                <p>Loading map...</p>
+            ) : error ? (
+                <p style={{ color: "red" }}>{error}</p>
+            ) : (
               <img
-                src={FacultyMap}
-                alt="Vicinity Map"
+                src={mapUrl} 
+                alt="Faculty Parking Slot Map"
                 ref={imageRef}
                 className="zoomable-image"
                 style={{
@@ -429,6 +466,7 @@ export default function FacultyStaffParkingSlot() {
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp} // Stop dragging if cursor leaves the image
               />
+            )}
             </div>
           </div>
           )}
