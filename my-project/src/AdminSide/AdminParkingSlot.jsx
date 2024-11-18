@@ -18,6 +18,7 @@ import GSO from '../Pictures/gsoo.png';
 import { IoEyeOff, IoEye } from "react-icons/io5";
 import { FaChalkboardUser, FaRegCircleCheck } from "react-icons/fa6";
 import { HiMagnifyingGlass } from "react-icons/hi2";
+import 'react-medium-image-zoom/dist/styles.css';
 
 export default function AdminParkingSlot() {
   const [userData, setUserData] = useState('');
@@ -1082,7 +1083,9 @@ const handleUpload = async () => {
     } catch (error) {
         console.error("Error fetching map:", error);
         alert("Error fetching map");
-    }
+    } finally {
+      setLoading(false);
+  }
 };
 
 useEffect(() => {
@@ -1096,6 +1099,39 @@ const handleViewMap = () => {
     setShowMapSelectionPopup(false); 
 };
 
+const [scale, setScale] = useState(1);
+  const [translate, setTranslate] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
+  const imageRef = useRef(null);
+
+  // Handle zoom in and out
+  const handleWheel = (e) => {
+    e.preventDefault();
+    const newScale = Math.min(Math.max(scale + e.deltaY * -0.01, 1), 3); // Max zoom is 3x, min is 1x
+    setScale(newScale);
+  };
+
+  // Handle image dragging (panning)
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartPosition({ x: e.clientX - translate.x, y: e.clientY - translate.y });
+  };
+
+  const handleMouseMove = (e) => {
+    if (isDragging) {
+      const x = e.clientX - startPosition.x;
+      const y = e.clientY - startPosition.y;
+      setTranslate({ x, y });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const [mapUrl, setMapUrl] = useState(null);
+  const [loading, setLoading] = useState(true);
   
 
 
@@ -1380,7 +1416,21 @@ const handleViewMap = () => {
                       {imageUrl && (
                         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
                           <div className="mt-4 w-3/5 h-3/4 relative flex justify-center items-center">
-                            <img src={imageUrl} alt={`${mapType} map`} className="w-full h-full object-fill rounded-lg" />
+                          {loading ? (
+                                <p className="text-white">Loading map...</p>
+                            ) : error ? (
+                                <p style={{ color: "red" }}>{error}</p>
+                            ) : (
+                            <img src={imageUrl} alt={`${mapType} map`} className="w-full h-full object-fill rounded-lg" 
+                            style={{
+                              transform: `scale(${scale}) translate(${translate.x}px, ${translate.y}px)`,
+                            }}
+                            onWheel={handleWheel}
+                            onMouseDown={handleMouseDown}
+                            onMouseMove={handleMouseMove}
+                            onMouseUp={handleMouseUp}
+                            onMouseLeave={handleMouseUp}/>
+                            )}
                             <button onClick={() => setImageUrl(false)} className="w-20 h-8 bg-gray-400 rounded text-white absolute top-5 right-5">Close</button>
                           </div>
                           
