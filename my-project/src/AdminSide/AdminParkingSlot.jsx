@@ -1514,8 +1514,8 @@ const [scale, setScale] = useState(1);
 
       {/* Pop-up for showing user data */}
       {popupData && (
-        <div className="fixed inset-0 bg-gray-900 h-screen bg-opacity-50 flex justify-center items-center z-30">
-        <div className="bg-white p-4 h-9/11 overflow-auto md:p-8 rounded-lg shadow-lg w-full max-w-2xl mx-2">
+        <div className="fixed inset-0 bg-gray-900 h-screen bg-opacity-50 flex justify-center items-center z-50">
+        <div className="bg-white p-4 h-9/11 overflow-auto md:p-8 rounded-lg shadow-lg w-full max-w-2xl mx-2 z-50">
           <h2 className="text-xl md:text-2xl font-semibold mb-4">Slot User Information</h2>
           <div className="text-sm md:text-base">
             {selectedUserType === 'student' ? (
