@@ -1941,7 +1941,7 @@ const [scale, setScale] = useState(1);
             <p>Update Vehicle Count Successfully.</p>
             <div className="flex justify-around mt-4">
               <button className="mr-2 px-4 py-2 bg-gray-300 rounded" onClick={() => setUpdateCountMessage(false)}>
-                Cancel
+                Close
               </button>
             </div>
           </div>
