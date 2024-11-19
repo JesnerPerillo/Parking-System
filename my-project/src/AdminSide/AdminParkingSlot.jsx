@@ -1415,7 +1415,7 @@ const [scale, setScale] = useState(1);
                       {/* Display the selected map */}
                       {imageUrl && (
                         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                          <div className="mt-4 w-3/5 h-3/4 relative flex justify-center items-center">
+                          <div className="mt-4 w-full h-3/5 relative flex justify-center items-center sm:w-3/5 sm:h-3/4">
                           {loading ? (
                                 <p className="text-white">Loading map...</p>
                             ) : error ? (
